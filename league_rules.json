@@ -1,0 +1,806 @@
+{
+    "rosterPositions": [
+        {
+            "label": "C",
+            "group": "START",
+            "eligibility": [
+                "C"
+            ],
+            "min": 2,
+            "max": 18,
+            "start": 2,
+            "colors": [
+                "DRAFT_BOARD_PURPLE"
+            ]
+        },
+        {
+            "label": "LW",
+            "group": "START",
+            "eligibility": [
+                "LW"
+            ],
+            "min": 2,
+            "max": 18,
+            "start": 2,
+            "colors": [
+                "DRAFT_BOARD_GREEN"
+            ]
+        },
+        {
+            "label": "RW",
+            "group": "START",
+            "eligibility": [
+                "RW"
+            ],
+            "min": 2,
+            "max": 18,
+            "start": 2,
+            "colors": [
+                "DRAFT_BOARD_GREEN"
+            ]
+        },
+        {
+            "label": "F",
+            "group": "START",
+            "eligibility": [
+                "C",
+                "LW",
+                "RW"
+            ],
+            "start": 1,
+            "colors": [
+                "DRAFT_BOARD_GREEN",
+                "DRAFT_BOARD_PURPLE"
+            ]
+        },
+        {
+            "label": "D",
+            "group": "START",
+            "eligibility": [
+                "D"
+            ],
+            "min": 4,
+            "max": 18,
+            "start": 4,
+            "colors": [
+                "DRAFT_BOARD_BLUE"
+            ]
+        },
+        {
+            "label": "F/D",
+            "group": "START",
+            "eligibility": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ],
+            "start": 1,
+            "colors": [
+                "DRAFT_BOARD_GREEN",
+                "DRAFT_BOARD_BLUE",
+                "DRAFT_BOARD_PURPLE"
+            ]
+        },
+        {
+            "label": "G",
+            "group": "START",
+            "eligibility": [
+                "G"
+            ],
+            "min": 2,
+            "max": 18,
+            "start": 2,
+            "colors": [
+                "DRAFT_BOARD_RED"
+            ]
+        },
+        {
+            "label": "IR",
+            "group": "INJURED",
+            "eligibility": [
+                "C",
+                "LW",
+                "RW",
+                "D",
+                "G"
+            ],
+            "start": 2,
+            "colors": [
+                "DRAFT_BOARD_GREEN",
+                "DRAFT_BOARD_BLUE",
+                "DRAFT_BOARD_RED",
+                "DRAFT_BOARD_PURPLE"
+            ]
+        },
+        {
+            "label": "BN",
+            "max": 4
+        },
+        {
+            "label": "TAXI",
+            "group": "TAXI",
+            "eligibility": [
+                "C",
+                "LW",
+                "RW",
+                "D",
+                "G"
+            ],
+            "colors": [
+                "DRAFT_BOARD_GREEN",
+                "DRAFT_BOARD_BLUE",
+                "DRAFT_BOARD_RED",
+                "DRAFT_BOARD_PURPLE"
+            ]
+        }
+    ],
+    "groups": [
+        {
+            "label": "Offense",
+            "scoringRules": [
+                {
+                    "category": {
+                        "id": 1,
+                        "abbreviation": "G",
+                        "nameSingular": "Goal",
+                        "namePlural": "Goals"
+                    },
+                    "points": {
+                        "value": 4.0,
+                        "formatted": "4"
+                    },
+                    "forEvery": 1,
+                    "description": "4 points for every Goal",
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${categorySingular}"
+                },
+                {
+                    "category": {
+                        "id": 36,
+                        "abbreviation": "PPP",
+                        "nameSingular": "Power Play Point",
+                        "namePlural": "Power Play Points"
+                    },
+                    "points": {
+                        "value": 1.0,
+                        "formatted": "1"
+                    },
+                    "forEvery": 1,
+                    "description": "1 point for every Power Play Point",
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} point for every ${categorySingular}"
+                },
+                {
+                    "category": {
+                        "id": 37,
+                        "abbreviation": "SHP",
+                        "nameSingular": "Short Handed Point",
+                        "namePlural": "Short Handed Points"
+                    },
+                    "points": {
+                        "value": 5.0,
+                        "formatted": "5"
+                    },
+                    "forEvery": 4,
+                    "description": "5 points for every 4 Short Handed Points (1.25 per)",
+                    "pointsPer": {
+                        "value": 1.25,
+                        "formatted": "1.25"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                },
+                {
+                    "category": {
+                        "id": 5,
+                        "abbreviation": "Ast",
+                        "nameSingular": "Assist",
+                        "namePlural": "Assists"
+                    },
+                    "points": {
+                        "value": 5.0,
+                        "formatted": "5"
+                    },
+                    "forEvery": 2,
+                    "description": "5 points for every 2 Assists (2.5 per)",
+                    "pointsPer": {
+                        "value": 2.5,
+                        "formatted": "2.5"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                },
+                {
+                    "category": {
+                        "id": 4,
+                        "abbreviation": "SOG",
+                        "nameSingular": "Shot On Goal",
+                        "namePlural": "Shots On Goal"
+                    },
+                    "points": {
+                        "value": 1.0,
+                        "formatted": "1"
+                    },
+                    "forEvery": 4,
+                    "description": "1 point for every 4 Shots On Goal (0.25 per)",
+                    "pointsPer": {
+                        "value": 0.25,
+                        "formatted": "0.25"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} point for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                },
+                {
+                    "category": {
+                        "id": 8,
+                        "abbreviation": "PIM",
+                        "nameSingular": "Penalty Minute",
+                        "namePlural": "Penalty Minutes"
+                    },
+                    "points": {
+                        "value": 2.0,
+                        "formatted": "2"
+                    },
+                    "forEvery": 10,
+                    "description": "2 points for every 10 Penalty Minutes (0.2 per)",
+                    "pointsPer": {
+                        "value": 0.2,
+                        "formatted": "0.2"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                }
+            ],
+            "allCategories": [
+                {
+                    "id": 1,
+                    "abbreviation": "G",
+                    "nameSingular": "Goal",
+                    "namePlural": "Goals"
+                },
+                {
+                    "id": 38,
+                    "abbreviation": "HT",
+                    "nameSingular": "Hat Trick",
+                    "namePlural": "Hat Tricks"
+                },
+                {
+                    "id": 39,
+                    "abbreviation": "GWG",
+                    "nameSingular": "Game-Winning Goal",
+                    "namePlural": "Game-Winning Goals"
+                },
+                {
+                    "id": 2,
+                    "abbreviation": "PPG",
+                    "nameSingular": "Power Play Goal",
+                    "namePlural": "Power Play Goals"
+                },
+                {
+                    "id": 6,
+                    "abbreviation": "PPA",
+                    "nameSingular": "Power Play Assist",
+                    "namePlural": "Power Play Assists"
+                },
+                {
+                    "id": 36,
+                    "abbreviation": "PPP",
+                    "nameSingular": "Power Play Point",
+                    "namePlural": "Power Play Points"
+                },
+                {
+                    "id": 3,
+                    "abbreviation": "SHG",
+                    "nameSingular": "Short Handed Goal",
+                    "namePlural": "Short Handed Goals"
+                },
+                {
+                    "id": 7,
+                    "abbreviation": "SHA",
+                    "nameSingular": "Short Handed Assist",
+                    "namePlural": "Short Handed Assists"
+                },
+                {
+                    "id": 37,
+                    "abbreviation": "SHP",
+                    "nameSingular": "Short Handed Point",
+                    "namePlural": "Short Handed Points"
+                },
+                {
+                    "id": 5,
+                    "abbreviation": "Ast",
+                    "nameSingular": "Assist",
+                    "namePlural": "Assists"
+                },
+                {
+                    "id": 33,
+                    "abbreviation": "Pts",
+                    "nameSingular": "Point",
+                    "namePlural": "Points"
+                },
+                {
+                    "id": 4,
+                    "abbreviation": "SOG",
+                    "nameSingular": "Shot On Goal",
+                    "namePlural": "Shots On Goal"
+                },
+                {
+                    "id": 34,
+                    "abbreviation": "%",
+                    "nameSingular": "Shot Percentage",
+                    "namePlural": "Shot Percentage"
+                },
+                {
+                    "id": 8,
+                    "abbreviation": "PIM",
+                    "nameSingular": "Penalty Minute",
+                    "namePlural": "Penalty Minutes"
+                },
+                {
+                    "id": 9,
+                    "abbreviation": "FW",
+                    "nameSingular": "Faceoff Won",
+                    "namePlural": "Faceoffs Won"
+                },
+                {
+                    "id": 10,
+                    "abbreviation": "FL",
+                    "nameSingular": "Faceoff Lost",
+                    "namePlural": "Faceoffs Lost",
+                    "lowerIsBetter": true
+                },
+                {
+                    "id": 11,
+                    "abbreviation": "TT",
+                    "nameSingular": "Turnover via Takeaway",
+                    "namePlural": "Turnovers via Takeaway"
+                },
+                {
+                    "id": 12,
+                    "abbreviation": "TG",
+                    "nameSingular": "Turnover via Giveaway",
+                    "namePlural": "Turnovers via Giveaway"
+                },
+                {
+                    "id": 15,
+                    "abbreviation": "S",
+                    "nameSingular": "Shift",
+                    "namePlural": "Shifts"
+                },
+                {
+                    "id": 16,
+                    "abbreviation": "SA",
+                    "nameSingular": "Shootout Attempt",
+                    "namePlural": "Shootout Attempts"
+                },
+                {
+                    "id": 17,
+                    "abbreviation": "SG",
+                    "nameSingular": "Shootout Goal",
+                    "namePlural": "Shootout Goals"
+                },
+                {
+                    "id": 18,
+                    "abbreviation": "+/-",
+                    "nameSingular": "Plus Minus",
+                    "namePlural": "Plus Minus"
+                }
+            ]
+        },
+        {
+            "label": "Defense",
+            "scoringRules": [
+                {
+                    "category": {
+                        "id": 13,
+                        "abbreviation": "Hit",
+                        "nameSingular": "Hit",
+                        "namePlural": "Hits"
+                    },
+                    "points": {
+                        "value": 4.0,
+                        "formatted": "4"
+                    },
+                    "forEvery": 10,
+                    "description": "4 points for every 10 Hits (0.4 per)",
+                    "pointsPer": {
+                        "value": 0.4,
+                        "formatted": "0.4"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                },
+                {
+                    "category": {
+                        "id": 14,
+                        "abbreviation": "Blk",
+                        "nameSingular": "Block",
+                        "namePlural": "Blocks"
+                    },
+                    "points": {
+                        "value": 4.0,
+                        "formatted": "4"
+                    },
+                    "forEvery": 10,
+                    "description": "4 points for every 10 Blocks (0.4 per)",
+                    "pointsPer": {
+                        "value": 0.4,
+                        "formatted": "0.4"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                }
+            ],
+            "allCategories": [
+                {
+                    "id": 13,
+                    "abbreviation": "Hit",
+                    "nameSingular": "Hit",
+                    "namePlural": "Hits"
+                },
+                {
+                    "id": 14,
+                    "abbreviation": "Blk",
+                    "nameSingular": "Block",
+                    "namePlural": "Blocks"
+                },
+                {
+                    "id": 35,
+                    "abbreviation": "T",
+                    "nameSingular": "Takeaway",
+                    "namePlural": "Takeaways"
+                }
+            ]
+        },
+        {
+            "label": "Goaltending",
+            "scoringRules": [
+                {
+                    "category": {
+                        "id": 19,
+                        "abbreviation": "W",
+                        "nameSingular": "Win",
+                        "namePlural": "Wins"
+                    },
+                    "points": {
+                        "value": 3.0,
+                        "formatted": "3"
+                    },
+                    "forEvery": 1,
+                    "description": "3 points for every Win",
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${categorySingular}"
+                },
+                {
+                    "category": {
+                        "id": 20,
+                        "abbreviation": "L",
+                        "nameSingular": "Loss",
+                        "namePlural": "Losses"
+                    },
+                    "points": {
+                        "value": -3.0,
+                        "formatted": "-3"
+                    },
+                    "forEvery": 2,
+                    "description": "-3 points for every 2 Losses (-1.5 per)",
+                    "pointsPer": {
+                        "value": -1.5,
+                        "formatted": "-1.5"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                },
+                {
+                    "category": {
+                        "id": 22,
+                        "abbreviation": "OTL",
+                        "nameSingular": "OT Loss",
+                        "namePlural": "OT Losses"
+                    },
+                    "points": {
+                        "value": 1.0,
+                        "formatted": "1"
+                    },
+                    "forEvery": 1,
+                    "description": "1 point for every OT Loss",
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} point for every ${categorySingular}"
+                },
+                {
+                    "category": {
+                        "id": 23,
+                        "abbreviation": "SO",
+                        "nameSingular": "Shutout",
+                        "namePlural": "Shutouts"
+                    },
+                    "points": {
+                        "value": 5.0,
+                        "formatted": "5"
+                    },
+                    "forEvery": 2,
+                    "description": "5 points for every 2 Shutouts (2.5 per)",
+                    "pointsPer": {
+                        "value": 2.5,
+                        "formatted": "2.5"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                },
+                {
+                    "category": {
+                        "id": 26,
+                        "abbreviation": "SV",
+                        "nameSingular": "Save",
+                        "namePlural": "Saves"
+                    },
+                    "points": {
+                        "value": 5.0,
+                        "formatted": "5"
+                    },
+                    "forEvery": 20,
+                    "description": "5 points for every 20 Saves (0.25 per)",
+                    "pointsPer": {
+                        "value": 0.25,
+                        "formatted": "0.25"
+                    },
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
+                },
+                {
+                    "category": {
+                        "id": 27,
+                        "abbreviation": "GA",
+                        "nameSingular": "Goal Against",
+                        "namePlural": "Goals Against",
+                        "lowerIsBetter": true
+                    },
+                    "points": {
+                        "value": -1.0,
+                        "formatted": "-1"
+                    },
+                    "forEvery": 1,
+                    "description": "-1 point for every Goal Against",
+                    "applyTo": [
+                        "C",
+                        "LW",
+                        "RW",
+                        "D",
+                        "G"
+                    ],
+                    "applyToAll": true,
+                    "template": "${points} point for every ${categorySingular}"
+                }
+            ],
+            "allCategories": [
+                {
+                    "id": 19,
+                    "abbreviation": "W",
+                    "nameSingular": "Win",
+                    "namePlural": "Wins"
+                },
+                {
+                    "id": 20,
+                    "abbreviation": "L",
+                    "nameSingular": "Loss",
+                    "namePlural": "Losses"
+                },
+                {
+                    "id": 21,
+                    "abbreviation": "ND",
+                    "nameSingular": "No Decision",
+                    "namePlural": "No Decisions"
+                },
+                {
+                    "id": 22,
+                    "abbreviation": "OTL",
+                    "nameSingular": "OT Loss",
+                    "namePlural": "OT Losses"
+                },
+                {
+                    "id": 23,
+                    "abbreviation": "SO",
+                    "nameSingular": "Shutout",
+                    "namePlural": "Shutouts"
+                },
+                {
+                    "id": 24,
+                    "abbreviation": "GS",
+                    "nameSingular": "Game Started",
+                    "namePlural": "Games Started"
+                },
+                {
+                    "id": 25,
+                    "abbreviation": "SA",
+                    "nameSingular": "Shot Against",
+                    "namePlural": "Shots Against"
+                },
+                {
+                    "id": 26,
+                    "abbreviation": "SV",
+                    "nameSingular": "Save",
+                    "namePlural": "Saves"
+                },
+                {
+                    "id": 27,
+                    "abbreviation": "GA",
+                    "nameSingular": "Goal Against",
+                    "namePlural": "Goals Against",
+                    "lowerIsBetter": true
+                },
+                {
+                    "id": 28,
+                    "abbreviation": "SGA",
+                    "nameSingular": "Shootout Goal Against",
+                    "namePlural": "Shootout Goals Against",
+                    "lowerIsBetter": true
+                },
+                {
+                    "id": 29,
+                    "abbreviation": "SAA",
+                    "nameSingular": "Shootout Attempt Against",
+                    "namePlural": "Shootout Attempts Against"
+                },
+                {
+                    "id": 30,
+                    "abbreviation": "ENG",
+                    "nameSingular": "Empty Net Goal Against",
+                    "namePlural": "Empty Net Goals Against",
+                    "lowerIsBetter": true
+                },
+                {
+                    "id": 32,
+                    "abbreviation": "%",
+                    "nameSingular": "Save Percentage",
+                    "namePlural": "Save Percentage"
+                }
+            ]
+        },
+        {
+            "label": "Misc",
+            "allCategories": [
+                {
+                    "abbreviation": "S",
+                    "nameSingular": "Second Played",
+                    "namePlural": "Seconds Played"
+                },
+                {
+                    "id": 31,
+                    "abbreviation": "Min",
+                    "nameSingular": "Minute",
+                    "namePlural": "Minutes"
+                }
+            ]
+        }
+    ],
+    "numStarters": 14,
+    "numBench": 4,
+    "maxActive": 18,
+    "maxRosterSize": 20,
+    "allScoringRuleTypes": [
+        {
+            "template": "${points} points for every ${forEvery} ${categoryPlural}"
+        },
+        {
+            "hasLowerBound": true,
+            "template": "${points} points for every ${forEvery} ${categoryPlural} after reaching ${boundLower} total ${categoryPlural}"
+        },
+        {
+            "hasUpperBound": true,
+            "template": "${points} points for every ${forEvery} ${categoryPlural} for the first ${boundUpper} total ${categoryPlural}"
+        },
+        {
+            "hasLowerBound": true,
+            "hasUpperBound": true,
+            "template": "${points} points for every ${forEvery} ${categoryPlural} between ${boundLower} and ${boundUpper} total ${categoryPlural} (inclusive)"
+        },
+        {
+            "isBonus": true,
+            "hasLowerBound": true,
+            "template": "${points} extra points when total ${categoryPlural} is greater than or equal to ${boundLower}"
+        },
+        {
+            "isBonus": true,
+            "hasUpperBound": true,
+            "template": "${points} extra points when total ${categoryPlural} is less than or equal to ${boundUpper}"
+        },
+        {
+            "isBonus": true,
+            "hasLowerBound": true,
+            "hasUpperBound": true,
+            "template": "${points} extra points when total ${categoryPlural} is between ${boundLower} and ${boundUpper} (inclusive)"
+        }
+    ]
+}
