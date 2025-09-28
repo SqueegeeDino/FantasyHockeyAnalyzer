@@ -4825,14 +4825,6 @@
                     "typeFull": "Day-to-day"
                 },
                 "sport": "NHL",
-                "news": [
-                    {
-                        "timeEpochMilli": "1758818407000",
-                        "contents": "Cooley (undisclosed) isn't in the lineup for Thursday's preseason game against Vegas, Brogan Houston of Deseret News Sports reports.",
-                        "analysis": "Cooley sustained an injury during Sunday's preseason game against the Avalanche and will be unavailable for a second consecutive exhibition matchup Thursday. However, he's considered day-to-day, so it wouldn't be surprising to see him return to action in time for Opening Night against Colorado on Oct. 9.",
-                        "title": "Won't play Thursday"
-                    }
-                ],
                 "nameFirst": "Logan",
                 "nameLast": "Cooley",
                 "hasLockedPremiumContent": true,
