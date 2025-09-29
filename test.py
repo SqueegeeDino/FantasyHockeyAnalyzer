@@ -9,7 +9,7 @@ import json
 client = NHLClient()
 
 filters = [
-    SeasonQuery(season_start="20242025", season_end="20242025"),
+    SeasonQuery(season_start="20232024", season_end="20242025"),
     PositionQuery(position=PositionTypes.DEFENSE)
 ]
 
