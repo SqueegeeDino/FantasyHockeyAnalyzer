@@ -26,7 +26,12 @@ if response_leagueScoring.status_code == 200:
             for rule in group["scoringRules"]:
                 cat = rule["category"]["abbreviation"]
                 desc = rule["description"]
-                print(f"  {cat}: {desc}")
+                if rule["forEvery"] == 1:
+                    pts = rule["points"]["value"]
+                    print("Pts true")
+                else:
+                    pts = rule["pointsPer"]["value"]
+                print(f"  {cat}: {desc} | {pts}")
 else:
     print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
 
