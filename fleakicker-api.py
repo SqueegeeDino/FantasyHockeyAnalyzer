@@ -12,7 +12,7 @@ response_leaguePlayers = rq.get(api_leaguePlayers) # Repeat the process for the 
 if response_leagueScoring.status_code == 200: # Check for successful response from API
     data_leagueScoring = response_leagueScoring.json() # Collect the json data using the METHOD, store it in variable "data"
     # Write JSON to file
-    with open("league_players.json", "w") as f: # With function "opens" and "closes" automatically
+    with open("league_scoring.json", "w") as f: # With function "opens" and "closes" automatically
         json.dump(data_leagueScoring, f, indent=4)  # indent for readability
 
     for pos in data_leagueScoring["rosterPositions"]: # Print to terminal specific information
