@@ -229,7 +229,7 @@
                                 "rank": {
                                     "rank": 5,
                                     "mean": {
-                                        "value": 2.3414633,
+                                        "value": 2.292683,
                                         "formatted": "2.3"
                                     },
                                     "rating": "RATING_BAD"
@@ -239,8 +239,8 @@
                         "defaultPoints": {
                             "rank": 11,
                             "mean": {
-                                "value": 4.381707,
-                                "formatted": "4.4"
+                                "value": 4.337805,
+                                "formatted": "4.3"
                             }
                         }
                     }
@@ -1265,10 +1265,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 26,
+                                    "rank": 29,
                                     "mean": {
-                                        "value": 3.0609756,
-                                        "formatted": "3.1"
+                                        "value": 3.0365853,
+                                        "formatted": "3"
                                     },
                                     "rating": "RATING_VERY_GOOD"
                                 }
@@ -1277,8 +1277,8 @@
                         "defaultPoints": {
                             "rank": 26,
                             "mean": {
-                                "value": 5.05,
-                                "formatted": "5"
+                                "value": 5.0804877,
+                                "formatted": "5.1"
                             },
                             "rating": "RATING_VERY_GOOD"
                         }
@@ -1522,10 +1522,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 24,
+                                    "rank": 21,
                                     "mean": {
-                                        "value": 2.9146342,
-                                        "formatted": "2.9"
+                                        "value": 2.8292682,
+                                        "formatted": "2.8"
                                     },
                                     "rating": "RATING_GOOD"
                                 }
@@ -1534,8 +1534,8 @@
                         "defaultPoints": {
                             "rank": 24,
                             "mean": {
-                                "value": 4.952439,
-                                "formatted": "5"
+                                "value": 4.9329267,
+                                "formatted": "4.9"
                             },
                             "rating": "RATING_GOOD"
                         }
@@ -1681,19 +1681,13 @@
                 "proTeamAbbreviation": "SJ",
                 "position": "C",
                 "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/9904.png",
-                "injury": {
-                    "typeAbbreviaition": "DTD",
-                    "description": "Undisclosed",
-                    "severity": "QUESTIONABLE",
-                    "typeFull": "Day-to-day"
-                },
                 "sport": "NHL",
                 "news": [
                     {
-                        "timeEpochMilli": "1758822581000",
-                        "contents": "Celebrini hasn't been taking contact at practice, Curtis Pashelka of The San Jose Mercury News reports, indicating he's unlikely to feature versus Vegas on Friday.",
-                        "analysis": "Celebrini has been on the ice for practice the last few days, but it seems he's not cleared for full contact, as he is sitting out certain drills. For now, fantasy managers probably don't need to worry about the 19-year-old center missing Opening Night against the Golden Knights on Oct. 9, but it is something to keep an eye on throughout the rest of training camp.",
-                        "title": "Doubtful against Knights"
+                        "timeEpochMilli": "1759092669000",
+                        "contents": "Celebrini (undisclosed) participated in Sunday's practice and appears to be available to return to the lineup, Curtis Pashelka of The San Jose Mercury News reports.",
+                        "analysis": "After recovering from an illness, Celebrini has been sticking to his own program during training camp practices. He hasn't been involved in many contact drills, but he skated with assistant coach Mike Ricci tethered to him during Sunday's session, per Sheng Peng of San Jose Hockey Now. The 19-year-old Celebrini should see preseason playing time ahead of being ready for the regular season.",
+                        "title": "Set to return"
                     }
                 ],
                 "nameFirst": "Macklin",
@@ -2068,10 +2062,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 28,
+                                    "rank": 27,
                                     "mean": {
-                                        "value": 3.109756,
-                                        "formatted": "3.1"
+                                        "value": 3.012195,
+                                        "formatted": "3"
                                     },
                                     "rating": "RATING_VERY_GOOD",
                                     "isRankTied": true
@@ -2079,10 +2073,10 @@
                             }
                         ],
                         "defaultPoints": {
-                            "rank": 28,
+                            "rank": 27,
                             "mean": {
-                                "value": 5.1682925,
-                                "formatted": "5.2"
+                                "value": 5.095122,
+                                "formatted": "5.1"
                             },
                             "rating": "RATING_VERY_GOOD"
                         }
@@ -2808,7 +2802,7 @@
                                 "rank": {
                                     "rank": 5,
                                     "mean": {
-                                        "value": 2.3414633,
+                                        "value": 2.292683,
                                         "formatted": "2.3"
                                     },
                                     "rating": "RATING_BAD"
@@ -2818,8 +2812,8 @@
                         "defaultPoints": {
                             "rank": 11,
                             "mean": {
-                                "value": 4.381707,
-                                "formatted": "4.4"
+                                "value": 4.337805,
+                                "formatted": "4.3"
                             }
                         }
                     }
@@ -3362,18 +3356,18 @@
                                 "rank": {
                                     "rank": 7,
                                     "mean": {
-                                        "value": 2.4146342,
-                                        "formatted": "2.4"
+                                        "value": 2.3292682,
+                                        "formatted": "2.3"
                                     },
                                     "rating": "RATING_BAD"
                                 }
                             }
                         ],
                         "defaultPoints": {
-                            "rank": 8,
+                            "rank": 9,
                             "mean": {
-                                "value": 4.3085365,
-                                "formatted": "4.3"
+                                "value": 4.232927,
+                                "formatted": "4.2"
                             }
                         }
                     }
@@ -4510,10 +4504,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 28,
+                                    "rank": 27,
                                     "mean": {
-                                        "value": 3.109756,
-                                        "formatted": "3.1"
+                                        "value": 3.012195,
+                                        "formatted": "3"
                                     },
                                     "rating": "RATING_VERY_GOOD",
                                     "isRankTied": true
@@ -4521,10 +4515,10 @@
                             }
                         ],
                         "defaultPoints": {
-                            "rank": 28,
+                            "rank": 27,
                             "mean": {
-                                "value": 5.1682925,
-                                "formatted": "5.2"
+                                "value": 5.095122,
+                                "formatted": "5.1"
                             },
                             "rating": "RATING_VERY_GOOD"
                         }
@@ -5044,10 +5038,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 26,
+                                    "rank": 29,
                                     "mean": {
-                                        "value": 3.0609756,
-                                        "formatted": "3.1"
+                                        "value": 3.0365853,
+                                        "formatted": "3"
                                     },
                                     "rating": "RATING_VERY_GOOD"
                                 }
@@ -5056,8 +5050,8 @@
                         "defaultPoints": {
                             "rank": 26,
                             "mean": {
-                                "value": 5.05,
-                                "formatted": "5"
+                                "value": 5.0804877,
+                                "formatted": "5.1"
                             },
                             "rating": "RATING_VERY_GOOD"
                         }

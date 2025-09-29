@@ -12,12 +12,21 @@ if response_leagueScoring.status_code == 200:
     # Write JSON to file
     with open("league_players.json", "w") as f:
         json.dump(data_leagueScoring, f, indent=4)  # indent for readability
-    for pos in data_leagueScoring["rosterPositions"]:
+
+    for pos in data_leagueScoring["rosterPositions"]: # Print to terminal specific information
         label = pos.get("label")
         min_val = pos.get("min")
         max_val = pos.get("max")
         start = pos.get("start")
         print(f"{label}: start={start}, min={min_val}, max={max_val}")
+    
+    for group in data_leagueScoring["groups"]:
+        print(f"\n{group['label']}")
+        if "scoringRules" in group:
+            for rule in group["scoringRules"]:
+                cat = rule["category"]["abbreviation"]
+                desc = rule["description"]
+                print(f"  {cat}: {desc}")
 else:
     print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
 
