@@ -229,7 +229,7 @@
                                 "rank": {
                                     "rank": 5,
                                     "mean": {
-                                        "value": 2.292683,
+                                        "value": 2.3414633,
                                         "formatted": "2.3"
                                     },
                                     "rating": "RATING_BAD"
@@ -239,8 +239,8 @@
                         "defaultPoints": {
                             "rank": 11,
                             "mean": {
-                                "value": 4.337805,
-                                "formatted": "4.3"
+                                "value": 4.381707,
+                                "formatted": "4.4"
                             }
                         }
                     }
@@ -962,7 +962,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 15,
+                "ordinal": 16,
                 "positions": [
                     {
                         "position": {
@@ -1265,10 +1265,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 29,
+                                    "rank": 26,
                                     "mean": {
-                                        "value": 3.0365853,
-                                        "formatted": "3"
+                                        "value": 3.0609756,
+                                        "formatted": "3.1"
                                     },
                                     "rating": "RATING_VERY_GOOD"
                                 }
@@ -1277,8 +1277,8 @@
                         "defaultPoints": {
                             "rank": 26,
                             "mean": {
-                                "value": 5.0804877,
-                                "formatted": "5.1"
+                                "value": 5.05,
+                                "formatted": "5"
                             },
                             "rating": "RATING_VERY_GOOD"
                         }
@@ -1522,10 +1522,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 21,
+                                    "rank": 24,
                                     "mean": {
-                                        "value": 2.8292682,
-                                        "formatted": "2.8"
+                                        "value": 2.9146342,
+                                        "formatted": "2.9"
                                     },
                                     "rating": "RATING_GOOD"
                                 }
@@ -1534,8 +1534,8 @@
                         "defaultPoints": {
                             "rank": 24,
                             "mean": {
-                                "value": 4.9329267,
-                                "formatted": "4.9"
+                                "value": 4.952439,
+                                "formatted": "5"
                             },
                             "rating": "RATING_GOOD"
                         }
@@ -1774,7 +1774,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 28,
+                "ordinal": 29,
                 "positions": [
                     {
                         "position": {
@@ -1925,7 +1925,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 36,
+                "ordinal": 34,
                 "positions": [
                     {
                         "position": {
@@ -1982,264 +1982,6 @@
                 "formatted": "3.75"
             },
             "seasonConsistency": "RATING_BAD"
-        },
-        {
-            "proPlayer": {
-                "id": 2313,
-                "nameFull": "J.T. Miller",
-                "nameShort": "J. Miller",
-                "proTeamAbbreviation": "NYR",
-                "position": "C/RW",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/2313.png",
-                "sport": "NHL",
-                "nameFirst": "J.T.",
-                "nameLast": "Miller",
-                "hasLockedPremiumContent": true,
-                "proTeam": {
-                    "abbreviation": "NYR",
-                    "location": "New York",
-                    "name": "Rangers"
-                },
-                "positionEligibility": [
-                    "C",
-                    "RW"
-                ]
-            },
-            "requestedGames": [
-                {
-                    "game": {
-                        "id": 26572,
-                        "away": {
-                            "abbreviation": "PIT",
-                            "location": "Pittsburgh",
-                            "name": "Penguins"
-                        },
-                        "home": {
-                            "abbreviation": "NYR",
-                            "location": "New York",
-                            "name": "Rangers"
-                        },
-                        "startTimeEpochMilli": "1759881600000",
-                        "period": {
-                            "duration": "DAY",
-                            "ordinal": 1,
-                            "startEpochMilli": "1759831200000"
-                        },
-                        "sport": "NHL"
-                    },
-                    "stats": [
-                        {
-                            "category": {
-                                "id": 1,
-                                "abbreviation": "G",
-                                "nameSingular": "Goal",
-                                "namePlural": "Goals"
-                            }
-                        },
-                        {
-                            "category": {
-                                "id": 5,
-                                "abbreviation": "Ast",
-                                "nameSingular": "Assist",
-                                "namePlural": "Assists"
-                            }
-                        }
-                    ],
-                    "participant": "HOME",
-                    "period": {
-                        "duration": "DAY",
-                        "ordinal": 1,
-                        "startEpochMilli": "1759831200000"
-                    },
-                    "ranks": {
-                        "position": "C",
-                        "categories": [
-                            {
-                                "category": {
-                                    "id": 33,
-                                    "abbreviation": "Pts",
-                                    "nameSingular": "Point",
-                                    "namePlural": "Points"
-                                },
-                                "rank": {
-                                    "rank": 27,
-                                    "mean": {
-                                        "value": 3.012195,
-                                        "formatted": "3"
-                                    },
-                                    "rating": "RATING_VERY_GOOD",
-                                    "isRankTied": true
-                                }
-                            }
-                        ],
-                        "defaultPoints": {
-                            "rank": 27,
-                            "mean": {
-                                "value": 5.095122,
-                                "formatted": "5.1"
-                            },
-                            "rating": "RATING_VERY_GOOD"
-                        }
-                    }
-                }
-            ],
-            "viewingActualPoints": {
-                "value": 367.45004,
-                "formatted": "367.45"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    },
-                    "value": {
-                        "value": 22.0,
-                        "formatted": "22"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    },
-                    "value": {
-                        "value": 48.0,
-                        "formatted": "48"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingActualPointsAverage": {
-                "value": 5.1034727,
-                "formatted": "5.1"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "rankFantasy": {
-                "ordinal": 42,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 16,
-                        "formatted": "16"
-                    },
-                    {
-                        "position": {
-                            "label": "RW",
-                            "group": "START",
-                            "eligibility": [
-                                "RW"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_GREEN"
-                            ]
-                        },
-                        "ordinal": 16,
-                        "formatted": "16"
-                    }
-                ],
-                "season": 2024
-            },
-            "rankDraft": {
-                "ordinal": 37,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 12,
-                        "formatted": "12",
-                        "rating": "RATING_GOOD"
-                    },
-                    {
-                        "position": {
-                            "label": "RW",
-                            "group": "START",
-                            "eligibility": [
-                                "RW"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_GREEN"
-                            ]
-                        },
-                        "ordinal": 12,
-                        "formatted": "12",
-                        "rating": "RATING_GOOD"
-                    }
-                ],
-                "season": 2025
-            },
-            "lastX": [
-                {
-                    "value": {
-                        "value": 3.75,
-                        "formatted": "3.75"
-                    },
-                    "duration": 1,
-                    "underPerforming": true
-                },
-                {
-                    "value": {
-                        "value": 6.55,
-                        "formatted": "6.55"
-                    },
-                    "duration": 5
-                },
-                {
-                    "value": {
-                        "value": 5.95,
-                        "formatted": "5.95"
-                    },
-                    "duration": 10
-                }
-            ],
-            "seasonTotal": {
-                "value": 367.20004,
-                "formatted": "367.2"
-            },
-            "seasonAverage": {
-                "value": 5.1000004,
-                "formatted": "5.1"
-            },
-            "seasonsStandartDeviation": {
-                "value": 3.400295,
-                "formatted": "3.4"
-            },
-            "numGamesInSchedulePeriod": 1
         },
         {
             "proPlayer": {
@@ -2350,7 +2092,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 38,
+                "ordinal": 37,
                 "positions": [
                     {
                         "position": {
@@ -2363,8 +2105,8 @@
                                 "DRAFT_BOARD_PURPLE"
                             ]
                         },
-                        "ordinal": 13,
-                        "formatted": "13",
+                        "ordinal": 12,
+                        "formatted": "12",
                         "rating": "RATING_GOOD"
                     },
                     {
@@ -2420,156 +2162,6 @@
             "seasonsStandartDeviation": {
                 "value": 3.3622367,
                 "formatted": "3.36"
-            },
-            "seasonConsistency": "RATING_BAD"
-        },
-        {
-            "proPlayer": {
-                "id": 4032,
-                "nameFull": "Sebastian Aho",
-                "nameShort": "S. Aho",
-                "proTeamAbbreviation": "CAR",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/4032.png",
-                "sport": "NHL",
-                "nameFirst": "Sebastian",
-                "nameLast": "Aho",
-                "hasLockedPremiumContent": true,
-                "proTeam": {
-                    "abbreviation": "CAR",
-                    "location": "Carolina",
-                    "name": "Hurricanes"
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "value": 356.79993,
-                "formatted": "356.8"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    },
-                    "value": {
-                        "value": 29.0,
-                        "formatted": "29"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    },
-                    "value": {
-                        "value": 45.0,
-                        "formatted": "45"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingActualPointsAverage": {
-                "value": 4.5164547,
-                "formatted": "4.52"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "rankFantasy": {
-                "ordinal": 49,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 19,
-                        "formatted": "19"
-                    }
-                ],
-                "season": 2024
-            },
-            "rankDraft": {
-                "ordinal": 39,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 14,
-                        "formatted": "14",
-                        "rating": "RATING_GOOD"
-                    }
-                ],
-                "season": 2025
-            },
-            "lastX": [
-                {
-                    "value": {
-                        "value": 8.0,
-                        "formatted": "8"
-                    },
-                    "duration": 1,
-                    "overPerforming": true
-                },
-                {
-                    "value": {
-                        "value": 3.87,
-                        "formatted": "3.87"
-                    },
-                    "duration": 5
-                },
-                {
-                    "value": {
-                        "value": 4.41,
-                        "formatted": "4.41"
-                    },
-                    "duration": 10
-                }
-            ],
-            "seasonTotal": {
-                "value": 356.79993,
-                "formatted": "356.8"
-            },
-            "seasonAverage": {
-                "value": 4.5164547,
-                "formatted": "4.52"
-            },
-            "seasonsStandartDeviation": {
-                "value": 3.3526661,
-                "formatted": "3.35"
             },
             "seasonConsistency": "RATING_BAD"
         },
@@ -2666,7 +2258,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 40,
+                "ordinal": 38,
                 "positions": [
                     {
                         "position": {
@@ -2679,8 +2271,8 @@
                                 "DRAFT_BOARD_PURPLE"
                             ]
                         },
-                        "ordinal": 15,
-                        "formatted": "15",
+                        "ordinal": 13,
+                        "formatted": "13",
                         "rating": "RATING_GOOD"
                     }
                 ],
@@ -2724,20 +2316,34 @@
         },
         {
             "proPlayer": {
-                "id": 4426,
-                "nameFull": "Martin Necas",
-                "nameShort": "M. Necas",
-                "proTeamAbbreviation": "COL",
+                "id": 2313,
+                "nameFull": "J.T. Miller",
+                "nameShort": "J. Miller",
+                "proTeamAbbreviation": "NYR",
                 "position": "C/RW",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/4426.png",
+                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/2313.png",
+                "injury": {
+                    "typeAbbreviaition": "DTD",
+                    "description": "Lower Body",
+                    "severity": "QUESTIONABLE",
+                    "typeFull": "Day-to-day"
+                },
                 "sport": "NHL",
-                "nameFirst": "Martin",
-                "nameLast": "Necas",
+                "news": [
+                    {
+                        "timeEpochMilli": "1759163957000",
+                        "contents": "Miller (lower body) is being evaluated after leaving Monday's practice early, Peter Baugh of The Athletic reports.",
+                        "analysis": "According to Vince Z. Mercogliano of The Athletic, Miller made it off the ice under his own power, but appeared to be favoring his leg after lunging for the puck during a drill. The team will probably be cautious with the 32-year-old forward, so it wouldn't be surprising if he didn't play again during the preseason. Miller amassed 22 goals and 70 points in 72 regular-season outings between the Rangers and Canucks in 2024-25.",
+                        "title": "Being evaluated"
+                    }
+                ],
+                "nameFirst": "J.T.",
+                "nameLast": "Miller",
                 "hasLockedPremiumContent": true,
                 "proTeam": {
-                    "abbreviation": "COL",
-                    "location": "Colorado",
-                    "name": "Avalanche"
+                    "abbreviation": "NYR",
+                    "location": "New York",
+                    "name": "Rangers"
                 },
                 "positionEligibility": [
                     "C",
@@ -2747,18 +2353,18 @@
             "requestedGames": [
                 {
                     "game": {
-                        "id": 26573,
+                        "id": 26572,
                         "away": {
-                            "abbreviation": "COL",
-                            "location": "Colorado",
-                            "name": "Avalanche"
+                            "abbreviation": "PIT",
+                            "location": "Pittsburgh",
+                            "name": "Penguins"
                         },
                         "home": {
-                            "abbreviation": "LA",
-                            "location": "Los Angeles",
-                            "name": "Kings"
+                            "abbreviation": "NYR",
+                            "location": "New York",
+                            "name": "Rangers"
                         },
-                        "startTimeEpochMilli": "1759890600000",
+                        "startTimeEpochMilli": "1759881600000",
                         "period": {
                             "duration": "DAY",
                             "ordinal": 1,
@@ -2784,6 +2390,7 @@
                             }
                         }
                     ],
+                    "participant": "HOME",
                     "period": {
                         "duration": "DAY",
                         "ordinal": 1,
@@ -2800,28 +2407,30 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 5,
+                                    "rank": 28,
                                     "mean": {
-                                        "value": 2.292683,
-                                        "formatted": "2.3"
+                                        "value": 3.109756,
+                                        "formatted": "3.1"
                                     },
-                                    "rating": "RATING_BAD"
+                                    "rating": "RATING_VERY_GOOD",
+                                    "isRankTied": true
                                 }
                             }
                         ],
                         "defaultPoints": {
-                            "rank": 11,
+                            "rank": 28,
                             "mean": {
-                                "value": 4.337805,
-                                "formatted": "4.3"
-                            }
+                                "value": 5.1682925,
+                                "formatted": "5.2"
+                            },
+                            "rating": "RATING_VERY_GOOD"
                         }
                     }
                 }
             ],
             "viewingActualPoints": {
-                "value": 370.69983,
-                "formatted": "370.7"
+                "value": 367.45004,
+                "formatted": "367.45"
             },
             "viewingActualStats": [
                 {
@@ -2832,8 +2441,8 @@
                         "namePlural": "Goals"
                     },
                     "value": {
-                        "value": 27.0,
-                        "formatted": "27"
+                        "value": 22.0,
+                        "formatted": "22"
                     }
                 },
                 {
@@ -2844,8 +2453,8 @@
                         "namePlural": "Assists"
                     },
                     "value": {
-                        "value": 56.0,
-                        "formatted": "56"
+                        "value": 48.0,
+                        "formatted": "48"
                     }
                 }
             ],
@@ -2859,8 +2468,8 @@
                 "startEpochMilli": "1759831200000"
             },
             "viewingActualPointsAverage": {
-                "value": 4.692403,
-                "formatted": "4.69"
+                "value": 5.1034727,
+                "formatted": "5.1"
             },
             "viewingFormat": "TOTAL",
             "viewingRange": {
@@ -2870,42 +2479,6 @@
             },
             "displayGroup": "SKATER",
             "rankFantasy": {
-                "ordinal": 35,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 14,
-                        "formatted": "14",
-                        "rating": "RATING_GOOD"
-                    },
-                    {
-                        "position": {
-                            "label": "RW",
-                            "group": "START",
-                            "eligibility": [
-                                "RW"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_GREEN"
-                            ]
-                        },
-                        "ordinal": 13,
-                        "formatted": "13",
-                        "rating": "RATING_GOOD"
-                    }
-                ],
-                "season": 2024
-            },
-            "rankDraft": {
                 "ordinal": 42,
                 "positions": [
                     {
@@ -2933,8 +2506,43 @@
                                 "DRAFT_BOARD_GREEN"
                             ]
                         },
-                        "ordinal": 13,
-                        "formatted": "13",
+                        "ordinal": 16,
+                        "formatted": "16"
+                    }
+                ],
+                "season": 2024
+            },
+            "rankDraft": {
+                "ordinal": 39,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 14,
+                        "formatted": "14",
+                        "rating": "RATING_GOOD"
+                    },
+                    {
+                        "position": {
+                            "label": "RW",
+                            "group": "START",
+                            "eligibility": [
+                                "RW"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_GREEN"
+                            ]
+                        },
+                        "ordinal": 12,
+                        "formatted": "12",
                         "rating": "RATING_GOOD"
                     }
                 ],
@@ -2943,41 +2551,190 @@
             "lastX": [
                 {
                     "value": {
-                        "value": 2.5,
-                        "formatted": "2.5"
+                        "value": 3.75,
+                        "formatted": "3.75"
                     },
                     "duration": 1,
                     "underPerforming": true
                 },
                 {
                     "value": {
-                        "value": 2.59,
-                        "formatted": "2.59"
+                        "value": 6.55,
+                        "formatted": "6.55"
                     },
                     "duration": 5
                 },
                 {
                     "value": {
-                        "value": 4.5,
-                        "formatted": "4.5"
+                        "value": 5.95,
+                        "formatted": "5.95"
                     },
                     "duration": 10
                 }
             ],
             "seasonTotal": {
-                "value": 373.69983,
-                "formatted": "373.7"
+                "value": 367.20004,
+                "formatted": "367.2"
             },
             "seasonAverage": {
-                "value": 4.7303777,
-                "formatted": "4.73"
+                "value": 5.1000004,
+                "formatted": "5.1"
             },
             "seasonsStandartDeviation": {
-                "value": 3.801072,
-                "formatted": "3.8"
+                "value": 3.400295,
+                "formatted": "3.4"
             },
-            "seasonConsistency": "RATING_BAD",
             "numGamesInSchedulePeriod": 1
+        },
+        {
+            "proPlayer": {
+                "id": 4032,
+                "nameFull": "Sebastian Aho",
+                "nameShort": "S. Aho",
+                "proTeamAbbreviation": "CAR",
+                "position": "C",
+                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/4032.png",
+                "sport": "NHL",
+                "nameFirst": "Sebastian",
+                "nameLast": "Aho",
+                "hasLockedPremiumContent": true,
+                "proTeam": {
+                    "abbreviation": "CAR",
+                    "location": "Carolina",
+                    "name": "Hurricanes"
+                },
+                "positionEligibility": [
+                    "C"
+                ]
+            },
+            "viewingActualPoints": {
+                "value": 356.79993,
+                "formatted": "356.8"
+            },
+            "viewingActualStats": [
+                {
+                    "category": {
+                        "id": 1,
+                        "abbreviation": "G",
+                        "nameSingular": "Goal",
+                        "namePlural": "Goals"
+                    },
+                    "value": {
+                        "value": 29.0,
+                        "formatted": "29"
+                    }
+                },
+                {
+                    "category": {
+                        "id": 5,
+                        "abbreviation": "Ast",
+                        "nameSingular": "Assist",
+                        "namePlural": "Assists"
+                    },
+                    "value": {
+                        "value": 45.0,
+                        "formatted": "45"
+                    }
+                }
+            ],
+            "transactionStatus": {
+                "locked": {},
+                "isLineupStatusLocked": true
+            },
+            "requestedGamesPeriod": {
+                "duration": "DAY",
+                "ordinal": 1,
+                "startEpochMilli": "1759831200000"
+            },
+            "viewingActualPointsAverage": {
+                "value": 4.5164547,
+                "formatted": "4.52"
+            },
+            "viewingFormat": "TOTAL",
+            "viewingRange": {
+                "season": 2024,
+                "low": 1,
+                "high": 196
+            },
+            "displayGroup": "SKATER",
+            "rankFantasy": {
+                "ordinal": 49,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 19,
+                        "formatted": "19"
+                    }
+                ],
+                "season": 2024
+            },
+            "rankDraft": {
+                "ordinal": 40,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 15,
+                        "formatted": "15",
+                        "rating": "RATING_GOOD"
+                    }
+                ],
+                "season": 2025
+            },
+            "lastX": [
+                {
+                    "value": {
+                        "value": 8.0,
+                        "formatted": "8"
+                    },
+                    "duration": 1,
+                    "overPerforming": true
+                },
+                {
+                    "value": {
+                        "value": 3.87,
+                        "formatted": "3.87"
+                    },
+                    "duration": 5
+                },
+                {
+                    "value": {
+                        "value": 4.41,
+                        "formatted": "4.41"
+                    },
+                    "duration": 10
+                }
+            ],
+            "seasonTotal": {
+                "value": 356.79993,
+                "formatted": "356.8"
+            },
+            "seasonAverage": {
+                "value": 4.5164547,
+                "formatted": "4.52"
+            },
+            "seasonsStandartDeviation": {
+                "value": 3.3526661,
+                "formatted": "3.35"
+            },
+            "seasonConsistency": "RATING_BAD"
         },
         {
             "proPlayer": {
@@ -3071,7 +2828,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 44,
+                "ordinal": 43,
                 "positions": [
                     {
                         "position": {
@@ -3084,8 +2841,8 @@
                                 "DRAFT_BOARD_PURPLE"
                             ]
                         },
-                        "ordinal": 17,
-                        "formatted": "17"
+                        "ordinal": 16,
+                        "formatted": "16"
                     }
                 ],
                 "season": 2025
@@ -3127,6 +2884,263 @@
                 "formatted": "3.31"
             },
             "seasonConsistency": "RATING_BAD"
+        },
+        {
+            "proPlayer": {
+                "id": 4426,
+                "nameFull": "Martin Necas",
+                "nameShort": "M. Necas",
+                "proTeamAbbreviation": "COL",
+                "position": "C/RW",
+                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/4426.png",
+                "sport": "NHL",
+                "nameFirst": "Martin",
+                "nameLast": "Necas",
+                "hasLockedPremiumContent": true,
+                "proTeam": {
+                    "abbreviation": "COL",
+                    "location": "Colorado",
+                    "name": "Avalanche"
+                },
+                "positionEligibility": [
+                    "C",
+                    "RW"
+                ]
+            },
+            "requestedGames": [
+                {
+                    "game": {
+                        "id": 26573,
+                        "away": {
+                            "abbreviation": "COL",
+                            "location": "Colorado",
+                            "name": "Avalanche"
+                        },
+                        "home": {
+                            "abbreviation": "LA",
+                            "location": "Los Angeles",
+                            "name": "Kings"
+                        },
+                        "startTimeEpochMilli": "1759890600000",
+                        "period": {
+                            "duration": "DAY",
+                            "ordinal": 1,
+                            "startEpochMilli": "1759831200000"
+                        },
+                        "sport": "NHL"
+                    },
+                    "stats": [
+                        {
+                            "category": {
+                                "id": 1,
+                                "abbreviation": "G",
+                                "nameSingular": "Goal",
+                                "namePlural": "Goals"
+                            }
+                        },
+                        {
+                            "category": {
+                                "id": 5,
+                                "abbreviation": "Ast",
+                                "nameSingular": "Assist",
+                                "namePlural": "Assists"
+                            }
+                        }
+                    ],
+                    "period": {
+                        "duration": "DAY",
+                        "ordinal": 1,
+                        "startEpochMilli": "1759831200000"
+                    },
+                    "ranks": {
+                        "position": "C",
+                        "categories": [
+                            {
+                                "category": {
+                                    "id": 33,
+                                    "abbreviation": "Pts",
+                                    "nameSingular": "Point",
+                                    "namePlural": "Points"
+                                },
+                                "rank": {
+                                    "rank": 5,
+                                    "mean": {
+                                        "value": 2.3414633,
+                                        "formatted": "2.3"
+                                    },
+                                    "rating": "RATING_BAD"
+                                }
+                            }
+                        ],
+                        "defaultPoints": {
+                            "rank": 11,
+                            "mean": {
+                                "value": 4.381707,
+                                "formatted": "4.4"
+                            }
+                        }
+                    }
+                }
+            ],
+            "viewingActualPoints": {
+                "value": 370.69983,
+                "formatted": "370.7"
+            },
+            "viewingActualStats": [
+                {
+                    "category": {
+                        "id": 1,
+                        "abbreviation": "G",
+                        "nameSingular": "Goal",
+                        "namePlural": "Goals"
+                    },
+                    "value": {
+                        "value": 27.0,
+                        "formatted": "27"
+                    }
+                },
+                {
+                    "category": {
+                        "id": 5,
+                        "abbreviation": "Ast",
+                        "nameSingular": "Assist",
+                        "namePlural": "Assists"
+                    },
+                    "value": {
+                        "value": 56.0,
+                        "formatted": "56"
+                    }
+                }
+            ],
+            "transactionStatus": {
+                "locked": {},
+                "isLineupStatusLocked": true
+            },
+            "requestedGamesPeriod": {
+                "duration": "DAY",
+                "ordinal": 1,
+                "startEpochMilli": "1759831200000"
+            },
+            "viewingActualPointsAverage": {
+                "value": 4.692403,
+                "formatted": "4.69"
+            },
+            "viewingFormat": "TOTAL",
+            "viewingRange": {
+                "season": 2024,
+                "low": 1,
+                "high": 196
+            },
+            "displayGroup": "SKATER",
+            "rankFantasy": {
+                "ordinal": 35,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 14,
+                        "formatted": "14",
+                        "rating": "RATING_GOOD"
+                    },
+                    {
+                        "position": {
+                            "label": "RW",
+                            "group": "START",
+                            "eligibility": [
+                                "RW"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_GREEN"
+                            ]
+                        },
+                        "ordinal": 13,
+                        "formatted": "13",
+                        "rating": "RATING_GOOD"
+                    }
+                ],
+                "season": 2024
+            },
+            "rankDraft": {
+                "ordinal": 44,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 17,
+                        "formatted": "17"
+                    },
+                    {
+                        "position": {
+                            "label": "RW",
+                            "group": "START",
+                            "eligibility": [
+                                "RW"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_GREEN"
+                            ]
+                        },
+                        "ordinal": 13,
+                        "formatted": "13",
+                        "rating": "RATING_GOOD"
+                    }
+                ],
+                "season": 2025
+            },
+            "lastX": [
+                {
+                    "value": {
+                        "value": 2.5,
+                        "formatted": "2.5"
+                    },
+                    "duration": 1,
+                    "underPerforming": true
+                },
+                {
+                    "value": {
+                        "value": 2.59,
+                        "formatted": "2.59"
+                    },
+                    "duration": 5
+                },
+                {
+                    "value": {
+                        "value": 4.5,
+                        "formatted": "4.5"
+                    },
+                    "duration": 10
+                }
+            ],
+            "seasonTotal": {
+                "value": 373.69983,
+                "formatted": "373.7"
+            },
+            "seasonAverage": {
+                "value": 4.7303777,
+                "formatted": "4.73"
+            },
+            "seasonsStandartDeviation": {
+                "value": 3.801072,
+                "formatted": "3.8"
+            },
+            "seasonConsistency": "RATING_BAD",
+            "numGamesInSchedulePeriod": 1
         },
         {
             "proPlayer": {
@@ -3356,18 +3370,18 @@
                                 "rank": {
                                     "rank": 7,
                                     "mean": {
-                                        "value": 2.3292682,
-                                        "formatted": "2.3"
+                                        "value": 2.4146342,
+                                        "formatted": "2.4"
                                     },
                                     "rating": "RATING_BAD"
                                 }
                             }
                         ],
                         "defaultPoints": {
-                            "rank": 9,
+                            "rank": 8,
                             "mean": {
-                                "value": 4.232927,
-                                "formatted": "4.2"
+                                "value": 4.3085365,
+                                "formatted": "4.3"
                             }
                         }
                     }
@@ -3504,155 +3518,6 @@
         },
         {
             "proPlayer": {
-                "id": 1249,
-                "nameFull": "John Tavares",
-                "nameShort": "J. Tavares",
-                "proTeamAbbreviation": "TOR",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/1249.png",
-                "sport": "NHL",
-                "nameFirst": "John",
-                "nameLast": "Tavares",
-                "hasLockedPremiumContent": true,
-                "proTeam": {
-                    "abbreviation": "TOR",
-                    "location": "Toronto",
-                    "name": "Maple Leafs"
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "value": 375.99994,
-                "formatted": "376"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    },
-                    "value": {
-                        "value": 38.0,
-                        "formatted": "38"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    },
-                    "value": {
-                        "value": 36.0,
-                        "formatted": "36"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingActualPointsAverage": {
-                "value": 5.0133324,
-                "formatted": "5.01"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "rankFantasy": {
-                "ordinal": 32,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 13,
-                        "formatted": "13",
-                        "rating": "RATING_GOOD"
-                    }
-                ],
-                "season": 2024
-            },
-            "rankDraft": {
-                "ordinal": 49,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 20,
-                        "formatted": "20"
-                    }
-                ],
-                "season": 2025
-            },
-            "lastX": [
-                {
-                    "value": {
-                        "value": 1.85,
-                        "formatted": "1.85"
-                    },
-                    "duration": 1,
-                    "underPerforming": true
-                },
-                {
-                    "value": {
-                        "value": 3.87,
-                        "formatted": "3.87"
-                    },
-                    "duration": 5
-                },
-                {
-                    "value": {
-                        "value": 4.24,
-                        "formatted": "4.24"
-                    },
-                    "duration": 10
-                }
-            ],
-            "seasonTotal": {
-                "value": 375.34995,
-                "formatted": "375.35"
-            },
-            "seasonAverage": {
-                "value": 5.004666,
-                "formatted": "5"
-            },
-            "seasonsStandartDeviation": {
-                "value": 3.4422603,
-                "formatted": "3.44"
-            }
-        },
-        {
-            "proPlayer": {
                 "id": 8521,
                 "nameFull": "Wyatt Johnston",
                 "nameShort": "W. Johnston",
@@ -3758,7 +3623,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 51,
+                "ordinal": 50,
                 "positions": [
                     {
                         "position": {
@@ -3771,8 +3636,8 @@
                                 "DRAFT_BOARD_PURPLE"
                             ]
                         },
-                        "ordinal": 21,
-                        "formatted": "21"
+                        "ordinal": 20,
+                        "formatted": "20"
                     },
                     {
                         "position": {
@@ -3829,6 +3694,155 @@
                 "formatted": "3.14"
             },
             "seasonConsistency": "RATING_BAD"
+        },
+        {
+            "proPlayer": {
+                "id": 1249,
+                "nameFull": "John Tavares",
+                "nameShort": "J. Tavares",
+                "proTeamAbbreviation": "TOR",
+                "position": "C",
+                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/1249.png",
+                "sport": "NHL",
+                "nameFirst": "John",
+                "nameLast": "Tavares",
+                "hasLockedPremiumContent": true,
+                "proTeam": {
+                    "abbreviation": "TOR",
+                    "location": "Toronto",
+                    "name": "Maple Leafs"
+                },
+                "positionEligibility": [
+                    "C"
+                ]
+            },
+            "viewingActualPoints": {
+                "value": 375.99994,
+                "formatted": "376"
+            },
+            "viewingActualStats": [
+                {
+                    "category": {
+                        "id": 1,
+                        "abbreviation": "G",
+                        "nameSingular": "Goal",
+                        "namePlural": "Goals"
+                    },
+                    "value": {
+                        "value": 38.0,
+                        "formatted": "38"
+                    }
+                },
+                {
+                    "category": {
+                        "id": 5,
+                        "abbreviation": "Ast",
+                        "nameSingular": "Assist",
+                        "namePlural": "Assists"
+                    },
+                    "value": {
+                        "value": 36.0,
+                        "formatted": "36"
+                    }
+                }
+            ],
+            "transactionStatus": {
+                "locked": {},
+                "isLineupStatusLocked": true
+            },
+            "requestedGamesPeriod": {
+                "duration": "DAY",
+                "ordinal": 1,
+                "startEpochMilli": "1759831200000"
+            },
+            "viewingActualPointsAverage": {
+                "value": 5.0133324,
+                "formatted": "5.01"
+            },
+            "viewingFormat": "TOTAL",
+            "viewingRange": {
+                "season": 2024,
+                "low": 1,
+                "high": 196
+            },
+            "displayGroup": "SKATER",
+            "rankFantasy": {
+                "ordinal": 32,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 13,
+                        "formatted": "13",
+                        "rating": "RATING_GOOD"
+                    }
+                ],
+                "season": 2024
+            },
+            "rankDraft": {
+                "ordinal": 51,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 21,
+                        "formatted": "21"
+                    }
+                ],
+                "season": 2025
+            },
+            "lastX": [
+                {
+                    "value": {
+                        "value": 1.85,
+                        "formatted": "1.85"
+                    },
+                    "duration": 1,
+                    "underPerforming": true
+                },
+                {
+                    "value": {
+                        "value": 3.87,
+                        "formatted": "3.87"
+                    },
+                    "duration": 5
+                },
+                {
+                    "value": {
+                        "value": 4.24,
+                        "formatted": "4.24"
+                    },
+                    "duration": 10
+                }
+            ],
+            "seasonTotal": {
+                "value": 375.34995,
+                "formatted": "375.35"
+            },
+            "seasonAverage": {
+                "value": 5.004666,
+                "formatted": "5"
+            },
+            "seasonsStandartDeviation": {
+                "value": 3.4422603,
+                "formatted": "3.44"
+            }
         },
         {
             "proPlayer": {
@@ -4072,7 +4086,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 56,
+                "ordinal": 59,
                 "positions": [
                     {
                         "position": {
@@ -4129,154 +4143,6 @@
                 "formatted": "3.7"
             },
             "seasonConsistency": "RATING_VERY_BAD"
-        },
-        {
-            "proPlayer": {
-                "id": 583,
-                "nameFull": "Nazem Kadri",
-                "nameShort": "N. Kadri",
-                "proTeamAbbreviation": "CGY",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/583.png",
-                "sport": "NHL",
-                "nameFirst": "Nazem",
-                "nameLast": "Kadri",
-                "hasLockedPremiumContent": true,
-                "proTeam": {
-                    "abbreviation": "CGY",
-                    "location": "Calgary",
-                    "name": "Flames"
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "value": 360.14993,
-                "formatted": "360.15"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    },
-                    "value": {
-                        "value": 35.0,
-                        "formatted": "35"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    },
-                    "value": {
-                        "value": 32.0,
-                        "formatted": "32"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingActualPointsAverage": {
-                "value": 4.392072,
-                "formatted": "4.39"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "rankFantasy": {
-                "ordinal": 45,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 17,
-                        "formatted": "17"
-                    }
-                ],
-                "season": 2024
-            },
-            "rankDraft": {
-                "ordinal": 66,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 24,
-                        "formatted": "24"
-                    }
-                ],
-                "season": 2025
-            },
-            "lastX": [
-                {
-                    "value": {
-                        "value": 9.0,
-                        "formatted": "9"
-                    },
-                    "duration": 1,
-                    "overPerforming": true
-                },
-                {
-                    "value": {
-                        "value": 5.98,
-                        "formatted": "5.98"
-                    },
-                    "duration": 5
-                },
-                {
-                    "value": {
-                        "value": 4.29,
-                        "formatted": "4.29"
-                    },
-                    "duration": 10
-                }
-            ],
-            "seasonTotal": {
-                "value": 359.89993,
-                "formatted": "359.9"
-            },
-            "seasonAverage": {
-                "value": 4.389024,
-                "formatted": "4.39"
-            },
-            "seasonsStandartDeviation": {
-                "value": 2.9829094,
-                "formatted": "2.98"
-            }
         },
         {
             "proPlayer": {
@@ -4383,8 +4249,8 @@
                                 "DRAFT_BOARD_PURPLE"
                             ]
                         },
-                        "ordinal": 25,
-                        "formatted": "25"
+                        "ordinal": 24,
+                        "formatted": "24"
                     }
                 ],
                 "season": 2025
@@ -4423,6 +4289,310 @@
             "seasonsStandartDeviation": {
                 "value": 3.3463466,
                 "formatted": "3.35"
+            },
+            "seasonConsistency": "RATING_BAD"
+        },
+        {
+            "proPlayer": {
+                "id": 583,
+                "nameFull": "Nazem Kadri",
+                "nameShort": "N. Kadri",
+                "proTeamAbbreviation": "CGY",
+                "position": "C",
+                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/583.png",
+                "sport": "NHL",
+                "nameFirst": "Nazem",
+                "nameLast": "Kadri",
+                "hasLockedPremiumContent": true,
+                "proTeam": {
+                    "abbreviation": "CGY",
+                    "location": "Calgary",
+                    "name": "Flames"
+                },
+                "positionEligibility": [
+                    "C"
+                ]
+            },
+            "viewingActualPoints": {
+                "value": 360.14993,
+                "formatted": "360.15"
+            },
+            "viewingActualStats": [
+                {
+                    "category": {
+                        "id": 1,
+                        "abbreviation": "G",
+                        "nameSingular": "Goal",
+                        "namePlural": "Goals"
+                    },
+                    "value": {
+                        "value": 35.0,
+                        "formatted": "35"
+                    }
+                },
+                {
+                    "category": {
+                        "id": 5,
+                        "abbreviation": "Ast",
+                        "nameSingular": "Assist",
+                        "namePlural": "Assists"
+                    },
+                    "value": {
+                        "value": 32.0,
+                        "formatted": "32"
+                    }
+                }
+            ],
+            "transactionStatus": {
+                "locked": {},
+                "isLineupStatusLocked": true
+            },
+            "requestedGamesPeriod": {
+                "duration": "DAY",
+                "ordinal": 1,
+                "startEpochMilli": "1759831200000"
+            },
+            "viewingActualPointsAverage": {
+                "value": 4.392072,
+                "formatted": "4.39"
+            },
+            "viewingFormat": "TOTAL",
+            "viewingRange": {
+                "season": 2024,
+                "low": 1,
+                "high": 196
+            },
+            "displayGroup": "SKATER",
+            "rankFantasy": {
+                "ordinal": 45,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 17,
+                        "formatted": "17"
+                    }
+                ],
+                "season": 2024
+            },
+            "rankDraft": {
+                "ordinal": 70,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 25,
+                        "formatted": "25"
+                    }
+                ],
+                "season": 2025
+            },
+            "lastX": [
+                {
+                    "value": {
+                        "value": 9.0,
+                        "formatted": "9"
+                    },
+                    "duration": 1,
+                    "overPerforming": true
+                },
+                {
+                    "value": {
+                        "value": 5.98,
+                        "formatted": "5.98"
+                    },
+                    "duration": 5
+                },
+                {
+                    "value": {
+                        "value": 4.29,
+                        "formatted": "4.29"
+                    },
+                    "duration": 10
+                }
+            ],
+            "seasonTotal": {
+                "value": 359.89993,
+                "formatted": "359.9"
+            },
+            "seasonAverage": {
+                "value": 4.389024,
+                "formatted": "4.39"
+            },
+            "seasonsStandartDeviation": {
+                "value": 2.9829094,
+                "formatted": "2.98"
+            }
+        },
+        {
+            "proPlayer": {
+                "id": 8944,
+                "nameFull": "Logan Cooley",
+                "nameShort": "L. Cooley",
+                "proTeamAbbreviation": "UTA",
+                "position": "C",
+                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/8944.png",
+                "injury": {
+                    "typeAbbreviaition": "DTD",
+                    "description": "Undisclosed",
+                    "severity": "QUESTIONABLE",
+                    "typeFull": "Day-to-day"
+                },
+                "sport": "NHL",
+                "nameFirst": "Logan",
+                "nameLast": "Cooley",
+                "hasLockedPremiumContent": true,
+                "proTeam": {
+                    "abbreviation": "UTA",
+                    "location": "Utah",
+                    "name": "Hockey Club"
+                },
+                "positionEligibility": [
+                    "C"
+                ]
+            },
+            "viewingActualPoints": {
+                "value": 306.69986,
+                "formatted": "306.7"
+            },
+            "viewingActualStats": [
+                {
+                    "category": {
+                        "id": 1,
+                        "abbreviation": "G",
+                        "nameSingular": "Goal",
+                        "namePlural": "Goals"
+                    },
+                    "value": {
+                        "value": 25.0,
+                        "formatted": "25"
+                    }
+                },
+                {
+                    "category": {
+                        "id": 5,
+                        "abbreviation": "Ast",
+                        "nameSingular": "Assist",
+                        "namePlural": "Assists"
+                    },
+                    "value": {
+                        "value": 40.0,
+                        "formatted": "40"
+                    }
+                }
+            ],
+            "transactionStatus": {
+                "locked": {},
+                "isLineupStatusLocked": true
+            },
+            "requestedGamesPeriod": {
+                "duration": "DAY",
+                "ordinal": 1,
+                "startEpochMilli": "1759831200000"
+            },
+            "viewingActualPointsAverage": {
+                "value": 4.0893316,
+                "formatted": "4.09"
+            },
+            "viewingFormat": "TOTAL",
+            "viewingRange": {
+                "season": 2024,
+                "low": 1,
+                "high": 196
+            },
+            "displayGroup": "SKATER",
+            "rankFantasy": {
+                "ordinal": 94,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 40,
+                        "formatted": "40",
+                        "rating": "RATING_VERY_BAD"
+                    }
+                ],
+                "season": 2024
+            },
+            "rankDraft": {
+                "ordinal": 83,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 26,
+                        "formatted": "26"
+                    }
+                ],
+                "season": 2025
+            },
+            "lastX": [
+                {
+                    "value": {
+                        "value": 2.75,
+                        "formatted": "2.75"
+                    },
+                    "duration": 1,
+                    "underPerforming": true
+                },
+                {
+                    "value": {
+                        "value": 7.4,
+                        "formatted": "7.4"
+                    },
+                    "duration": 5
+                },
+                {
+                    "value": {
+                        "value": 4.84,
+                        "formatted": "4.84"
+                    },
+                    "duration": 10
+                }
+            ],
+            "seasonTotal": {
+                "value": 306.19986,
+                "formatted": "306.2"
+            },
+            "seasonAverage": {
+                "value": 4.082665,
+                "formatted": "4.08"
+            },
+            "seasonsStandartDeviation": {
+                "value": 3.020084,
+                "formatted": "3.02"
             },
             "seasonConsistency": "RATING_BAD"
         },
@@ -4504,10 +4674,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 27,
+                                    "rank": 28,
                                     "mean": {
-                                        "value": 3.012195,
-                                        "formatted": "3"
+                                        "value": 3.109756,
+                                        "formatted": "3.1"
                                     },
                                     "rating": "RATING_VERY_GOOD",
                                     "isRankTied": true
@@ -4515,10 +4685,10 @@
                             }
                         ],
                         "defaultPoints": {
-                            "rank": 27,
+                            "rank": 28,
                             "mean": {
-                                "value": 5.095122,
-                                "formatted": "5.1"
+                                "value": 5.1682925,
+                                "formatted": "5.2"
                             },
                             "rating": "RATING_VERY_GOOD"
                         }
@@ -4597,7 +4767,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 82,
+                "ordinal": 85,
                 "positions": [
                     {
                         "position": {
@@ -4610,8 +4780,8 @@
                                 "DRAFT_BOARD_PURPLE"
                             ]
                         },
-                        "ordinal": 26,
-                        "formatted": "26"
+                        "ordinal": 27,
+                        "formatted": "27"
                     }
                 ],
                 "season": 2025
@@ -4747,7 +4917,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 86,
+                "ordinal": 88,
                 "positions": [
                     {
                         "position": {
@@ -4760,8 +4930,8 @@
                                 "DRAFT_BOARD_PURPLE"
                             ]
                         },
-                        "ordinal": 27,
-                        "formatted": "27"
+                        "ordinal": 28,
+                        "formatted": "28"
                     }
                 ],
                 "season": 2025
@@ -4803,162 +4973,6 @@
                 "formatted": "3.52"
             },
             "seasonConsistency": "RATING_VERY_BAD"
-        },
-        {
-            "proPlayer": {
-                "id": 8944,
-                "nameFull": "Logan Cooley",
-                "nameShort": "L. Cooley",
-                "proTeamAbbreviation": "UTA",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/8944.png",
-                "injury": {
-                    "typeAbbreviaition": "DTD",
-                    "description": "Undisclosed",
-                    "severity": "QUESTIONABLE",
-                    "typeFull": "Day-to-day"
-                },
-                "sport": "NHL",
-                "nameFirst": "Logan",
-                "nameLast": "Cooley",
-                "hasLockedPremiumContent": true,
-                "proTeam": {
-                    "abbreviation": "UTA",
-                    "location": "Utah",
-                    "name": "Hockey Club"
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "value": 306.69986,
-                "formatted": "306.7"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    },
-                    "value": {
-                        "value": 25.0,
-                        "formatted": "25"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    },
-                    "value": {
-                        "value": 40.0,
-                        "formatted": "40"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingActualPointsAverage": {
-                "value": 4.0893316,
-                "formatted": "4.09"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "rankFantasy": {
-                "ordinal": 94,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 40,
-                        "formatted": "40",
-                        "rating": "RATING_VERY_BAD"
-                    }
-                ],
-                "season": 2024
-            },
-            "rankDraft": {
-                "ordinal": 87,
-                "positions": [
-                    {
-                        "position": {
-                            "label": "C",
-                            "group": "START",
-                            "eligibility": [
-                                "C"
-                            ],
-                            "colors": [
-                                "DRAFT_BOARD_PURPLE"
-                            ]
-                        },
-                        "ordinal": 28,
-                        "formatted": "28"
-                    }
-                ],
-                "season": 2025
-            },
-            "lastX": [
-                {
-                    "value": {
-                        "value": 2.75,
-                        "formatted": "2.75"
-                    },
-                    "duration": 1,
-                    "underPerforming": true
-                },
-                {
-                    "value": {
-                        "value": 7.4,
-                        "formatted": "7.4"
-                    },
-                    "duration": 5
-                },
-                {
-                    "value": {
-                        "value": 4.84,
-                        "formatted": "4.84"
-                    },
-                    "duration": 10
-                }
-            ],
-            "seasonTotal": {
-                "value": 306.19986,
-                "formatted": "306.2"
-            },
-            "seasonAverage": {
-                "value": 4.082665,
-                "formatted": "4.08"
-            },
-            "seasonsStandartDeviation": {
-                "value": 3.020084,
-                "formatted": "3.02"
-            },
-            "seasonConsistency": "RATING_BAD"
         },
         {
             "proPlayer": {
@@ -5038,10 +5052,10 @@
                                     "namePlural": "Points"
                                 },
                                 "rank": {
-                                    "rank": 29,
+                                    "rank": 26,
                                     "mean": {
-                                        "value": 3.0365853,
-                                        "formatted": "3"
+                                        "value": 3.0609756,
+                                        "formatted": "3.1"
                                     },
                                     "rating": "RATING_VERY_GOOD"
                                 }
@@ -5050,8 +5064,8 @@
                         "defaultPoints": {
                             "rank": 26,
                             "mean": {
-                                "value": 5.0804877,
-                                "formatted": "5.1"
+                                "value": 5.05,
+                                "formatted": "5"
                             },
                             "rating": "RATING_VERY_GOOD"
                         }
@@ -5129,7 +5143,7 @@
                 "season": 2024
             },
             "rankDraft": {
-                "ordinal": 89,
+                "ordinal": 94,
                 "positions": [
                     {
                         "position": {
