@@ -75,7 +75,7 @@ def dbScoringPop():
     conn.commit()
     conn.close()
         
-
+'''
 conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
 cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 res = cur.execute("SELECT * FROM score")
@@ -86,4 +86,4 @@ for row in rows:
     print(row)
 
 # Always close connection
-conn.close()
+conn.close()'''
