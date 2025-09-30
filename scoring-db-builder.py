@@ -5,10 +5,11 @@ import os
 
 leagueID = 12100
 
+# apiScoringGet function grabs scoring values and puts them in a .json file. Only runs if such a file doesn't exist
 def apiScoringGet(leagueID):
     api_leagueScoring = f"https://www.fleaflicker.com/api/FetchLeagueRules?sport=NHL&league_id={leagueID}" # Store the endpoint
     response_leagueScoring = rq.get(api_leagueScoring) # Use the requests.get method to collect the data as a response
-    if os.path.isfile("./FantasyHockeyAnalyzer/league_rules.json"):
+    if os.path.isfile("./FantasyHockeyAnalyzer/league_rules.json") == False:
         if response_leagueScoring.status_code == 200: # Check for successful response from API
             data_leagueScoring = response_leagueScoring.json() # Collect the json data using the METHOD, store it in variable "data"
             # Write JSON to file
