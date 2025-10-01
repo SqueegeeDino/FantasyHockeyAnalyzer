@@ -2,1562 +2,27 @@
     "players": [
         {
             "proPlayer": {
-                "id": 3166,
-                "nameFull": "Peter Quenneville",
-                "nameShort": "P. Quenneville",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Peter",
-                "nameLast": "Quenneville",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3171,
-                "nameFull": "Saku Salminen",
-                "nameShort": "S. Salminen",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Saku",
-                "nameLast": "Salminen",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3177,
-                "nameFull": "Jacob de la Rose",
-                "nameShort": "J. de la Rose",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/3177.png",
-                "sport": "NHL",
-                "nameFirst": "Jacob",
-                "nameLast": "de la Rose",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3180,
-                "nameFull": "Jeremy Gregoire",
-                "nameShort": "J. Gregoire",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/3180.png",
-                "sport": "NHL",
-                "nameFirst": "Jeremy",
-                "nameLast": "Gregoire",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3186,
-                "nameFull": "Tim Harrison",
-                "nameShort": "T. Harrison",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Tim",
-                "nameLast": "Harrison",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3196,
-                "nameFull": "Matej Paulovic",
-                "nameShort": "M. Paulovic",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Matej",
-                "nameLast": "Paulovic",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3200,
-                "nameFull": "Ryan Fitzgerald",
-                "nameShort": "R. Fitzgerald",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/3200.png",
-                "sport": "NHL",
-                "nameFirst": "Ryan",
-                "nameLast": "Fitzgerald",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3203,
-                "nameFull": "Mitchell Dempsey",
-                "nameShort": "M. Dempsey",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Mitchell",
-                "nameLast": "Dempsey",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3215,
-                "nameFull": "Christopher Clapperton",
-                "nameShort": "C. Clapperton",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Christopher",
-                "nameLast": "Clapperton",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3220,
-                "nameFull": "Bogdan Yakimov",
-                "nameShort": "B. Yakimov",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Bogdan",
-                "nameLast": "Yakimov",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3221,
-                "nameFull": "Marc-Olivier Roy",
-                "nameShort": "M. Roy",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Marc-Olivier",
-                "nameLast": "Roy",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3223,
-                "nameFull": "Kyle Platzer ",
-                "nameShort": "K. Platzer ",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Kyle",
-                "nameLast": "Platzer ",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3224,
-                "nameFull": "Aidan Muir",
-                "nameShort": "A. Muir",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Aidan",
-                "nameLast": "Muir",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3225,
-                "nameFull": "Evan Campbell",
-                "nameShort": "E. Campbell",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Evan",
-                "nameLast": "Campbell",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3227,
-                "nameFull": "Gregory Chase ",
-                "nameShort": "G. Chase ",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Gregory",
-                "nameLast": "Chase ",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3240,
-                "nameFull": "Drew Olson",
-                "nameShort": "D. Olson",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Drew",
-                "nameLast": "Olson",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3242,
-                "nameFull": "Mattias Janmark-Nylen",
-                "nameShort": "M. Janmark-Nylen",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Mattias",
-                "nameLast": "Janmark-Nylen",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3248,
-                "nameFull": "Hampus Melen",
-                "nameShort": "H. Melen",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Hampus",
-                "nameLast": "Melen",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3249,
-                "nameFull": "Pavel Laplante",
-                "nameShort": "P. Laplante",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Pavel",
-                "nameLast": "Laplante",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3250,
-                "nameFull": "Laurent Dauphin",
-                "nameShort": "L. Dauphin",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/3250.png",
-                "sport": "NHL",
-                "nameFirst": "Laurent",
-                "nameLast": "Dauphin",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3254,
-                "nameFull": "Jedd Soleway",
-                "nameShort": "J. Soleway",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Jedd",
-                "nameLast": "Soleway",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3273,
-                "nameFull": "Felix Girard",
-                "nameShort": "F. Girard",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Felix",
-                "nameLast": "Girard",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3275,
-                "nameFull": "Emil Pettersson",
+                "id": 9688,
+                "nameFull": "Elias Pettersson",
                 "nameShort": "E. Pettersson",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
+                "proTeamAbbreviation": "VAN",
+                "position": "D",
                 "sport": "NHL",
-                "nameFirst": "Emil",
+                "nameFirst": "Elias",
                 "nameLast": "Pettersson",
+                "hasLockedPremiumContent": true,
                 "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
+                    "abbreviation": "VAN",
+                    "location": "Vancouver",
+                    "name": "Canucks"
                 },
                 "positionEligibility": [
-                    "C"
+                    "D"
                 ]
             },
             "viewingActualPoints": {
-                "formatted": "\u2014"
+                "value": 39.149998,
+                "formatted": "39.15"
             },
             "viewingActualStats": [
                 {
@@ -1566,6 +31,10 @@
                         "abbreviation": "G",
                         "nameSingular": "Goal",
                         "namePlural": "Goals"
+                    },
+                    "value": {
+                        "value": 1.0,
+                        "formatted": "1"
                     }
                 },
                 {
@@ -1574,6 +43,10 @@
                         "abbreviation": "Ast",
                         "nameSingular": "Assist",
                         "namePlural": "Assists"
+                    },
+                    "value": {
+                        "value": 2.0,
+                        "formatted": "2"
                     }
                 }
             ],
@@ -1586,6 +59,10 @@
                 "ordinal": 1,
                 "startEpochMilli": "1759831200000"
             },
+            "viewingActualPointsAverage": {
+                "value": 1.3982142,
+                "formatted": "1.4"
+            },
             "viewingFormat": "TOTAL",
             "viewingRange": {
                 "season": 2024,
@@ -1593,42 +70,90 @@
                 "high": 196
             },
             "displayGroup": "SKATER",
+            "rankFantasy": {
+                "ordinal": 752,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "D",
+                            "group": "START",
+                            "eligibility": [
+                                "D"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_BLUE"
+                            ]
+                        },
+                        "ordinal": 236,
+                        "formatted": "236",
+                        "rating": "RATING_VERY_BAD"
+                    }
+                ],
+                "season": 2024
+            },
             "lastX": [
                 {
-                    "duration": 1
+                    "value": {
+                        "value": 0.8,
+                        "formatted": "0.8"
+                    },
+                    "duration": 1,
+                    "underPerforming": true
                 },
                 {
+                    "value": {
+                        "value": 1.31,
+                        "formatted": "1.31"
+                    },
                     "duration": 5
                 },
                 {
+                    "value": {
+                        "value": 1.77,
+                        "formatted": "1.77"
+                    },
                     "duration": 10
                 }
-            ]
+            ],
+            "seasonTotal": {
+                "value": 39.149998,
+                "formatted": "39.15"
+            },
+            "seasonAverage": {
+                "value": 1.3982142,
+                "formatted": "1.4"
+            },
+            "seasonsStandartDeviation": {
+                "value": 1.2648041,
+                "formatted": "1.26"
+            },
+            "seasonConsistency": "RATING_VERY_BAD"
         },
         {
             "proPlayer": {
-                "id": 3276,
-                "nameFull": "Tommy Veilleux",
-                "nameShort": "T. Veilleux",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
+                "id": 4411,
+                "nameFull": "Elias Pettersson",
+                "nameShort": "E. Pettersson",
+                "proTeamAbbreviation": "VAN",
+                "position": "C/LW",
+                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/4411.png",
                 "sport": "NHL",
-                "nameFirst": "Tommy",
-                "nameLast": "Veilleux",
+                "nameFirst": "Elias",
+                "nameLast": "Pettersson",
+                "hasLockedPremiumContent": true,
                 "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
+                    "abbreviation": "VAN",
+                    "location": "Vancouver",
+                    "name": "Canucks"
                 },
                 "positionEligibility": [
                     "C",
-                    "LW",
-                    "RW"
+                    "LW"
                 ]
             },
             "viewingActualPoints": {
-                "formatted": "\u2014"
+                "value": 241.44995,
+                "formatted": "241.45"
             },
             "viewingActualStats": [
                 {
@@ -1637,6 +162,10 @@
                         "abbreviation": "G",
                         "nameSingular": "Goal",
                         "namePlural": "Goals"
+                    },
+                    "value": {
+                        "value": 15.0,
+                        "formatted": "15"
                     }
                 },
                 {
@@ -1645,6 +174,10 @@
                         "abbreviation": "Ast",
                         "nameSingular": "Assist",
                         "namePlural": "Assists"
+                    },
+                    "value": {
+                        "value": 30.0,
+                        "formatted": "30"
                     }
                 }
             ],
@@ -1657,443 +190,96 @@
                 "ordinal": 1,
                 "startEpochMilli": "1759831200000"
             },
+            "viewingActualPointsAverage": {
+                "value": 3.7726555,
+                "formatted": "3.77"
+            },
             "viewingFormat": "TOTAL",
             "viewingRange": {
                 "season": 2024,
                 "low": 1,
                 "high": 196
             },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3282,
-                "nameFull": "Vincent Dunn",
-                "nameShort": "V. Dunn",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "headshotUrl": "https://d26bvpybnxg29h.cloudfront.net/nhl/3282.png",
+            "owner": {
+                "id": 84084,
+                "name": "Mock",
                 "sport": "NHL",
-                "nameFirst": "Vincent",
-                "nameLast": "Dunn",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
+                "initials": "M"
             },
             "displayGroup": "SKATER",
+            "rankFantasy": {
+                "ordinal": 201,
+                "positions": [
+                    {
+                        "position": {
+                            "label": "C",
+                            "group": "START",
+                            "eligibility": [
+                                "C"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_PURPLE"
+                            ]
+                        },
+                        "ordinal": 68,
+                        "formatted": "68",
+                        "rating": "RATING_VERY_BAD"
+                    },
+                    {
+                        "position": {
+                            "label": "LW",
+                            "group": "START",
+                            "eligibility": [
+                                "LW"
+                            ],
+                            "colors": [
+                                "DRAFT_BOARD_GREEN"
+                            ]
+                        },
+                        "ordinal": 65,
+                        "formatted": "65",
+                        "rating": "RATING_VERY_BAD"
+                    }
+                ],
+                "season": 2024
+            },
             "lastX": [
                 {
-                    "duration": 1
+                    "value": {
+                        "value": 0.4,
+                        "formatted": "0.4"
+                    },
+                    "duration": 1,
+                    "underPerforming": true
                 },
                 {
+                    "value": {
+                        "value": 5.41,
+                        "formatted": "5.41"
+                    },
                     "duration": 5
                 },
                 {
+                    "value": {
+                        "value": 5.31,
+                        "formatted": "5.31"
+                    },
                     "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3286,
-                "nameFull": "Quentin Shore",
-                "nameShort": "Q. Shore",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Quentin",
-                "nameLast": "Shore",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
                 }
             ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
+            "seasonTotal": {
+                "value": 241.44995,
+                "formatted": "241.45"
             },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
+            "seasonAverage": {
+                "value": 3.7726555,
+                "formatted": "3.77"
             },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
+            "seasonsStandartDeviation": {
+                "value": 2.9564946,
+                "formatted": "2.96"
             },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3288,
-                "nameFull": "Bobby Robins",
-                "nameShort": "B. Robins",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Bobby",
-                "nameLast": "Robins",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3291,
-                "nameFull": "Will Acton",
-                "nameShort": "W. Acton",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Will",
-                "nameLast": "Acton",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3293,
-                "nameFull": "Ludwig Karlsson",
-                "nameShort": "L. Karlsson",
-                "proTeamAbbreviation": "FA",
-                "position": "F",
-                "sport": "NHL",
-                "nameFirst": "Ludwig",
-                "nameLast": "Karlsson",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C",
-                    "LW",
-                    "RW"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
-        },
-        {
-            "proPlayer": {
-                "id": 3295,
-                "nameFull": "Julien Cayer",
-                "nameShort": "J. Cayer",
-                "proTeamAbbreviation": "FA",
-                "position": "C",
-                "sport": "NHL",
-                "nameFirst": "Julien",
-                "nameLast": "Cayer",
-                "proTeam": {
-                    "abbreviation": "FA",
-                    "location": "Free",
-                    "name": "Agent",
-                    "isFreeAgent": true
-                },
-                "positionEligibility": [
-                    "C"
-                ]
-            },
-            "viewingActualPoints": {
-                "formatted": "\u2014"
-            },
-            "viewingActualStats": [
-                {
-                    "category": {
-                        "id": 1,
-                        "abbreviation": "G",
-                        "nameSingular": "Goal",
-                        "namePlural": "Goals"
-                    }
-                },
-                {
-                    "category": {
-                        "id": 5,
-                        "abbreviation": "Ast",
-                        "nameSingular": "Assist",
-                        "namePlural": "Assists"
-                    }
-                }
-            ],
-            "transactionStatus": {
-                "locked": {},
-                "isLineupStatusLocked": true
-            },
-            "requestedGamesPeriod": {
-                "duration": "DAY",
-                "ordinal": 1,
-                "startEpochMilli": "1759831200000"
-            },
-            "viewingFormat": "TOTAL",
-            "viewingRange": {
-                "season": 2024,
-                "low": 1,
-                "high": 196
-            },
-            "displayGroup": "SKATER",
-            "lastX": [
-                {
-                    "duration": 1
-                },
-                {
-                    "duration": 5
-                },
-                {
-                    "duration": 10
-                }
-            ]
+            "seasonConsistency": "RATING_BAD"
         }
     ],
     "eligibleSorts": [
@@ -2205,24 +391,34 @@
     "lastXDurationType": "DAY",
     "lastXShortDuration": 5,
     "lastXLongDuration": 10,
-    "resultOffsetNext": 1300,
     "sort": "SORT_DRAFT_RANKING",
     "filter": {
         "position": {
-            "label": "C",
+            "label": "ALL",
             "group": "START",
             "eligibility": [
-                "C"
+                "C",
+                "LW",
+                "RW",
+                "D",
+                "G"
             ],
             "colors": [
+                "DRAFT_BOARD_GREEN",
+                "DRAFT_BOARD_BLUE",
+                "DRAFT_BOARD_RED",
                 "DRAFT_BOARD_PURPLE"
             ]
         },
         "positionEligibility": [
-            "C"
+            "C",
+            "LW",
+            "RW",
+            "D",
+            "G"
         ]
     },
-    "resultTotal": 1300,
+    "resultTotal": 2,
     "sortSeasons": {
         "eligibleValues": [
             2025

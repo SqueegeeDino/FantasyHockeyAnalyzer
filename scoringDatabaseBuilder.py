@@ -75,6 +75,40 @@ def dbScoringPop():
     conn.commit()
     conn.close()
         
+def dbPlayerIndexPop():
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+
+    cur.execute('''CREATE TABLE IF NOT EXISTS player_index (
+        fleakicker_id INTEGER UNIQUE, 
+        nhl_id INTEGER,
+        local_id INTEGER,
+        name TEXT,
+        pos TEXT,
+        team TEXT
+        )            
+    ''') # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
+
+    # === Open and parse the league_rules.json ===
+    with open('league_players.json', 'r') as file: # Open the 'league_rules.json', in read mode, as identified by 'r'
+        data = json.load(file) # Set the 'data' variable as the file loaded in
+
+    for idx, player in enumerate(data["players"], start=1):  # start=1 makes it 1-based instead of 0-based
+        fleakicker_id = player["proPlayer"]["id"]
+        nhl_id = player.get("nhlPlayerId", None)
+        local_id = idx  # use the loop number as local_id
+        name = player["proPlayer"]["nameFull"]
+        pos = player["proPlayer"]["position"]
+        team = player["proPlayer"]["proTeamAbbreviation"]
+
+        d = [fleakicker_id, nhl_id, local_id, name, pos, team]
+        cur.execute("INSERT OR REPLACE INTO player_index VALUES(?, ?, ?, ?, ?, ?)", d)
+
+
+    conn.commit()
+    conn.close()
+
+dbPlayerIndexPop()
 '''
 conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
 cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
@@ -87,3 +121,14 @@ for row in rows:
 
 # Always close connection
 conn.close()'''
+
+conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch
+res = cur.execute("SELECT * FROM player_index")
+rows = res.fetchall()
+
+print("\n--- Players in Database ---")
+for row in rows:
+    print(row)
+
+conn.close()

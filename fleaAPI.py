@@ -5,9 +5,11 @@ import json
 # TODO: Create dynamic link creation, potentially with UI
 
 leagueID = 17602
+offSet = 0 # Used for paging through large player lists. 30 results per page
 
-api_leaguePlayers = f"https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id=17602&sort=SORT_DRAFT_RANKING&filter.position.eligibility=c&filter.free_agent_only=false&result_offset=1270" # Player list, currently filtered to centers
+api_leaguePlayers = f"https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id={leagueID}&sort=SORT_DRAFT_RANKING&result_offset={offSet}&filter.player_id=4411&filter.player_id=9688" # Player list, currently filtered to centers
 
+#for i in range(0, 1300, 30): # Loop to page through large player lists, max 30 per page
 
 response_leaguePlayers = rq.get(api_leaguePlayers) # Use the requests.get method to collect the data as a response
 

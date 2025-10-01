@@ -1,9 +1,4 @@
-from nhlpy.api.query.builder import QueryBuilder, QueryContext
-from nhlpy.nhl_client import NHLClient
-from nhlpy.api.query.filters.draft import DraftQuery
-from nhlpy.api.query.filters.season import SeasonQuery
-from nhlpy.api.query.filters.game_type import GameTypeQuery
-from nhlpy.api.query.filters.position import PositionQuery, PositionTypes
+from nhlpy import NHLClient
 import json
 
 client = NHLClient()
@@ -11,21 +6,17 @@ client = NHLClient()
 # Get available filter options and API configuration
 config = client.misc.config()
 
-filters = [
-    SeasonQuery(season_start="20232024", season_end="20242025"),
-    PositionQuery(position=PositionTypes.DEFENSE)
-]
+# Get all teams
+teams = client.teams.teams()
 
-query_builder = QueryBuilder()
-query_context: QueryContext = query_builder.build(filters=filters)
+with open("NHLTeams.json", "w") as f:
+    json.dump(teams, f, indent=4)  # indent for readability
 
-skaterStats = client.stats.skater_stats_with_query_context(
-    report_type='summary',
-    query_context=query_context,
-    aggregate=True
-)
+# Get current season roster
+roster = client.teams.team_roster(team_abbr="VAN", season="20242025")
 
-with open("skater_stats.json", "w") as f:
-    json.dump(skaterStats, f, indent=4)  # indent for readability
+with open("NHLRoster.json", "w") as f:
+    json.dump(roster, f, indent=4)  # indent for readability
 
-print(config)
+print("Complete")
+#print(config)
