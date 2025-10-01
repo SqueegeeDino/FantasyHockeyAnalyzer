@@ -1,4 +1,6 @@
 import scoringDatabaseBuilder as sdb
 
-sdb.apiScoringGet(12100)
+leagueID = 17602
+
+sdb.apiScoringGet(leagueID)
 sdb.dbScoringPop()

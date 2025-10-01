@@ -4,7 +4,9 @@ import json
 # Fleakicker API links
 # TODO: Create dynamic link creation, potentially with UI
 
-api_leaguePlayers = "https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id=12100&sort=SORT_DRAFT_RANKING&filter.position.eligibility=c" # Player list, currently filtered to centers
+leagueID = 17602
+
+api_leaguePlayers = f"https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id=17602&sort=SORT_DRAFT_RANKING&filter.position.eligibility=c&filter.free_agent_only=false&result_offset=1270" # Player list, currently filtered to centers
 
 
 response_leaguePlayers = rq.get(api_leaguePlayers) # Use the requests.get method to collect the data as a response

@@ -8,6 +8,9 @@ import json
 
 client = NHLClient()
 
+# Get available filter options and API configuration
+config = client.misc.config()
+
 filters = [
     SeasonQuery(season_start="20232024", season_end="20242025"),
     PositionQuery(position=PositionTypes.DEFENSE)
@@ -24,3 +27,5 @@ skaterStats = client.stats.skater_stats_with_query_context(
 
 with open("skater_stats.json", "w") as f:
     json.dump(skaterStats, f, indent=4)  # indent for readability
+
+print(config)
