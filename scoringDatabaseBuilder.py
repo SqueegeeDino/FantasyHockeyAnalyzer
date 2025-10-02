@@ -79,10 +79,8 @@ def dbPlayerIndexPop():
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS player_index (
+    cur.execute('''CREATE TABLE IF NOT EXISTS player_index_ff (
         fleakicker_id INTEGER UNIQUE, 
-        nhl_id INTEGER,
-        local_id INTEGER,
         name TEXT,
         pos TEXT,
         team TEXT
@@ -101,12 +99,25 @@ def dbPlayerIndexPop():
         pos = player["proPlayer"]["position"]
         team = player["proPlayer"]["proTeamAbbreviation"]
 
-        d = [fleakicker_id, nhl_id, local_id, name, pos, team]
-        cur.execute("INSERT OR REPLACE INTO player_index VALUES(?, ?, ?, ?, ?, ?)", d)
+        d = [fleakicker_id, name, pos, team]
+        cur.execute("INSERT OR REPLACE INTO player_index_ff VALUES(?, ?, ?, ?)", d)
 
 
     conn.commit()
     conn.close()
+
+def dbTableWipe():
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+
+    cur.execute("DROP TABLE IF EXISTS score")
+    cur.execute("DROP TABLE IF EXISTS player_index")
+    cur.execute("DROP TABLE IF EXISTS player_index_ff")
+
+    conn.commit()
+    conn.close()
+
+    print("Database wiped")
 
 dbPlayerIndexPop()
 '''
@@ -124,10 +135,10 @@ conn.close()'''
 
 conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
 cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch
-res = cur.execute("SELECT * FROM player_index")
+res = cur.execute("SELECT * FROM player_index_ff")
 rows = res.fetchall()
 
-print("\n--- Players in Database ---")
+print("\n--- Players in Database: FleaFlicker ---")
 for row in rows:
     print(row)
 
