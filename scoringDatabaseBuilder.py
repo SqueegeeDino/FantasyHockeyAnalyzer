@@ -189,9 +189,6 @@ def dbPlayerIndexNHLPop():
 
 
 def dbPlayerIndexLocalPop():
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
-    
     conn = sqlite3.connect("fleakicker.db")
     cur = conn.cursor()
 
@@ -208,14 +205,17 @@ def dbPlayerIndexLocalPop():
     )
     """)
 
-    # Insert players that exist in BOTH tables (no NHL-only or FF-only)
+    # Insert only players in BOTH tables, handling multi-position matches
     cur.execute("""
     INSERT OR IGNORE INTO player_index_local (name, pos, team, nhl_id, ff_id)
-    SELECT n.name, n.pos, n.team, n.nhl_id, f.fleakicker_id
+    SELECT n.name, f.pos, n.team, n.nhl_id, f.fleakicker_id
     FROM player_index_nhl n
     JOIN player_index_ff f
-    ON n.name = f.name AND n.pos = f.pos AND n.team = f.team
+      ON n.name = f.name
+     AND n.team = f.team
+     AND f.pos LIKE '%' || n.pos || '%'
     """)
+
     conn.commit()
     conn.close()
 
@@ -295,7 +295,7 @@ def dbPlayerIndexNHLFix():
 
 # Only re-run these if needed. The scoring and player index functions only need to be run once to populate the database
 #apiScoringGet(leagueID)
-dbPlayerIndexPopFF()
+#dbPlayerIndexPopFF()
 #dbPlayerIndexNHLPop()
 dbPlayerIndexNHLFix()
 dbPlayerIndexLocalPop()
