@@ -153,6 +153,38 @@ def dbPlayerIndexNHLPop():
     conn.commit()
     conn.close()
 
+
+def dbPlayerIndexLocalPop():
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+    
+    conn = sqlite3.connect("fleakicker.db")
+    cur = conn.cursor()
+
+    # Create the local table if it doesn't exist
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS player_index_local (
+        local_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        pos TEXT NOT NULL,
+        team TEXT NOT NULL,
+        nhl_id INTEGER,
+        ff_id INTEGER,
+        UNIQUE(name, pos, team)
+    )
+    """)
+
+    # Insert players that exist in BOTH tables (no NHL-only or FF-only)
+    cur.execute("""
+    INSERT OR IGNORE INTO player_index_local (name, pos, team, nhl_id, ff_id)
+    SELECT n.name, n.pos, n.team, n.nhl_id, f.fleakicker_id
+    FROM player_index_nhl n
+    JOIN player_index_ff f
+    ON n.name = f.name AND n.pos = f.pos AND n.team = f.team
+    """)
+    conn.commit()
+    conn.close()
+
 def dbTableWipe():
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
@@ -160,18 +192,43 @@ def dbTableWipe():
     cur.execute("DROP TABLE IF EXISTS score")
     cur.execute("DROP TABLE IF EXISTS player_index")
     cur.execute("DROP TABLE IF EXISTS player_index_ff")
+    cur.execute("DROP TABLE IF EXISTS player_index_nhl")
+    cur.execute("DROP TABLE IF EXISTS player_index_local")
 
     conn.commit()
     conn.close()
 
     print("Database wiped")
 
+def inspect_db_schema(db_path):
+    """Print all tables and their column names/types for a given SQLite database."""
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    # Get all table names
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = [row[0] for row in cur.fetchall()]
+
+    print(f"📋 Tables in {db_path}:")
+    for table in tables:
+        print(f"\n=== {table} ===")
+        cur.execute(f"PRAGMA table_info({table});")
+        columns = cur.fetchall()
+        for col in columns:
+            cid, name, col_type, notnull, default, pk = col
+            pk_str = " PRIMARY KEY" if pk else ""
+            print(f"  - {name} ({col_type}){' NOT NULL' if notnull else ''}{pk_str}")
+
+    conn.close()
 
 # Run the functions
 dbTableWipe()
 dbPlayerIndexPopFF()
 dbPlayerIndexNHLPop()
-
+dbPlayerIndexLocalPop()
+#inspect_db_schema('fleakicker.db')
+'''
+# Export the player_index_nhl table to a CSV file
 try:
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
@@ -186,6 +243,30 @@ try:
         csvwriter.writerow(headers)  # Write the header row
         csvwriter.writerows(rows)    # Write all data rows
     print("player_index_nhl.csv created successfully.")
+except sqlite3.Error as e:
+    print(f"SQLite error: {e}")
+except IOError as e:
+    print(f"File I/O error: {e}")
+finally:
+    if conn: # type: ignore
+        conn.close()
+'''
+
+# Export the player_index_nhl table to a CSV file
+try:
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
+
+    cur.execute(f"SELECT * FROM player_index_local")
+    rows = cur.fetchall()
+
+    headers = [description[0] for description in cur.description]
+
+    with open('player_index_local.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(headers)  # Write the header row
+        csvwriter.writerows(rows)    # Write all data rows
+    print("player_index_local.csv created successfully.")
 except sqlite3.Error as e:
     print(f"SQLite error: {e}")
 except IOError as e:
