@@ -2,8 +2,22 @@ import sqlite3
 import json
 import requests as rq
 import os
+from nhlpy import NHLClient
+from nhlpy.api.query.builder import QueryBuilder, QueryContext
+from nhlpy.api.query.filters.franchise import FranchiseQuery
+from nhlpy.api.query.filters.season import SeasonQuery
+import csv
 
 leagueID = 12100
+client = NHLClient()
+
+
+# Helper function to clean names
+def clean_name(ntype, name):
+    """
+    Clean the name of the player or team
+    """
+    return name[ntype]['default']
 
 # apiScoringGet function grabs scoring values and puts them in a .json file. Only runs if such a file doesn't exist
 def apiScoringGet(leagueID):
@@ -74,8 +88,9 @@ def dbScoringPop():
 
     conn.commit()
     conn.close()
-        
-def dbPlayerIndexPop():
+
+ # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info       
+def dbPlayerIndexPopFF():
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
@@ -106,6 +121,38 @@ def dbPlayerIndexPop():
     conn.commit()
     conn.close()
 
+# dbPlayerIndexNHLPop populates the player_index_nhl table using NHL player info
+def dbPlayerIndexNHLPop():
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
+
+    # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
+    cur.execute('''CREATE TABLE IF NOT EXISTS player_index_nhl (
+        nhl_id INTEGER UNIQUE,
+        name TEXT,
+        pos TEXT,
+        team TEXT
+    )''')
+
+    forwards, defense, goalies = [], [], []
+    teams = client.teams.teams()
+    for team in teams:
+        players = client.teams.team_roster(team_abbr=team['abbr'], season="20252026")
+        for p in players['forwards'] + players['defensemen'] + players['goalies']:
+            p['nhl_id'] = p['id']
+            p['team'] = team['abbr']
+            p['firstName'] = clean_name('firstName', p)
+            p['lastName'] = clean_name('lastName', p)
+            p['name'] = f"{p['firstName']} {p['lastName']}"
+            pos = p['positionCode']
+
+            d = [p['nhl_id'], p['name'], pos, p['team']]
+            cur.execute("INSERT OR REPLACE INTO player_index_nhl VALUES(?, ?, ?, ?)", d)
+            conn.commit()
+    
+    conn.commit()
+    conn.close()
+
 def dbTableWipe():
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
@@ -119,7 +166,34 @@ def dbTableWipe():
 
     print("Database wiped")
 
-dbPlayerIndexPop()
+
+# Run the functions
+dbTableWipe()
+dbPlayerIndexPopFF()
+dbPlayerIndexNHLPop()
+
+try:
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
+
+    cur.execute(f"SELECT * FROM player_index_nhl")
+    rows = cur.fetchall()
+
+    headers = [description[0] for description in cur.description]
+
+    with open('player_index_nhl.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(headers)  # Write the header row
+        csvwriter.writerows(rows)    # Write all data rows
+    print("player_index_nhl.csv created successfully.")
+except sqlite3.Error as e:
+    print(f"SQLite error: {e}")
+except IOError as e:
+    print(f"File I/O error: {e}")
+finally:
+    if conn: # type: ignore
+        conn.close()
+
 '''
 conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
 cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
@@ -133,6 +207,7 @@ for row in rows:
 # Always close connection
 conn.close()'''
 
+'''
 conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
 cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch
 res = cur.execute("SELECT * FROM player_index_ff")
@@ -142,4 +217,4 @@ print("\n--- Players in Database: FleaFlicker ---")
 for row in rows:
     print(row)
 
-conn.close()
+conn.close()'''
