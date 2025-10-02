@@ -7,9 +7,18 @@ from nhlpy.api.query.builder import QueryBuilder, QueryContext
 from nhlpy.api.query.filters.franchise import FranchiseQuery
 from nhlpy.api.query.filters.season import SeasonQuery
 import csv
+import time
+from tqdm import tqdm
 
-leagueID = 12100
+leagueID = 17602
+offsets = list(range(0, 1300, 30))  # Offsets for pagination
 client = NHLClient()
+
+
+# Progress math. Ignore
+positions = ["c", "lw", "rw", "d", "g"]
+total_requests = len(positions) * (1300 // 30)  # 5 positions, 1300 players max, 30 per page
+current_request = 0
 
 
 # Helper function to clean names
@@ -90,7 +99,10 @@ def dbScoringPop():
     conn.close()
 
  # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info       
+
+# dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
 def dbPlayerIndexPopFF():
+    dbTableWipe("player_index_ff")
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
@@ -102,22 +114,34 @@ def dbPlayerIndexPopFF():
         )            
     ''') # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
 
-    # === Open and parse the league_rules.json ===
-    with open('league_players.json', 'r') as file: # Open the 'league_rules.json', in read mode, as identified by 'r'
-        data = json.load(file) # Set the 'data' variable as the file loaded in
+    with tqdm(total=total_requests, desc="Fetching Fleaflicker Players", unit="req", colour="green") as pbar:
+            for ipos in positions:
+                for i in offsets:
+                    api_leaguePlayers = f"https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id={leagueID}&sort=SORT_DRAFT_RANKING&result_offset={i}&filter.position_eligibility={ipos}"
+                    response_leaguePlayers = rq.get(api_leaguePlayers, timeout=10)
 
-    for idx, player in enumerate(data["players"], start=1):  # start=1 makes it 1-based instead of 0-based
-        fleakicker_id = player["proPlayer"]["id"]
-        nhl_id = player.get("nhlPlayerId", None)
-        local_id = idx  # use the loop number as local_id
-        name = player["proPlayer"]["nameFull"]
-        pos = player["proPlayer"]["position"]
-        team = player["proPlayer"]["proTeamAbbreviation"]
+                    if response_leaguePlayers.status_code == 200:
+                        data = response_leaguePlayers.json()
+                        if "players" not in data:
+                            pbar.write(f"No players found for position {ipos} at offset {i}")
+                            pbar.update(1)
+                            continue
 
-        d = [fleakicker_id, name, pos, team]
-        cur.execute("INSERT OR REPLACE INTO player_index_ff VALUES(?, ?, ?, ?)", d)
+                        for player in data["players"]:
+                            fleakicker_id = player["proPlayer"]["id"]
+                            name = player["proPlayer"]["nameFull"]
+                            pos = player["proPlayer"]["position"]
+                            team = player["proPlayer"]["proTeamAbbreviation"]
 
+                            cur.execute("INSERT OR REPLACE INTO player_index_ff VALUES(?, ?, ?, ?)",
+                                        (fleakicker_id, name, pos, team))
+                            conn.commit()
 
+                    else:
+                        pbar.write(f"Error leaguePlayers: {response_leaguePlayers.status_code}")
+
+                    pbar.update(1)     # move the progress bar forward
+                    time.sleep(0.5)      # sleep to avoid hitting rate limits
     conn.commit()
     conn.close()
 
@@ -133,8 +157,6 @@ def dbPlayerIndexNHLPop():
         pos TEXT,
         team TEXT
     )''')
-
-    forwards, defense, goalies = [], [], []
     teams = client.teams.teams()
     for team in teams:
         players = client.teams.team_roster(team_abbr=team['abbr'], season="20252026")
@@ -150,6 +172,18 @@ def dbPlayerIndexNHLPop():
             cur.execute("INSERT OR REPLACE INTO player_index_nhl VALUES(?, ?, ?, ?)", d)
             conn.commit()
     
+    # Standardize position names
+    cur.execute("""
+    UPDATE player_index_nhl
+    SET pos = 'LW'
+    WHERE pos = 'L';
+
+    UPDATE player_index_nhl
+    SET pos = 'RW'
+    WHERE pos = 'R';
+    """)
+
+
     conn.commit()
     conn.close()
 
@@ -185,7 +219,8 @@ def dbPlayerIndexLocalPop():
     conn.commit()
     conn.close()
 
-def dbTableWipe():
+# Wipe all tables in the database
+def dbTableWipeALL():
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
@@ -200,6 +235,19 @@ def dbTableWipe():
 
     print("Database wiped")
 
+# Wipe a specific table
+def dbTableWipe(table_name):
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+
+    cur.execute(f"DROP TABLE IF EXISTS {table_name}")
+
+    conn.commit()
+    conn.close()
+
+    print(f"Table {table_name} wiped")
+
+# Lets us inspect the database schema
 def inspect_db_schema(db_path):
     """Print all tables and their column names/types for a given SQLite database."""
     conn = sqlite3.connect(db_path)
@@ -221,10 +269,35 @@ def inspect_db_schema(db_path):
 
     conn.close()
 
+# Fixes for known data issues in the NHL player index
+def dbPlayerIndexNHLFix():
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+
+    # Standardize position names
+    cur.execute("""
+    UPDATE player_index_nhl
+    SET pos = 'LW'
+    WHERE pos = 'L';
+                """)
+
+    cur.execute("""
+    UPDATE player_index_nhl
+    SET pos = 'RW'
+    WHERE pos = 'R';
+    """)
+
+    conn.commit()
+    conn.close()
+
+
 # Run the functions
-dbTableWipe()
+
+# Only re-run these if needed. The scoring and player index functions only need to be run once to populate the database
+#apiScoringGet(leagueID)
 dbPlayerIndexPopFF()
-dbPlayerIndexNHLPop()
+#dbPlayerIndexNHLPop()
+dbPlayerIndexNHLFix()
 dbPlayerIndexLocalPop()
 #inspect_db_schema('fleakicker.db')
 '''
@@ -252,7 +325,31 @@ finally:
         conn.close()
 '''
 
-# Export the player_index_nhl table to a CSV file
+# Export the player_index_ff table to a CSV file
+try:
+    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
+
+    cur.execute(f"SELECT * FROM player_index_ff")
+    rows = cur.fetchall()
+
+    headers = [description[0] for description in cur.description]
+
+    with open('player_index_ff.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(headers)  # Write the header row
+        csvwriter.writerows(rows)    # Write all data rows
+    print("player_index_ff.csv created successfully.")
+except sqlite3.Error as e:
+    print(f"SQLite error: {e}")
+except IOError as e:
+    print(f"File I/O error: {e}")
+finally:
+    if conn: # type: ignore
+        conn.close()
+
+
+# Export the player_index_local table to a CSV file
 try:
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and

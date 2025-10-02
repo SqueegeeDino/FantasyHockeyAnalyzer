@@ -7,7 +7,7 @@
                 "C"
             ],
             "min": 2,
-            "max": 18,
+            "max": 8,
             "start": 2,
             "colors": [
                 "DRAFT_BOARD_PURPLE"
@@ -20,7 +20,7 @@
                 "LW"
             ],
             "min": 2,
-            "max": 18,
+            "max": 8,
             "start": 2,
             "colors": [
                 "DRAFT_BOARD_GREEN"
@@ -33,7 +33,7 @@
                 "RW"
             ],
             "min": 2,
-            "max": 18,
+            "max": 8,
             "start": 2,
             "colors": [
                 "DRAFT_BOARD_GREEN"
@@ -60,7 +60,7 @@
                 "D"
             ],
             "min": 4,
-            "max": 18,
+            "max": 10,
             "start": 4,
             "colors": [
                 "DRAFT_BOARD_BLUE"
@@ -89,11 +89,15 @@
                 "G"
             ],
             "min": 2,
-            "max": 18,
+            "max": 8,
             "start": 2,
             "colors": [
                 "DRAFT_BOARD_RED"
             ]
+        },
+        {
+            "label": "BN",
+            "max": 4
         },
         {
             "label": "IR",
@@ -105,17 +109,12 @@
                 "D",
                 "G"
             ],
-            "start": 2,
             "colors": [
                 "DRAFT_BOARD_GREEN",
                 "DRAFT_BOARD_BLUE",
                 "DRAFT_BOARD_RED",
                 "DRAFT_BOARD_PURPLE"
             ]
-        },
-        {
-            "label": "BN",
-            "max": 4
         },
         {
             "label": "TAXI",
@@ -179,10 +178,8 @@
                         "C",
                         "LW",
                         "RW",
-                        "D",
-                        "G"
+                        "D"
                     ],
-                    "applyToAll": true,
                     "template": "${points} point for every ${categorySingular}"
                 },
                 {
@@ -206,10 +203,8 @@
                         "C",
                         "LW",
                         "RW",
-                        "D",
-                        "G"
+                        "D"
                     ],
-                    "applyToAll": true,
                     "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
                 },
                 {
@@ -260,10 +255,8 @@
                         "C",
                         "LW",
                         "RW",
-                        "D",
-                        "G"
+                        "D"
                     ],
-                    "applyToAll": true,
                     "template": "${points} point for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
                 },
                 {
@@ -454,10 +447,8 @@
                         "C",
                         "LW",
                         "RW",
-                        "D",
-                        "G"
+                        "D"
                     ],
-                    "applyToAll": true,
                     "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
                 },
                 {
@@ -481,10 +472,8 @@
                         "C",
                         "LW",
                         "RW",
-                        "D",
-                        "G"
+                        "D"
                     ],
-                    "applyToAll": true,
                     "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
                 }
             ],
@@ -526,13 +515,8 @@
                     "forEvery": 1,
                     "description": "3 points for every Win",
                     "applyTo": [
-                        "C",
-                        "LW",
-                        "RW",
-                        "D",
                         "G"
                     ],
-                    "applyToAll": true,
                     "template": "${points} points for every ${categorySingular}"
                 },
                 {
@@ -553,13 +537,8 @@
                         "formatted": "-1.5"
                     },
                     "applyTo": [
-                        "C",
-                        "LW",
-                        "RW",
-                        "D",
                         "G"
                     ],
-                    "applyToAll": true,
                     "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
                 },
                 {
@@ -576,13 +555,8 @@
                     "forEvery": 1,
                     "description": "1 point for every OT Loss",
                     "applyTo": [
-                        "C",
-                        "LW",
-                        "RW",
-                        "D",
                         "G"
                     ],
-                    "applyToAll": true,
                     "template": "${points} point for every ${categorySingular}"
                 },
                 {
@@ -603,13 +577,8 @@
                         "formatted": "2.5"
                     },
                     "applyTo": [
-                        "C",
-                        "LW",
-                        "RW",
-                        "D",
                         "G"
                     ],
-                    "applyToAll": true,
                     "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
                 },
                 {
@@ -630,13 +599,8 @@
                         "formatted": "0.25"
                     },
                     "applyTo": [
-                        "C",
-                        "LW",
-                        "RW",
-                        "D",
                         "G"
                     ],
-                    "applyToAll": true,
                     "template": "${points} points for every ${forEvery} ${categoryPlural} (${pointsPer} per)"
                 },
                 {
@@ -768,7 +732,7 @@
     "numStarters": 14,
     "numBench": 4,
     "maxActive": 18,
-    "maxRosterSize": 20,
+    "maxRosterSize": 18,
     "allScoringRuleTypes": [
         {
             "template": "${points} points for every ${forEvery} ${categoryPlural}"
