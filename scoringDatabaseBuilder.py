@@ -346,7 +346,19 @@ def indexSearchPlayer(playerSearch, playerReturn):
     return result
     conn.close()
 
-
+def helperIDSP(pS, pR):
+    iR = indexSearchPlayer(pS, pR)
+    conn = sqlite3.connect("fleakicker.db")
+    cur = conn.cursor()
+    if len(iR) == 0: # type: ignore
+        return iR[0] # type: ignore
+    else:
+        for i, item in enumerate(iR): # type: ignore
+            res = cur.execute('''SELECT * from player_index_local WHERE nhl_id = ?''', (item,))
+            row = res.fetchall()
+            print(f"{i}: {row}")
+            #print(f"{i}: {item}")
+        
 
 # Run the functions
 
