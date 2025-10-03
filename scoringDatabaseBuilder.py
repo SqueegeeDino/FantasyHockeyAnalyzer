@@ -346,11 +346,12 @@ def indexSearchPlayer(playerSearch, playerReturn):
     return result
     conn.close()
 
+# Returns index 0 of list if list length is 1 (just to make the return not a list). If list length is >1 (eg. dupliate names) returns each with full index info
 def helperIDSP(pS, pR):
     iR = indexSearchPlayer(pS, pR)
     conn = sqlite3.connect("fleakicker.db")
     cur = conn.cursor()
-    if len(iR) == 0: # type: ignore
+    if len(iR) == 1: # type: ignore
         return iR[0] # type: ignore
     else:
         for i, item in enumerate(iR): # type: ignore
@@ -358,8 +359,8 @@ def helperIDSP(pS, pR):
             row = res.fetchall()
             print(f"{i}: {row}")
             #print(f"{i}: {item}")
-        
-
+        return iR
+          
 # Run the functions
 
 # Only re-run these if needed. The scoring and player index functions only need to be run once to populate the database

@@ -10,8 +10,30 @@ import requests as rq
 
 client = NHLClient()
 
-skater = sdb.indexSearchPlayer("Logan Cooley", "nhl_id")
-api_nhl = f"https://api-web.nhle.com/v1/player/8478402/landing"
+searchQuery = "Logan Cooley"
+skater = sdb.helperIDSP(searchQuery, "nhl_id")
+print(type(skater))
+if type(skater) is not int:
+    print(f"Multiple results returned for {searchQuery}. Pick from above list (EG 0 or 1)")
+    user_choice = ""
+    while True:
+        try:
+            # Get user input and convert to int
+            choice_index = int(input("Enter the number of your choice: "))
+
+            # Validate the input 
+            if 0 <= choice_index < len(skater): # type: ignore
+                skater = skater[choice_index] # type: ignore
+                break
+            else: 
+                print("Invalid choice. Try again.")
+        except ValueError:
+            print("Invalid input.")
+
+
+api_nhl = f"https://api-web.nhle.com/v1/player/{skater}/landing"
+
+print(f"Skater call: {skater}")
 
 responseNHL = rq.get(api_nhl)
 
