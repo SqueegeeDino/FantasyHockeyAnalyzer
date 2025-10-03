@@ -9,14 +9,12 @@ playerReturnTypes = ["local_id", "name", "pos", "team", "nhl_id", "ff_id"]
 def playerStatsGet(playerSearch, playerReturn):
     conn = sqlite3.connect("fleakicker.db")
     cur = conn.cursor()
-
+    result = []
     if playerReturn not in playerReturnTypes:
         raise ValueError(f"Invalid value: {playerReturn}. Must be one of {', '.join(playerReturnTypes)}")
     if isinstance(playerSearch, str):
-        print(f"{playerSearch}")
         condition = "name"
     elif isinstance(playerSearch, int):
-        print(f"{playerSearch} Int")
         condition = "nhl_id"
     else:
         print(f"{playerSearch} Invalid")
@@ -26,12 +24,13 @@ def playerStatsGet(playerSearch, playerReturn):
     found_players = cur.fetchall()
     if found_players:
         for p in found_players:
-            print(f" - {p[0]}")
+            p = p[0]
+            result.append(p)
     else:
         print(f"Player not found.")
-
+    return result
     conn.close()
     
 
 
-playerStatsGet("Elias Pettersson", "nhl_id")
+print(playerStatsGet("Elias Pettersson", "nhl_id"))
