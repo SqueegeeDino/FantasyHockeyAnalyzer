@@ -101,7 +101,7 @@ def dbScoringPop():
  # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info       
 
 # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
-def dbPlayerIndexPopFF():
+def dbPlayerIndexFFPop():
     dbTableWipe("player_index_ff")
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
@@ -187,7 +187,7 @@ def dbPlayerIndexNHLPop():
     conn.commit()
     conn.close()
 
-
+# dbPlayerIndexLocalPop creates and populates the player_index_local table by matching players from both FleaFlicker and NHL tables
 def dbPlayerIndexLocalPop():
     conn = sqlite3.connect("fleakicker.db")
     cur = conn.cursor()
@@ -290,87 +290,38 @@ def dbPlayerIndexNHLFix():
     conn.commit()
     conn.close()
 
+def dbTableToCsv(table):
+    try:
+        conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+        cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
+
+        cur.execute(f"SELECT * FROM {table}")
+        rows = cur.fetchall()
+
+        headers = [description[0] for description in cur.description]
+
+        with open(f'{table}.csv', 'w', newline='', encoding='utf-8') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(headers)  # Write the header row
+            csvwriter.writerows(rows)    # Write all data rows
+        print(f"{table}.csv created successfully.")
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    except IOError as e:
+        print(f"File I/O error: {e}")
+    finally:
+        if conn: # type: ignore
+            conn.close()
 
 # Run the functions
 
 # Only re-run these if needed. The scoring and player index functions only need to be run once to populate the database
 #apiScoringGet(leagueID)
-#dbPlayerIndexPopFF()
+#dbPlayerIndexFFPop()
 #dbPlayerIndexNHLPop()
-dbPlayerIndexNHLFix()
-dbPlayerIndexLocalPop()
+#dbPlayerIndexNHLFix()
+#dbPlayerIndexLocalPop()
 #inspect_db_schema('fleakicker.db')
-'''
-# Export the player_index_nhl table to a CSV file
-try:
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
-
-    cur.execute(f"SELECT * FROM player_index_nhl")
-    rows = cur.fetchall()
-
-    headers = [description[0] for description in cur.description]
-
-    with open('player_index_nhl.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(headers)  # Write the header row
-        csvwriter.writerows(rows)    # Write all data rows
-    print("player_index_nhl.csv created successfully.")
-except sqlite3.Error as e:
-    print(f"SQLite error: {e}")
-except IOError as e:
-    print(f"File I/O error: {e}")
-finally:
-    if conn: # type: ignore
-        conn.close()
-'''
-
-# Export the player_index_ff table to a CSV file
-try:
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
-
-    cur.execute(f"SELECT * FROM player_index_ff")
-    rows = cur.fetchall()
-
-    headers = [description[0] for description in cur.description]
-
-    with open('player_index_ff.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(headers)  # Write the header row
-        csvwriter.writerows(rows)    # Write all data rows
-    print("player_index_ff.csv created successfully.")
-except sqlite3.Error as e:
-    print(f"SQLite error: {e}")
-except IOError as e:
-    print(f"File I/O error: {e}")
-finally:
-    if conn: # type: ignore
-        conn.close()
-
-
-# Export the player_index_local table to a CSV file
-try:
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
-
-    cur.execute(f"SELECT * FROM player_index_local")
-    rows = cur.fetchall()
-
-    headers = [description[0] for description in cur.description]
-
-    with open('player_index_local.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(headers)  # Write the header row
-        csvwriter.writerows(rows)    # Write all data rows
-    print("player_index_local.csv created successfully.")
-except sqlite3.Error as e:
-    print(f"SQLite error: {e}")
-except IOError as e:
-    print(f"File I/O error: {e}")
-finally:
-    if conn: # type: ignore
-        conn.close()
 
 '''
 conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
