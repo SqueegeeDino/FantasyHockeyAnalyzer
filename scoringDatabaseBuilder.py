@@ -15,10 +15,10 @@ offsets = list(range(0, 1300, 30))  # Offsets for pagination
 client = NHLClient()
 
 
-# Progress math. Ignore
+# Variables mostly used in index population
 positions = ["c", "lw", "rw", "d", "g"]
-total_requests = len(positions) * (1300 // 30)  # 5 positions, 1300 players max, 30 per page
-current_request = 0
+total_requests = len(positions) * (1300 // 30)  # 5 positions, 1300 players max, 30 per page, fleakicker API specific
+current_request = 0 # Fleakicker request counter
 
 
 # Helper function to clean names
@@ -28,6 +28,7 @@ def clean_name(ntype, name):
     """
     return name[ntype]['default']
 
+'''=== BUILDING ==='''
 # apiScoringGet function grabs scoring values and puts them in a .json file. Only runs if such a file doesn't exist
 def apiScoringGet(leagueID):
     api_leagueScoring = f"https://www.fleaflicker.com/api/FetchLeagueRules?sport=NHL&league_id={leagueID}" # Store the endpoint
@@ -219,6 +220,7 @@ def dbPlayerIndexLocalPop():
     conn.commit()
     conn.close()
 
+'''=== MANAGING ==='''
 # Wipe all tables in the database
 def dbTableWipeALL():
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
@@ -290,6 +292,7 @@ def dbPlayerIndexNHLFix():
     conn.commit()
     conn.close()
 
+# Export a table to CSV
 def dbTableToCsv(table):
     try:
         conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
@@ -312,6 +315,38 @@ def dbTableToCsv(table):
     finally:
         if conn: # type: ignore
             conn.close()
+
+'''=== SEARCHING ==='''
+# Valid returns for searching the local index
+indexReturnTypes = ["local_id", "name", "pos", "team", "nhl_id", "ff_id"]
+
+# Single player search funtion. Searching by name or NHL_ID only legal methods.
+def indexSearchPlayer(playerSearch, playerReturn):
+    conn = sqlite3.connect("fleakicker.db")
+    cur = conn.cursor()
+    result = []
+    if playerReturn not in indexReturnTypes:
+        raise ValueError(f"Invalid value: {playerReturn}. Must be one of {', '.join(indexReturnTypes)}")
+    if isinstance(playerSearch, str):
+        condition = "name"
+    elif isinstance(playerSearch, int):
+        condition = "nhl_id"
+    else:
+        print(f"{playerSearch} Invalid")
+        return
+    
+    cur.execute(f"SELECT {playerReturn} FROM player_index_local WHERE {condition} = ?", (playerSearch,))
+    found_players = cur.fetchall()
+    if found_players:
+        for p in found_players:
+            p = p[0]
+            result.append(p)
+    else:
+        print(f"Player not found.")
+    return result
+    conn.close()
+
+
 
 # Run the functions
 
