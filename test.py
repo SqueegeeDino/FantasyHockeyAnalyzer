@@ -9,7 +9,7 @@ import scoringDatabaseBuilder as sdb
 import requests as rq
 
 client = NHLClient()
-endpoint = "https://api.nhle.com/stats/rest/en/skater/summary?limit=-1&&sort=points&cayenneExp=seasonId=20232024"
+endpoint = "https://api.nhle.com/stats/rest/en/skater/summary?limit=-1&&sort=points&cayenneExp=seasonId=20232024&game-type=2"
 
 responseEP = rq.get(endpoint)
 
