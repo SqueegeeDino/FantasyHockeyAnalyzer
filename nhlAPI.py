@@ -10,7 +10,7 @@ import requests as rq
 
 client = NHLClient()
 
-searchQuery = "Logan Cooley"
+searchQuery = "Devon Toews"
 skater = sdb.helperIDSP(searchQuery, "nhl_id")
 print(type(skater))
 if type(skater) is not int:
