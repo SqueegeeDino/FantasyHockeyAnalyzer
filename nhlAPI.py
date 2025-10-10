@@ -1,9 +1,9 @@
-import scoringDatabaseBuilder as sdb
+import databaseManager as dbm
 import requests as rq
 import sqlite3
 
-limit = 25 # -1 for all results
-season = 20222023
+limit = -1 # -1 for all results
+season = 20252026 # Current season
 
 # Base endpoint for NHL stats API
 endpointBase = "https://api.nhle.com/stats/rest/en"
@@ -27,7 +27,7 @@ def infer_type(value):
 # === DATABASE ===
 # Config
 DB_NAME = "fleakicker.db"
-TABLE_NAME_SKATER = "rawstats_dynamic_player"
+TABLE_NAME_SKATER = "rawstats_dynamic_skater"
 TABLE_NAME_GOALIE = "rawstats_dynamic_goalie"
 
 def rawstats_dynamic_player(database_name=DB_NAME, table_name=TABLE_NAME_SKATER, endpoint=endpointSkater):

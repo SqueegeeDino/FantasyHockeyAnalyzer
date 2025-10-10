@@ -10,6 +10,7 @@ import csv
 import time
 from tqdm import tqdm
 
+DB_NAME = "fleakicker.db"
 leagueID = 17602
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
 client = NHLClient()
@@ -360,38 +361,41 @@ def helperIDSP(pS, pR):
             print(f"{i}: {row}")
             #print(f"{i}: {item}")
         return iR
-          
-# Run the functions
+    conn.close()
 
-# Only re-run these if needed. The scoring and player index functions only need to be run once to populate the database
-#apiScoringGet(leagueID)
-#dbPlayerIndexFFPop()
-#dbPlayerIndexNHLPop()
-#dbPlayerIndexNHLFix()
-#dbPlayerIndexLocalPop()
-#inspect_db_schema('fleakicker.db')
+def rawStatsSearchPlayerName():
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
 
-'''
-conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
-res = cur.execute("SELECT * FROM score")
-rows = res.fetchall()
+    search_name = input("Enter player name: ").strip()
 
-print("\n--- Scores in database ---")
-for row in rows:
-    print(row)
+    query = f"""
+    SELECT playerId, "skaterFullName", teamAbbrevs, positionCode, goals, assists, points
+    FROM {"rawstats_dynamic_skater"}
+    WHERE "skaterFullName" LIKE ?
+    """
+    cur.execute(query, (f"%{search_name}%",))
+    rows = cur.fetchall()
 
-# Always close connection
-conn.close()'''
+    if not rows:
+        print("No player found.")
+        conn.close()
+        return
 
-'''
-conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch
-res = cur.execute("SELECT * FROM player_index_ff")
-rows = res.fetchall()
+    if len(rows) == 1:
+        player = rows[0]
+    else:
+        print(f"\nFound {len(rows)} players matching '{search_name}':\n")
+        for i, row in enumerate(rows, start=1):
+            playerId, name, team, pos, goals, assists, points = row
+            print(f"{i}. {name} ({team}) - {pos} | G:{goals}, A:{assists}, Pts:{points}")
+        print()
+        choice = input("Enter the number of the player you want to view: ").strip()
+        while not choice.isdigit() or not (1 <= int(choice) <= len(rows)):
+            choice = input("Invalid choice. Please enter a valid number: ").strip()
+        player = rows[int(choice) - 1]
 
-print("\n--- Players in Database: FleaFlicker ---")
-for row in rows:
-    print(row)
+    print("\nSelected player details:")
+    print(player)
 
-conn.close()'''
+    conn.close()
