@@ -30,38 +30,37 @@ def clean_name(ntype, name):
     return name[ntype]['default']
 
 '''=== BUILDING ==='''
-# apiScoringGet function grabs scoring values and puts them in a .json file. Only runs if such a file doesn't exist
+# apiScoringGet function grabs scoring values and puts them in a .json file
 def apiScoringGet(leagueID):
     api_leagueScoring = f"https://www.fleaflicker.com/api/FetchLeagueRules?sport=NHL&league_id={leagueID}" # Store the endpoint
     response_leagueScoring = rq.get(api_leagueScoring) # Use the requests.get method to collect the data as a response
-    if os.path.isfile("./FantasyHockeyAnalyzer/league_rules.json") == False:
-        if response_leagueScoring.status_code == 200: # Check for successful response from API
-            data_leagueScoring = response_leagueScoring.json() # Collect the json data using the METHOD, store it in variable "data"
-            # Write JSON to file
-            with open("league_rules.json", "w") as f: # With function "opens" and "closes" automatically
-                json.dump(data_leagueScoring, f, indent=4)  # indent for readability
+    if response_leagueScoring.status_code == 200: # Check for successful response from API
+        data_leagueScoring = response_leagueScoring.json() # Collect the json data using the METHOD, store it in variable "data"
+        # Write JSON to file
+        with open("league_rules.json", "w") as f: # With function "opens" and "closes" automatically
+            json.dump(data_leagueScoring, f, indent=4)  # indent for readability
 
-            for pos in data_leagueScoring["rosterPositions"]: # Print to terminal specific information
-                label = pos.get("label")
-                min_val = pos.get("min")
-                max_val = pos.get("max")
-                start = pos.get("start")
-                print(f"{label}: start={start}, min={min_val}, max={max_val}")
-            
-            for group in data_leagueScoring["groups"]: # Search the JSON for the "groups" header and loop through each
-                print(f"\n{group['label']}") # Prints the label of the group, for instance "Goalies"
-                if "scoringRules" in group: # Makes sure the group has scoringRules in it
-                    for rule in group["scoringRules"]: # Loop through the scoringRules
-                        cat = rule["category"]["abbreviation"] # Get the category abbreviation, for instance "SHP" for Short Handed Points. Side by side items lets us step down without a new loop
-                        desc = rule["description"] # Gets the decription item of the category
-                        if rule["forEvery"] == 1: # This checks to see if it's a simple pts per 1 score, or if it's something like "4 pts for every 10"
-                            pts = rule["points"]["value"]
-                            print("Pts true")
-                        else: # This is where we check the pt value for a single instance of the event, in case it's a pts per multiple like "4 pts for every 10"
-                            pts = rule["pointsPer"]["value"]
-                        print(f"  {cat}: {desc} | {pts}") # Print it all nicely
-        else:
-            print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
+        for pos in data_leagueScoring["rosterPositions"]: # Print to terminal specific information
+            label = pos.get("label")
+            min_val = pos.get("min")
+            max_val = pos.get("max")
+            start = pos.get("start")
+            print(f"{label}: start={start}, min={min_val}, max={max_val}")
+        
+        for group in data_leagueScoring["groups"]: # Search the JSON for the "groups" header and loop through each
+            print(f"\n{group['label']}") # Prints the label of the group, for instance "Goalies"
+            if "scoringRules" in group: # Makes sure the group has scoringRules in it
+                for rule in group["scoringRules"]: # Loop through the scoringRules
+                    cat = rule["category"]["abbreviation"] # Get the category abbreviation, for instance "SHP" for Short Handed Points. Side by side items lets us step down without a new loop
+                    desc = rule["description"] # Gets the decription item of the category
+                    if rule["forEvery"] == 1: # This checks to see if it's a simple pts per 1 score, or if it's something like "4 pts for every 10"
+                        pts = rule["points"]["value"]
+                        print("Pts true")
+                    else: # This is where we check the pt value for a single instance of the event, in case it's a pts per multiple like "4 pts for every 10"
+                        pts = rule["pointsPer"]["value"]
+                    print(f"  {cat}: {desc} | {pts}") # Print it all nicely
+    else:
+        print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
 
 # dbScoringPop function generates and populates the fleakicker.db database with a scoring table based on the .json
 def dbScoringPop():
@@ -98,15 +97,14 @@ def dbScoringPop():
                 conn.commit()
 
     conn.commit()
-    conn.close()
-
- # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info       
+    conn.close()       
 
 # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
-def dbPlayerIndexFFPop():
-    dbTableWipe("player_index_ff")
+def dbPlayerIndexFFPop(faStatus: bool):
+    statusStr = str(faStatus).lower() # Convert the boolean to a lowercase string for the API call
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+    failCount = 0
 
     cur.execute('''CREATE TABLE IF NOT EXISTS player_index_ff (
         fleakicker_id INTEGER UNIQUE, 
@@ -115,11 +113,18 @@ def dbPlayerIndexFFPop():
         team TEXT
         )            
     ''') # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
+    cur.execute('''CREATE TABLE IF NOT EXISTS player_index_ff_fa (
+        fleakicker_id INTEGER UNIQUE, 
+        name TEXT,
+        pos TEXT,
+        team TEXT
+        )            
+    ''') # Create the table for free agents
 
     with tqdm(total=total_requests, desc="Fetching Fleaflicker Players", unit="req", colour="green") as pbar:
             for ipos in positions:
                 for i in offsets:
-                    api_leaguePlayers = f"https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id={leagueID}&sort=SORT_DRAFT_RANKING&result_offset={i}&filter.position_eligibility={ipos}"
+                    api_leaguePlayers = f"https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id={leagueID}&sort=SORT_DRAFT_RANKING&result_offset={i}&filter.position_eligibility={ipos}&filter.free_agent_only={statusStr}"
                     response_leaguePlayers = rq.get(api_leaguePlayers, timeout=10)
 
                     if response_leaguePlayers.status_code == 200:
@@ -127,6 +132,10 @@ def dbPlayerIndexFFPop():
                         if "players" not in data:
                             pbar.write(f"No players found for position {ipos} at offset {i}")
                             pbar.update(1)
+                            failCount += 1
+                            if failCount >= 3:  # If 3 consecutive failures, break out of both loops
+                                pbar.write("Multiple consecutive failures, stopping further requests.")
+                                return
                             continue
 
                         for player in data["players"]:
@@ -134,13 +143,21 @@ def dbPlayerIndexFFPop():
                             name = player["proPlayer"]["nameFull"]
                             pos = player["proPlayer"]["position"]
                             team = player["proPlayer"]["proTeamAbbreviation"]
-
-                            cur.execute("INSERT OR REPLACE INTO player_index_ff VALUES(?, ?, ?, ?)",
+                            if faStatus:
+                                cur.execute("INSERT OR REPLACE INTO player_index_ff_fa VALUES(?, ?, ?, ?)",
                                         (fleakicker_id, name, pos, team))
-                            conn.commit()
+                                conn.commit()
+                            else:
+                                cur.execute("INSERT OR REPLACE INTO player_index_ff VALUES(?, ?, ?, ?)",
+                                            (fleakicker_id, name, pos, team))
+                                conn.commit()
 
                     else:
                         pbar.write(f"Error leaguePlayers: {response_leaguePlayers.status_code}")
+                        failCount += 1
+                        if failCount >= 3:  # If 3 consecutive failures, break out of both loops
+                            pbar.write("Multiple consecutive failures, stopping further requests.")
+                            return
 
                     pbar.update(1)     # move the progress bar forward
                     time.sleep(0.5)      # sleep to avoid hitting rate limits
@@ -348,8 +365,8 @@ def indexSearchPlayer(playerSearch, playerReturn):
     conn.close()
 
 # Returns index 0 of list if list length is 1 (just to make the return not a list). If list length is >1 (eg. dupliate names) returns each with full index info
-def helperIDSP(pS, pR):
-    iR = indexSearchPlayer(pS, pR)
+def helperIDSP(playerSearch, playerReturn):
+    iR = indexSearchPlayer(playerSearch, playerReturn)
     conn = sqlite3.connect("fleakicker.db")
     cur = conn.cursor()
     if len(iR) == 1: # type: ignore

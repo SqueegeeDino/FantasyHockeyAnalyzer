@@ -9,5 +9,7 @@ TABLE_NAME = "rawstats_dynamic_player"
 
 #nhlAPI.rawstats_dynamic_player()
 
-
+#dbm.dbPlayerIndexFFPop(True)
+#dbm.dbScoringPop()
+dbm.dbTableToCsv("score")
 dbm.inspect_db_schema(DB_NAME)
