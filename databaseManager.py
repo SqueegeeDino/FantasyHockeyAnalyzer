@@ -196,7 +196,8 @@ def dbPlayerIndexNHLPop():
     UPDATE player_index_nhl
     SET pos = 'LW'
     WHERE pos = 'L';
-
+                """)
+    cur.execute("""
     UPDATE player_index_nhl
     SET pos = 'RW'
     WHERE pos = 'R';
@@ -239,69 +240,98 @@ def dbPlayerIndexLocalPop():
     conn.close()
 
 # Builds a unified view combining both skater and goalie stats with Fantasy Points calculated dynamically using the 'score' table
-def dbBuildUnifiedFantasyView():
+def dbBuildUnifiedFantasyView(debug=True):
     """
-    Creates a unified SQL view combining both skater and goalie stats
-    with Fantasy Points calculated dynamically using the 'score' table.
-    Includes:
-        - playerType (Skater/Goalie)
-        - freeAgent flag (True/False from player_index_ff_fa)
-        - fantasy_points_total
-        - fantasy_points_per_game
+    Builds unified_fantasy_points view and optionally prints debug info.
     """
     conn = sqlite3.connect(DB_NAME)
     cur = conn.cursor()
 
-    # --- Fetch scoring rules ---
+    # === Fetch scoring rules ===
     cur.execute("SELECT name, value FROM score")
     scoring_rules = cur.fetchall()
-
     if not scoring_rules:
         print("⚠️ No scoring rules found. Run dbScoringPop() first.")
         conn.close()
         return
 
-    # --- Shared fields ---
-    base_fields = [
-        "ps.playerId",
-        "ps.skaterFullName",
-        "ps.teamAbbrevs",
-        "ps.positionCode",
-        "ps.gamesPlayed"
-    ]
+    # === Build total fantasy points formula ===
+    # === Column name translation ===
+    STAT_MAP = {
+        "G": "goals",
+        "Ast": "assists",
+        "PPP": "ppPoints",
+        "SHP": "shPoints",
+        "SOG": "shots",
+        "PIM": "penaltyMinutes",
+        "Hit": "hits",
+        "Blk": "blocks",
+        "W": "wins",
+        "L": "losses",
+        "OTL": "otLosses",
+        "SO": "shutouts",
+        "SV": "saves",
+        "GA": "goalsAgainst"
+    }
 
-    # --- Build formulas dynamically from the 'score' table ---
+    # === Build translated formula ===
     total_formula = []
-    for stat_name, multiplier in scoring_rules:
-        total_formula.append(f"(COALESCE(ps.\"{stat_name}\", 0) * {multiplier})")
+    for stat, value in scoring_rules:
+        column_name = STAT_MAP.get(stat, stat)  # fall back to raw name if unmapped
+        total_formula.append(f"(COALESCE(ps.\"{column_name}\", 0) * {value})")
 
     total_sum_expr = " + ".join(total_formula)
+    if debug:
+        print("🧾 Mapped scoring columns:")
+        for stat, value in scoring_rules:
+            mapped = STAT_MAP.get(stat, stat)
+            print(f" - {stat} → {mapped} ({value})")
+        print("==============================\n")
 
-    # --- Skater subquery ---
+    if debug:
+        print("\n==============================")
+        print("🎯 Scoring stats detected:")
+        for stat, val in scoring_rules:
+            print(f" - {stat}: {val}")
+        print("==============================\n")
+
+    # === Skater subquery ===
     skater_query = f"""
     SELECT
-        {' ,'.join(base_fields)},
+        ps.playerId AS nhl_id,
+        pl.ff_id,
+        ps.skaterFullName AS playerFullName,
+        ps.teamAbbrevs,
+        ps.positionCode,
+        ps.gamesPlayed,
         'Skater' AS playerType,
-        CASE WHEN fa.playerId IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
         ({total_sum_expr}) AS fantasy_points_total,
         ROUND(({total_sum_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
-    FROM rawstats_dynamic_skater ps
-    LEFT JOIN player_index_ff_fa fa ON ps.playerId = fa.playerId
+    FROM rawstats_dynamic_player ps
+    LEFT JOIN player_index_local pl ON ps.playerId = pl.nhl_id
+    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
     """
 
-    # --- Goalie subquery ---
+    # === Goalie subquery ===
+    # Note: doubled single quotes around 'G' ensure correct quoting inside f-string
     goalie_query = f"""
     SELECT
-        {' ,'.join(base_fields)},
+        ps.playerId AS nhl_id,
+        pl.ff_id,
+        ps.goalieFullName AS playerFullName,
+        ps.teamAbbrevs,
+        'G' AS positionCode,
+        ps.gamesPlayed,
         'Goalie' AS playerType,
-        CASE WHEN fa.playerId IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
         ({total_sum_expr}) AS fantasy_points_total,
         ROUND(({total_sum_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
     FROM rawstats_dynamic_goalie ps
-    LEFT JOIN player_index_ff_fa fa ON ps.playerId = fa.playerId
+    LEFT JOIN player_index_local pl ON ps.playerId = pl.nhl_id
+    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
     """
 
-    # --- Unified view combining both ---
     unified_sql = f"""
     CREATE VIEW IF NOT EXISTS unified_fantasy_points AS
     {skater_query}
@@ -309,12 +339,27 @@ def dbBuildUnifiedFantasyView():
     {goalie_query};
     """
 
+    if debug:
+        print("🧩 --- SKATER QUERY ---")
+        print(skater_query)
+        print("\n🧩 --- GOALIE QUERY ---")
+        print(goalie_query)
+        print("\n🧩 --- FULL CREATE VIEW SQL ---")
+        print(unified_sql)
+        print("==============================\n")
+
+    # Recreate the view
     cur.execute("DROP VIEW IF EXISTS unified_fantasy_points")
-    cur.execute(unified_sql)
+    try:
+        cur.execute(unified_sql)
+    except sqlite3.Error as e:
+        print("❌ SQL execution failed:", e)
+        conn.close()
+        raise
+
     conn.commit()
     conn.close()
-
-    print("✅ Created view 'unified_fantasy_points' with playerType, freeAgent, total & per-game Fantasy Points.")
+    print("✅ Created unified_fantasy_points view with debugging output.")
 
 '''=== MANAGING ==='''
 # Wipe all tables in the database
@@ -466,7 +511,7 @@ def rawStatsSearchPlayerName():
 
     query = f"""
     SELECT playerId, "skaterFullName", teamAbbrevs, positionCode, goals, assists, points
-    FROM {"rawstats_dynamic_skater"}
+    FROM {"rawstats_dynamic_player"}
     WHERE "skaterFullName" LIKE ?
     """
     cur.execute(query, (f"%{search_name}%",))
