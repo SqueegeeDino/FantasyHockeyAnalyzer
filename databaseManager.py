@@ -11,7 +11,7 @@ import time
 from tqdm import tqdm
 
 DB_NAME = "fleakicker.db"
-leagueID = 17602
+leagueID = 12100
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
 client = NHLClient()
 
@@ -237,6 +237,84 @@ def dbPlayerIndexLocalPop():
 
     conn.commit()
     conn.close()
+
+# Builds a unified view combining both skater and goalie stats with Fantasy Points calculated dynamically using the 'score' table
+def dbBuildUnifiedFantasyView():
+    """
+    Creates a unified SQL view combining both skater and goalie stats
+    with Fantasy Points calculated dynamically using the 'score' table.
+    Includes:
+        - playerType (Skater/Goalie)
+        - freeAgent flag (True/False from player_index_ff_fa)
+        - fantasy_points_total
+        - fantasy_points_per_game
+    """
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # --- Fetch scoring rules ---
+    cur.execute("SELECT name, value FROM score")
+    scoring_rules = cur.fetchall()
+
+    if not scoring_rules:
+        print("⚠️ No scoring rules found. Run dbScoringPop() first.")
+        conn.close()
+        return
+
+    # --- Shared fields ---
+    base_fields = [
+        "ps.playerId",
+        "ps.skaterFullName",
+        "ps.teamAbbrevs",
+        "ps.positionCode",
+        "ps.gamesPlayed"
+    ]
+
+    # --- Build formulas dynamically from the 'score' table ---
+    total_formula = []
+    for stat_name, multiplier in scoring_rules:
+        total_formula.append(f"(COALESCE(ps.\"{stat_name}\", 0) * {multiplier})")
+
+    total_sum_expr = " + ".join(total_formula)
+
+    # --- Skater subquery ---
+    skater_query = f"""
+    SELECT
+        {' ,'.join(base_fields)},
+        'Skater' AS playerType,
+        CASE WHEN fa.playerId IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        ({total_sum_expr}) AS fantasy_points_total,
+        ROUND(({total_sum_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
+    FROM rawstats_dynamic_skater ps
+    LEFT JOIN player_index_ff_fa fa ON ps.playerId = fa.playerId
+    """
+
+    # --- Goalie subquery ---
+    goalie_query = f"""
+    SELECT
+        {' ,'.join(base_fields)},
+        'Goalie' AS playerType,
+        CASE WHEN fa.playerId IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        ({total_sum_expr}) AS fantasy_points_total,
+        ROUND(({total_sum_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
+    FROM rawstats_dynamic_goalie ps
+    LEFT JOIN player_index_ff_fa fa ON ps.playerId = fa.playerId
+    """
+
+    # --- Unified view combining both ---
+    unified_sql = f"""
+    CREATE VIEW IF NOT EXISTS unified_fantasy_points AS
+    {skater_query}
+    UNION ALL
+    {goalie_query};
+    """
+
+    cur.execute("DROP VIEW IF EXISTS unified_fantasy_points")
+    cur.execute(unified_sql)
+    conn.commit()
+    conn.close()
+
+    print("✅ Created view 'unified_fantasy_points' with playerType, freeAgent, total & per-game Fantasy Points.")
 
 '''=== MANAGING ==='''
 # Wipe all tables in the database
