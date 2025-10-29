@@ -62,6 +62,77 @@ def apiScoringGet(leagueID):
     else:
         print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
 
+def ensure_hits_blocks_columns():
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # We try adding. If column already exists, SQLite will throw,
+    # so we catch and ignore.
+    try:
+        cur.execute("ALTER TABLE rawstats_dynamic_player ADD COLUMN hits INTEGER;")
+    except sqlite3.OperationalError:
+        pass
+
+    try:
+        cur.execute("ALTER TABLE rawstats_dynamic_player ADD COLUMN blocks INTEGER;")
+    except sqlite3.OperationalError:
+        pass
+
+    conn.commit()
+    conn.close()
+
+def fetch_hits_blocks_for_player(player_id: int, season_id: int):
+    # PSEUDOCODE: you’ll need to confirm the real URL/params
+    # based on that “get_NHL_Player_game_logs” description.
+    #
+    # This is what it conceptually looks like:
+    #
+    endpoint = "https://api.bloodlinealpha.com/nhl/players/game-log?playerId={}&seasonId=20242025&gameTypeId=2&isAggregate=true&isAscending=false&properties=hits,blockedShots"  # <- fill in real endpoint
+    params = {
+        "playerId": player_id,
+        "seasonId": season_id,
+        "gameTypeId": 2,     # regular season
+        "isAggregate": True,
+        "properties": "hits,blockedShots"
+    }
+
+    resp = rq.get(endpoint, params=params)
+    if resp.status_code != 200:
+        return None
+
+    js = resp.json()
+
+    # We expect something like { "hits": 143, "blockedShots": 82 }
+    hits = js.get("hits", 0)
+    blocks = js.get("blockedShots", 0)
+
+    return hits, blocks
+
+# Add data from fetch_hits_blocks_for_player to the rawstats_dynamic_player table
+def populate_hits_blocks():
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # Get all skaters we know about
+    cur.execute("SELECT playerId, seasonId FROM rawstats_dynamic_player")
+    players = cur.fetchall()
+
+    for player_id, season_id in players:
+        result = fetch_hits_blocks_for_player(player_id, season_id)
+        if result is None:
+            continue
+        hits, blocks = result
+
+        cur.execute("""
+            UPDATE rawstats_dynamic_player
+            SET hits = ?, blocks = ?
+            WHERE playerId = ?
+        """, (hits, blocks, player_id))
+
+    conn.commit()
+    conn.close()
+    print("✅ hits/blocks populated")
+
 # dbScoringPop function generates and populates the fleakicker.db database with a scoring table based on the .json
 def dbScoringPop():
     conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
@@ -327,7 +398,7 @@ def dbBuildUnifiedFantasyView(debug=True):
         CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
         ({skater_total_expr}) AS fantasy_points_total,
         ROUND(({skater_total_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
-    FROM rawstats_dynamic_player ps
+    FROM rawstats_dynamic_skater ps
     LEFT JOIN player_index_local pl ON ps.playerId = pl.nhl_id
     LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
     """

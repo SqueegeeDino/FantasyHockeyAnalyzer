@@ -15,6 +15,7 @@ endpointBase = "https://api.nhle.com/stats/rest/en"
 endpointSkater = f"{endpointBase}/skater/summary?limit={limit}&sort=points&dir=desc&cayenneExp=seasonId={season} and gameTypeId=2"
 endpointGoalie = f"{endpointBase}/goalie/summary?limit={limit}&sort=wins&dir=desc&cayenneExp=seasonId={season} and gameTypeId=2"
 
+
 # Map Python types → SQLite types
 def infer_type(value):
     if isinstance(value, int):
@@ -113,3 +114,13 @@ def rawstats_dynamic_goalie(database_name=DB_NAME, table_name=TABLE_NAME_GOALIE,
         conn.close()
     else:
         print(f"Error API call: {reGoalie.status_code}")
+
+# === Testing ===
+# /v1/edge/skater-detail/{player-id}/{season}/{game-type}
+def nhlTest():
+    reTest = rq.get("https://api-web.nhle.com/v1/edge/skater-detail/8478402/20252026/2")
+    if reTest.status_code == 200:
+        testData = reTest.json
+        print(testData)
+    else:
+        print(f"Error: {reTest.status_code}") 
