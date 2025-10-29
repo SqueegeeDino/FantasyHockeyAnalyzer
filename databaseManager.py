@@ -375,20 +375,38 @@ def dbBuildUnifiedFantasyView(debug=True):
 
 '''=== MANAGING ==='''
 # Wipe all tables in the database
-def dbTableWipeALL():
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+def dbWipeAll(db_name="fleakicker.db"):
+    """
+    Fully wipes a SQLite database (tables + views) while skipping protected system tables.
+    """
+    conn = sqlite3.connect(db_name)
+    cur = conn.cursor()
 
-    cur.execute("DROP TABLE IF EXISTS score")
-    cur.execute("DROP TABLE IF EXISTS player_index")
-    cur.execute("DROP TABLE IF EXISTS player_index_ff")
-    cur.execute("DROP TABLE IF EXISTS player_index_nhl")
-    cur.execute("DROP TABLE IF EXISTS player_index_local")
+    # Disable foreign key checks
+    cur.execute("PRAGMA foreign_keys = OFF;")
 
+    # Fetch all tables and views
+    cur.execute("SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view');")
+    objects = cur.fetchall()
+
+    if not objects:
+        print("⚠️ No tables or views found in database.")
+    else:
+        print(f"🧨 Found {len(objects)} objects to drop:")
+        for name, obj_type in objects:
+            if name == "sqlite_sequence":  # Skip SQLite's internal autoincrement tracker
+                print(f"  - Skipping internal system table: {name}")
+                continue
+            print(f"  - Dropping {obj_type}: {name}")
+            cur.execute(f"DROP {obj_type.upper()} IF EXISTS {name}")
+
+    # Re-enable and vacuum
+    cur.execute("PRAGMA foreign_keys = ON;")
     conn.commit()
+    cur.execute("VACUUM;")
     conn.close()
 
-    print("Database wiped")
+    print("✅ Database fully wiped and vacuumed.")
 
 # Wipe a specific table
 def dbTableWipe(table_name):
