@@ -241,13 +241,10 @@ def dbPlayerIndexLocalPop():
 
 # Builds a unified view combining both skater and goalie stats with Fantasy Points calculated dynamically using the 'score' table
 def dbBuildUnifiedFantasyView(debug=True):
-    """
-    Builds unified_fantasy_points view and optionally prints debug info.
-    """
     conn = sqlite3.connect(DB_NAME)
     cur = conn.cursor()
 
-    # === Fetch scoring rules ===
+    # 1. Load scoring rules from DB
     cur.execute("SELECT name, value FROM score")
     scoring_rules = cur.fetchall()
     if not scoring_rules:
@@ -255,47 +252,69 @@ def dbBuildUnifiedFantasyView(debug=True):
         conn.close()
         return
 
-    # === Build total fantasy points formula ===
-    # === Column name translation ===
-    STAT_MAP = {
-        "G": "goals",
-        "Ast": "assists",
-        "PPP": "ppPoints",
-        "SHP": "shPoints",
-        "SOG": "shots",
-        "PIM": "penaltyMinutes",
-        "Hit": "hits",
-        "Blk": "blocks",
-        "W": "wins",
-        "L": "losses",
-        "OTL": "otLosses",
-        "SO": "shutouts",
-        "SV": "saves",
-        "GA": "goalsAgainst"
+    # 2. Alias/mapping: scoring stat name -> actual column + which tables it applies to
+    STAT_ALIAS_MAP = {
+        "G":          {"col": "goals",            "tables": ["skater"]},
+        "Goals":      {"col": "goals",            "tables": ["skater"]},
+
+        "Ast":        {"col": "assists",          "tables": ["skater"]},
+        "Assists":    {"col": "assists",          "tables": ["skater"]},
+
+        "PPP":        {"col": "ppPoints",         "tables": ["skater"]},
+        "PPPoints":   {"col": "ppPoints",         "tables": ["skater"]},
+        "Power Play Points": {"col": "ppPoints",  "tables": ["skater"]},
+
+        "SHP":        {"col": "shPoints",         "tables": ["skater"]},
+        "Short Handed Points": {"col": "shPoints","tables": ["skater"]},
+
+        "SOG":        {"col": "shots",            "tables": ["skater"]},
+        "Shots On Goal": {"col": "shots",         "tables": ["skater"]},
+
+        "PIM":        {"col": "penaltyMinutes",   "tables": ["skater"]},
+
+        # If/when you add these columns to rawstats_dynamic_player, you can re-enable:
+        # "Hit":        {"col": "hits",             "tables": ["skater"]},
+        # "Blk":        {"col": "blocks",           "tables": ["skater"]},
+
+        "W":          {"col": "wins",             "tables": ["goalie"]},
+        "L":          {"col": "losses",           "tables": ["goalie"]},
+        "OTL":        {"col": "otLosses",         "tables": ["goalie"]},
+        "SO":         {"col": "shutouts",         "tables": ["goalie"]},
+        "SV":         {"col": "saves",            "tables": ["goalie"]},
+        "GA":         {"col": "goalsAgainst",     "tables": ["goalie"]},
     }
 
-    # === Build translated formula ===
-    total_formula = []
-    for stat, value in scoring_rules:
-        column_name = STAT_MAP.get(stat, stat)  # fall back to raw name if unmapped
-        total_formula.append(f"(COALESCE(ps.\"{column_name}\", 0) * {value})")
+    # 3. Build per-side formulas
+    skater_terms = []
+    goalie_terms = []
 
-    total_sum_expr = " + ".join(total_formula)
-    if debug:
-        print("🧾 Mapped scoring columns:")
-        for stat, value in scoring_rules:
-            mapped = STAT_MAP.get(stat, stat)
-            print(f" - {stat} → {mapped} ({value})")
-        print("==============================\n")
+    for stat_name, multiplier in scoring_rules:
+        mapping = STAT_ALIAS_MAP.get(stat_name)
 
-    if debug:
-        print("\n==============================")
-        print("🎯 Scoring stats detected:")
-        for stat, val in scoring_rules:
-            print(f" - {stat}: {val}")
-        print("==============================\n")
+        if mapping is None:
+            # Scoring rule we don't know how to map yet – skip gracefully
+            if debug:
+                print(f"⚠️ Skipping stat '{stat_name}' (no mapping)")
+            continue
 
-    # === Skater subquery ===
+        col = mapping["col"]
+        applies_to = mapping["tables"]
+
+        if "skater" in applies_to:
+            skater_terms.append(f"(COALESCE(ps.\"{col}\", 0) * {multiplier})")
+        if "goalie" in applies_to:
+            goalie_terms.append(f"(COALESCE(ps.\"{col}\", 0) * {multiplier})")
+
+    # Safety fallbacks so we don't build empty expressions
+    if not skater_terms:
+        skater_terms = ["0"]
+    if not goalie_terms:
+        goalie_terms = ["0"]
+
+    skater_total_expr = " + ".join(skater_terms)
+    goalie_total_expr = " + ".join(goalie_terms)
+
+    # 4. Build skater subquery
     skater_query = f"""
     SELECT
         ps.playerId AS nhl_id,
@@ -306,15 +325,14 @@ def dbBuildUnifiedFantasyView(debug=True):
         ps.gamesPlayed,
         'Skater' AS playerType,
         CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
-        ({total_sum_expr}) AS fantasy_points_total,
-        ROUND(({total_sum_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
+        ({skater_total_expr}) AS fantasy_points_total,
+        ROUND(({skater_total_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
     FROM rawstats_dynamic_player ps
     LEFT JOIN player_index_local pl ON ps.playerId = pl.nhl_id
     LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
     """
 
-    # === Goalie subquery ===
-    # Note: doubled single quotes around 'G' ensure correct quoting inside f-string
+    # 5. Build goalie subquery
     goalie_query = f"""
     SELECT
         ps.playerId AS nhl_id,
@@ -325,8 +343,8 @@ def dbBuildUnifiedFantasyView(debug=True):
         ps.gamesPlayed,
         'Goalie' AS playerType,
         CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
-        ({total_sum_expr}) AS fantasy_points_total,
-        ROUND(({total_sum_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
+        ({goalie_total_expr}) AS fantasy_points_total,
+        ROUND(({goalie_total_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game
     FROM rawstats_dynamic_goalie ps
     LEFT JOIN player_index_local pl ON ps.playerId = pl.nhl_id
     LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
@@ -340,26 +358,20 @@ def dbBuildUnifiedFantasyView(debug=True):
     """
 
     if debug:
-        print("🧩 --- SKATER QUERY ---")
-        print(skater_query)
-        print("\n🧩 --- GOALIE QUERY ---")
-        print(goalie_query)
-        print("\n🧩 --- FULL CREATE VIEW SQL ---")
+        print("\n🧾 Skater fantasy expression:")
+        print(skater_total_expr)
+        print("\n🧾 Goalie fantasy expression:")
+        print(goalie_total_expr)
+        print("\n🧩 FINAL VIEW SQL:")
         print(unified_sql)
-        print("==============================\n")
+        print("====================================================\n")
 
-    # Recreate the view
     cur.execute("DROP VIEW IF EXISTS unified_fantasy_points")
-    try:
-        cur.execute(unified_sql)
-    except sqlite3.Error as e:
-        print("❌ SQL execution failed:", e)
-        conn.close()
-        raise
-
+    cur.execute(unified_sql)
     conn.commit()
     conn.close()
-    print("✅ Created unified_fantasy_points view with debugging output.")
+
+    print("✅ Created unified_fantasy_points view (modular mapped stats).")
 
 '''=== MANAGING ==='''
 # Wipe all tables in the database

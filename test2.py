@@ -6,6 +6,7 @@ import pandas as pd
 
 DB_NAME = "fleakicker.db"
 TABLE_NAME = "rawstats_dynamic_player"
+leagueID = 12100
 
 def testQuery():
     # --- Configuration ---
@@ -27,14 +28,42 @@ def testQuery():
     print(f"✅ Exported {len(df)} rows from '{TABLE_NAME}' to '{OUTPUT_FILE}'")
     conn.close()
 
+OUTPUT_FILE = "fantasy_leaderboard.csv"
+
+def exportFantasyLeaderboard():
+    conn = sqlite3.connect(DB_NAME)
+
+    query = """
+    SELECT
+        playerFullName,
+        teamAbbrevs,
+        positionCode,
+        playerType,
+        freeAgent,
+        gamesPlayed,
+        fantasy_points_total,
+        fantasy_points_per_game
+    FROM unified_fantasy_points
+    ORDER BY fantasy_points_per_game DESC
+    LIMIT 50
+    """
+
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+
+    df.to_csv(OUTPUT_FILE, index=False)
+    print(f"✅ Exported {len(df)} rows to {OUTPUT_FILE}")
 #nhlAPI.rawstats_dynamic_player()
 
-#dbm.dbPlayerIndexFFPop(True)
-#dbm.dbPlayerIndexFFPop(False)
-#dbm.dbScoringPop()
-#dbm.dbTableToCsv("score")
-#dbm.dbPlayerIndexNHLPop()
-#dbm.dbPlayerIndexNHLFix()
-dbm.dbBuildUnifiedFantasyView(debug=True)
-dbm.inspect_db_schema(DB_NAME)
-testQuery()
+dbm.apiScoringGet(leagueID)
+dbm.dbScoringPop() # Build scoring dataset
+dbm.dbPlayerIndexFFPop(True) # Get FleaFlicker free agent list
+dbm.dbPlayerIndexFFPop(False) # Get FleaFlicker non-free agents
+#dbm.dbTableToCsv("score") # Set the scoring table to a csv for inspection
+dbm.dbPlayerIndexNHLPop() # NHL player index
+dbm.dbPlayerIndexNHLFix() # Fix Elias Pettersson
+dbm.dbPlayerIndexLocalPop() # Create local database index
+dbm.dbBuildUnifiedFantasyView(debug=True) # Build the unified view
+#dbm.inspect_db_schema(DB_NAME) # Schema inspection, primarily for debugging
+exportFantasyLeaderboard() # Export the Unified Fantasy View to a .csv
+#testQuery()
