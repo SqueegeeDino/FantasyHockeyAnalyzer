@@ -62,12 +62,18 @@ def exportFantasyLeaderboard():
 #dbm.dbTableToCsv("score") # Set the scoring table to a csv for inspection
 #dbm.dbPlayerIndexNHLPop() # NHL player index
 #dbm.dbPlayerIndexNHLFix() # Fix Elias Pettersson
-#nhlAPI.rawstats_dynamic_goalie()
-#nhlAPI.rawstats_dynamic_player()
-#dbm.dbPlayerIndexLocalPop() # Create local database index
-#dbm.dbBuildUnifiedFantasyView(debug=True) # Build the unified view
+nhlAPI.rawstats_dynamic_goalie()
+print("✅ nhlAPI.rawstats_dynamic_goalie")
+nhlAPI.rawstats_dynamic_player()
+print("✅ nhlAPI.rawstats_dynamic_player")
+dbm.dbPlayerIndexLocalPop() # Create local database index
+print("✅ dbm.dbPlayerIndexLocalPop")
+dbm.dbPopulateRealtime()
+print("✅ dbm.dbPopulateRealtime")
+dbm.dbBuildUnifiedFantasyView(debug=True) # Build the unified view
+print("✅ Built unified view")
 #dbm.inspect_db_schema(DB_NAME) # Schema inspection, primarily for debugging
-#exportFantasyLeaderboard() # Export the Unified Fantasy View to a .csv
+exportFantasyLeaderboard() # Export the Unified Fantasy View to a .csv
+print("✅ Exported!")
 #testQuery()
 #nhl.nhlTest()
-dbm.dbPopulateRealtime()
