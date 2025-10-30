@@ -3,7 +3,7 @@ import databaseManager as dbm
 import requests as rq
 import sqlite3
 import pandas as pd
-import nhlAPI
+import nhlAPI as nhl
 
 DB_NAME = "fleakicker.db"
 leagueID = 12100
@@ -69,4 +69,4 @@ def exportFantasyLeaderboard():
 #dbm.inspect_db_schema(DB_NAME) # Schema inspection, primarily for debugging
 #exportFantasyLeaderboard() # Export the Unified Fantasy View to a .csv
 #testQuery()
-nhlAPI.nhlTest()
+nhl.nhlTest()

@@ -1,0 +1,34 @@
+{
+    "data": [
+        {
+            "blockedShots": 55,
+            "blockedShotsPer60": 1.63,
+            "emptyNetAssists": 1,
+            "emptyNetGoals": 1,
+            "emptyNetPoints": 2,
+            "firstGoals": 6,
+            "gamesPlayed": 82,
+            "giveaways": 52,
+            "giveawaysPer60": 1.54,
+            "hits": 29,
+            "hitsPer60": 0.85,
+            "lastName": "Hughes",
+            "missedShotCrossbar": 2,
+            "missedShotGoalpost": 4,
+            "missedShotOverNet": 2,
+            "missedShotShort": 1,
+            "missedShotWideOfNet": 90,
+            "missedShots": 99,
+            "otGoals": 1,
+            "playerId": 8480800,
+            "positionCode": "D",
+            "shootsCatches": "L",
+            "shotAttemptsBlocked": 242,
+            "skaterFullName": "Quinn Hughes",
+            "takeaways": 43,
+            "takeawaysPer60": 1.27,
+            "timeOnIcePerGame": 1481.09
+        }
+    ],
+    "total": 1
+}
