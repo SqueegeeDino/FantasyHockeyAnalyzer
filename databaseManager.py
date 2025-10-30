@@ -14,6 +14,7 @@ DB_NAME = "fleakicker.db"
 leagueID = 12100
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
 client = NHLClient()
+season = 20252026
 
 
 # Variables mostly used in index population
@@ -309,6 +310,75 @@ def dbPlayerIndexLocalPop():
 
     conn.commit()
     conn.close()
+
+# == RealtimeTable Functions ==
+# RealtimeTable is how we find data like hits, blocks, and time on ice. There's lots of interesting stats in here for future use
+
+REALTIME_URL = (
+    "https://api.nhle.com/stats/rest/en/skater/realtime"
+    "?isAggregate=true"
+    "&isGame=false"
+    "&limit=-1"
+    # change seasonId here as needed
+    f"&cayenneExp=seasonId={season} and gameTypeId=2"
+)
+
+def dbEnsureRealtimeTable(): # Build the table inside the database
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS rawstats_dynamic_player_realtime (
+            playerId INTEGER,
+            seasonId INTEGER,
+            hits INTEGER,
+            blockedShots INTEGER,
+            timeOnIcePerGame REAL,
+            PRIMARY KEY (playerId, seasonId)
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def fetch_realtime_json(): # Actually call the API endpoint
+    resp = rq.get(REALTIME_URL)
+    resp.raise_for_status()
+    return resp.json()
+
+def dbPopulateRealtime():
+    """
+    Fetches realtime skater data (hits, blockedShots, toi/g) for a season
+    and stores it in rawstats_dynamic_player_realtime.
+    """
+    dbEnsureRealtimeTable()
+    data = fetch_realtime_json()
+
+    rows = data.get("data", [])
+
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # optional: wipe this season before inserting
+    # since the endpoint is season-specific, it's safe
+    cur.execute("DELETE FROM rawstats_dynamic_player_realtime WHERE seasonId = ?", (season,))
+
+    for item in rows:
+        player_id = item.get("playerId")
+        hits = item.get("hits", 0)
+        blocked = item.get("blockedShots", 0)
+        toi = item.get("timeOnIcePerGame", 0)
+        # this endpoint didn't explicitly include seasonId in your sample,
+        # but it's in the filter, so we can hardcode it here:
+        season_id = season
+
+        cur.execute("""
+            INSERT OR REPLACE INTO rawstats_dynamic_player_realtime
+                (playerId, seasonId, hits, blockedShots, timeOnIcePerGame)
+            VALUES (?, ?, ?, ?, ?)
+        """, (player_id, season_id, hits, blocked, toi))
+
+    conn.commit()
+    conn.close()
+    print(f"✅ Inserted/updated {len(rows)} realtime rows.")
 
 # Builds a unified view combining both skater and goalie stats with Fantasy Points calculated dynamically using the 'score' table
 def dbBuildUnifiedFantasyView(debug=True):

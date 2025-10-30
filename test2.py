@@ -69,4 +69,5 @@ def exportFantasyLeaderboard():
 #dbm.inspect_db_schema(DB_NAME) # Schema inspection, primarily for debugging
 #exportFantasyLeaderboard() # Export the Unified Fantasy View to a .csv
 #testQuery()
-nhl.nhlTest()
+#nhl.nhlTest()
+dbm.dbPopulateRealtime()
