@@ -28,31 +28,6 @@ def testQuery():
     print(f"✅ Exported {len(df)} rows from '{TABLE_NAME}' to '{OUTPUT_FILE}'")
     conn.close()
 
-OUTPUT_FILE = "fantasy_leaderboard.csv"
-
-def exportFantasyLeaderboard():
-    conn = sqlite3.connect(DB_NAME)
-
-    query = """
-    SELECT
-        playerFullName,
-        teamAbbrevs,
-        positionCode,
-        playerType,
-        freeAgent,
-        gamesPlayed,
-        fantasy_points_total,
-        fantasy_points_per_game
-    FROM unified_fantasy_points
-    ORDER BY fantasy_points_per_game DESC
-    LIMIT 50
-    """
-
-    df = pd.read_sql_query(query, conn)
-    conn.close()
-
-    df.to_csv(OUTPUT_FILE, index=False)
-    print(f"✅ Exported {len(df)} rows to {OUTPUT_FILE}")
 
 #dbm.dbWipeAll(DB_NAME)
 #dbm.apiScoringGet(leagueID)
@@ -73,7 +48,7 @@ print("✅ dbm.dbPopulateRealtime")
 dbm.dbBuildUnifiedFantasyView(debug=True) # Build the unified view
 print("✅ Built unified view")
 #dbm.inspect_db_schema(DB_NAME) # Schema inspection, primarily for debugging
-exportFantasyLeaderboard() # Export the Unified Fantasy View to a .csv
+dbm.exportFantasyLeaderboard() # Export the Unified Fantasy View to a .csv
 print("✅ Exported!")
 #testQuery()
 #nhl.nhlTest()

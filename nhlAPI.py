@@ -1,6 +1,7 @@
 import databaseManager as dbm
 import requests as rq
 import sqlite3
+from nhlpy import NHLClient
 
 limit = -1 # -1 for all results
 season = 20252026 # Current season
