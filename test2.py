@@ -40,23 +40,22 @@ print("✅ dbm.apiScoringGet")
 dbm.dbScoringPop()  # Build scoring dataset
 print("✅ dbm.dbScoringPop")
 
-# === PLAYER INDEX (Fleaflicker) ===
-dbm.dbPlayerIndexFFPop(True)   # Get FleaFlicker free agent list
-print("✅ dbm.dbPlayerIndexFFPop(True) — Free Agents")
-
-dbm.dbPlayerIndexFFPop(False)  # Get FleaFlicker non-free agents
-print("✅ dbm.dbPlayerIndexFFPop(False) — Rostered Players")
-
-# === TABLE EXPORT ===
-dbm.dbTableToCsv("score")  # Export the scoring table for inspection
-print("✅ dbm.dbTableToCsv('score')")
-
 # === NHL PLAYER INDEX ===
-dbm.dbPlayerIndexNHLPop()  # Build NHL index
+dbm.dbPlayerIndexNHLPop(debug=True)  # Build NHL index
 print("✅ dbm.dbPlayerIndexNHLPop")
 
 dbm.dbPlayerIndexNHLFix()  # Fix name collisions (Elias Pettersson, etc.)
 print("✅ dbm.dbPlayerIndexNHLFix")
+
+# === PLAYER INDEX (Fleaflicker) ===
+dbm.build_ff_indexes()
+print("✅ dbm.build_ff_indexes")
+
+dbm.dbPlayerIndexLocalPop()
+print("✅ dbm.dbPlayerIndexLocalPop")
+# === TABLE EXPORT ===
+dbm.dbTableToCsv("score")  # Export the scoring table for inspection
+print("✅ dbm.dbTableToCsv('score')")
 
 # === NHL STATS ===
 nhlAPI.rawstats_dynamic_skater()  # (your renamed skater stats function)

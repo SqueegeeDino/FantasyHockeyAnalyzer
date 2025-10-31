@@ -7,6 +7,7 @@ import time
 from tqdm import tqdm
 import pandas as pd
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 DB_NAME = "fleakicker.db"
 leagueID = 12100
@@ -171,111 +172,190 @@ def dbScoringPop():
 
 # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
 def dbPlayerIndexFFPop(faStatus: bool):
-    statusStr = str(faStatus).lower() # Convert the boolean to a lowercase string for the API call
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
+    statusStr = str(faStatus).lower()  # "true" / "false"
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
     failCount = 0
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS player_index_ff (
-        fleakicker_id INTEGER UNIQUE, 
-        name TEXT,
-        pos TEXT,
-        team TEXT
-        )            
-    ''') # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
-    cur.execute('''CREATE TABLE IF NOT EXISTS player_index_ff_fa (
-        fleakicker_id INTEGER UNIQUE, 
-        name TEXT,
-        pos TEXT,
-        team TEXT
-        )            
-    ''') # Create the table for free agents
-
-    with tqdm(total=total_requests, desc="Fetching Fleaflicker Players", unit="req", colour="green") as pbar:
-            for ipos in positions:
-                for i in offsets:
-                    api_leaguePlayers = f"https://www.fleaflicker.com/api/FetchPlayerListing?sport=NHL&league_id={leagueID}&sort=SORT_DRAFT_RANKING&result_offset={i}&filter.position_eligibility={ipos}&filter.free_agent_only={statusStr}"
-                    response_leaguePlayers = rq.get(api_leaguePlayers, timeout=10)
-
-                    if response_leaguePlayers.status_code == 200:
-                        data = response_leaguePlayers.json()
-                        if "players" not in data:
-                            pbar.write(f"No players found for position {ipos} at offset {i}")
-                            pbar.update(1)
-                            failCount += 1
-                            if failCount >= 3:  # If 3 consecutive failures, break out of both loops
-                                pbar.write("Multiple consecutive failures, stopping further requests.")
-                                return
-                            continue
-
-                        for player in data["players"]:
-                            fleakicker_id = player["proPlayer"]["id"]
-                            name = player["proPlayer"]["nameFull"]
-                            pos = player["proPlayer"]["position"]
-                            team = player["proPlayer"]["proTeamAbbreviation"]
-                            if faStatus:
-                                cur.execute("INSERT OR REPLACE INTO player_index_ff_fa VALUES(?, ?, ?, ?)",
-                                        (fleakicker_id, name, pos, team))
-                                conn.commit()
-                            else:
-                                cur.execute("INSERT OR REPLACE INTO player_index_ff VALUES(?, ?, ?, ?)",
-                                            (fleakicker_id, name, pos, team))
-                                conn.commit()
-
-                    else:
-                        pbar.write(f"Error leaguePlayers: {response_leaguePlayers.status_code}")
-                        failCount += 1
-                        if failCount >= 3:  # If 3 consecutive failures, break out of both loops
-                            pbar.write("Multiple consecutive failures, stopping further requests.")
-                            return
-
-                    pbar.update(1)     # move the progress bar forward
-                    time.sleep(0.5)      # sleep to avoid hitting rate limits
-    conn.commit()
-    conn.close()
-
-# dbPlayerIndexNHLPop populates the player_index_nhl table using NHL player info
-def dbPlayerIndexNHLPop():
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
-
-    # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
-    cur.execute('''CREATE TABLE IF NOT EXISTS player_index_nhl (
-        nhl_id INTEGER UNIQUE,
-        name TEXT,
-        pos TEXT,
-        team TEXT
-    )''')
-    teams = client.teams.teams()
-    for team in teams:
-        players = client.teams.team_roster(team_abbr=team['abbr'], season="20252026")
-        for p in players['forwards'] + players['defensemen'] + players['goalies']:
-            p['nhl_id'] = p['id']
-            p['team'] = team['abbr']
-            p['firstName'] = clean_name('firstName', p)
-            p['lastName'] = clean_name('lastName', p)
-            p['name'] = f"{p['firstName']} {p['lastName']}"
-            pos = p['positionCode']
-
-            d = [p['nhl_id'], p['name'], pos, p['team']]
-            cur.execute("INSERT OR REPLACE INTO player_index_nhl VALUES(?, ?, ?, ?)", d)
-            conn.commit()
-    
-    # Standardize position names
+    # tables
     cur.execute("""
-    UPDATE player_index_nhl
-    SET pos = 'LW'
-    WHERE pos = 'L';
-                """)
+        CREATE TABLE IF NOT EXISTS player_index_ff (
+            fleakicker_id INTEGER UNIQUE,
+            name TEXT,
+            pos TEXT,
+            team TEXT
+        )
+    """)
     cur.execute("""
-    UPDATE player_index_nhl
-    SET pos = 'RW'
-    WHERE pos = 'R';
+        CREATE TABLE IF NOT EXISTS player_index_ff_fa (
+            fleakicker_id INTEGER UNIQUE,
+            name TEXT,
+            pos TEXT,
+            team TEXT
+        )
     """)
 
+    # we’ll collect rows in memory, then bulk-insert
+    rows_to_insert = []
+
+    # reuse HTTP connection
+    session = rq.Session()
+
+    # simple rate limiter
+    REQ_SLEEP_EVERY = 5   # sleep after every 5 requests
+    REQ_SLEEP_TIME = 0.5  # seconds
+
+    req_count = 0
+
+    with tqdm(total=total_requests,
+              desc=f"FleaFlicker {'FA' if faStatus else 'All'}",
+              unit="req",
+              colour="green") as pbar:
+
+        for ipos in positions:
+            for i in offsets:
+                url = (
+                    "https://www.fleaflicker.com/api/FetchPlayerListing"
+                    f"?sport=NHL&league_id={leagueID}"
+                    f"&sort=SORT_DRAFT_RANKING"
+                    f"&result_offset={i}"
+                    f"&filter.position_eligibility={ipos}"
+                    f"&filter.free_agent_only={statusStr}"
+                )
+
+                try:
+                    resp = session.get(url, timeout=10)
+                except Exception as e:
+                    pbar.write(f"Request error {e}")
+                    failCount += 1
+                    if failCount >= 3:
+                        pbar.write("Multiple consecutive failures, stopping.")
+                        conn.close()
+                        return
+                    pbar.update(1)
+                    continue
+
+                if resp.status_code == 200:
+                    data = resp.json()
+                    players = data.get("players")
+
+                    if not players:
+                        pbar.write(f"No players for {ipos} offset {i}")
+                        failCount += 1
+                        if failCount >= 3:
+                            pbar.write("Multiple consecutive empty pages, stopping.")
+                            conn.close()
+                            return
+                        pbar.update(1)
+                        continue
+
+                    # reset failCount on success
+                    failCount = 0
+
+                    for player in players:
+                        fleakicker_id = player["proPlayer"]["id"]
+                        name = player["proPlayer"]["nameFull"]
+                        pos = player["proPlayer"]["position"]
+                        team = player["proPlayer"]["proTeamAbbreviation"]
+                        rows_to_insert.append((fleakicker_id, name, pos, team))
+
+                else:
+                    pbar.write(f"HTTP {resp.status_code} for {ipos} offset {i}")
+                    failCount += 1
+                    if failCount >= 3:
+                        pbar.write("Multiple consecutive failures, stopping.")
+                        conn.close()
+                        pbar.n = 100
+                        return
+
+                req_count += 1
+                if req_count % REQ_SLEEP_EVERY == 0:
+                    time.sleep(REQ_SLEEP_TIME)
+
+                pbar.update(1)
+
+    # === bulk insert at the end ===
+    if rows_to_insert:
+        if faStatus:
+            cur.executemany(
+                "INSERT OR REPLACE INTO player_index_ff_fa VALUES (?, ?, ?, ?)",
+                rows_to_insert
+            )
+        else:
+            cur.executemany(
+                "INSERT OR REPLACE INTO player_index_ff VALUES (?, ?, ?, ?)",
+                rows_to_insert
+            )
 
     conn.commit()
     conn.close()
+
+    print(f"✅ dbPlayerIndexFFPop({faStatus}) — inserted {len(rows_to_insert)} players")
+
+# Call this to build FleaFlicker indexes to speed up the process if you want both
+def build_ff_indexes():
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        fut_all = ex.submit(dbPlayerIndexFFPop, False)
+        fut_fa  = ex.submit(dbPlayerIndexFFPop, True)
+        fut_all.result()
+        fut_fa.result()
+    print("✅ Both FF indexes built")
+
+# Fetch all the team rosters for the dbPlayerIndexNHLPop function to use
+def fetch_team_roster(team_abbr, debug=True):
+    roster = client.teams.team_roster(team_abbr=team_abbr, season="20252026")
+    if debug == True:
+        print(f"Fetched team: {team_abbr}")
+    return team_abbr, roster
+
+# dbPlayerIndexNHLPop populates the player_index_nhl table using NHL player info
+def dbPlayerIndexNHLPop(debug=True):
+    conn = sqlite3.connect("fleakicker.db")
+    cur = conn.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS player_index_nhl (
+            nhl_id INTEGER UNIQUE,
+            name   TEXT,
+            pos    TEXT,
+            team   TEXT
+        )
+    """)
+
+    teams = client.teams.teams()
+    team_abbrs = [t["abbr"] for t in teams]
+
+    rows = []
+
+    # fetch all rosters in parallel
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        futures = [ex.submit(fetch_team_roster, abbr) for abbr in team_abbrs]
+        for fut in futures:
+            team_abbr, roster = fut.result()
+            players = roster["forwards"] + roster["defensemen"] + roster["goalies"]
+            for p in players:
+                nhl_id = p["id"]
+                first = clean_name("firstName", p)
+                last = clean_name("lastName", p)
+                name = f"{first} {last}"
+                pos = p.get("positionCode", "")
+                if pos == "L":
+                    pos = "LW"
+                elif pos == "R":
+                    pos = "RW"
+                rows.append((nhl_id, name, pos, team_abbr))
+            if debug == True:
+                print(f"Executed:{fut.result}")
+
+    # single bulk insert
+    cur.executemany(
+        "INSERT OR REPLACE INTO player_index_nhl (nhl_id, name, pos, team) VALUES (?, ?, ?, ?)",
+        rows,
+    )
+
+    conn.commit()
+    conn.close()
+    print(f"✅ dbPlayerIndexNHLPop (parallel) — inserted {len(rows)} players")
 
 # dbPlayerIndexLocalPop creates and populates the player_index_local table by matching players from both FleaFlicker and NHL tables
 def dbPlayerIndexLocalPop():
