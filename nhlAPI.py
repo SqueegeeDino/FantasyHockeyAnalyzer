@@ -32,7 +32,7 @@ DB_NAME = "fleakicker.db"
 TABLE_NAME_SKATER = "rawstats_dynamic_skater"
 TABLE_NAME_GOALIE = "rawstats_dynamic_goalie"
 
-def rawstats_dynamic_player(database_name=DB_NAME, table_name=TABLE_NAME_SKATER, endpoint=endpointSkater):
+def rawstats_dynamic_skater(database_name=DB_NAME, table_name=TABLE_NAME_SKATER, endpoint=endpointSkater):
     # Handle skater request and population
     reSkater = rq.get(endpoint)
     if reSkater.status_code == 200:

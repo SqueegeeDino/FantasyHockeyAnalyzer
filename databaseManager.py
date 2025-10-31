@@ -1,15 +1,12 @@
 import sqlite3
 import json
 import requests as rq
-import os
 from nhlpy import NHLClient
-from nhlpy.api.query.builder import QueryBuilder, QueryContext
-from nhlpy.api.query.filters.franchise import FranchiseQuery
-from nhlpy.api.query.filters.season import SeasonQuery
 import csv
 import time
 from tqdm import tqdm
 import pandas as pd
+from datetime import datetime
 
 DB_NAME = "fleakicker.db"
 leagueID = 12100
@@ -707,10 +704,24 @@ def rawStatsSearchPlayerName():
 
 # Export the Unified Fantasy View
 OUTPUT_FILE = "fantasy_leaderboard.csv"
-def exportFantasyLeaderboard():
+def exportFantasyLeaderboard(limit=100, sort_by="fantasy_points_per_game"):
+    """
+    Export top fantasy performers to CSV.
+    
+    limit: how many rows to include in the export
+    sort_by: 'fantasy_points_per_game' or 'fantasy_points_total'
+    """
+    # Safety check: only allow known sort columns
+    if sort_by not in ("fantasy_points_per_game", "fantasy_points_total"):
+        sort_by = "fantasy_points_per_game"
+
+    # build filename with timestamp so you don't overwrite older exports
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = f"fantasy_leaderboard_{sort_by}_{timestamp}.csv"
+
     conn = sqlite3.connect(DB_NAME)
 
-    query = """
+    query = f"""
     SELECT
         playerFullName,
         teamAbbrevs,
@@ -721,12 +732,31 @@ def exportFantasyLeaderboard():
         fantasy_points_total,
         fantasy_points_per_game
     FROM unified_fantasy_points
-    ORDER BY fantasy_points_per_game DESC
-    LIMIT 50
+    ORDER BY {sort_by} DESC
+    LIMIT {limit}
     """
 
     df = pd.read_sql_query(query, conn)
     conn.close()
 
-    df.to_csv(OUTPUT_FILE, index=False)
-    print(f"✅ Exported {len(df)} rows to {OUTPUT_FILE}")
+    # Optional cleanup: turn 0/1 into 'FA'/'Rostered' for readability
+    df["freeAgent"] = df["freeAgent"].apply(lambda x: "FA" if x == 1 else "Rostered")
+
+    # Reorder columns how you'd likely want to see them
+    df = df[
+        [
+            "playerFullName",
+            "teamAbbrevs",
+            "positionCode",
+            "playerType",
+            "freeAgent",
+            "gamesPlayed",
+            "fantasy_points_total",
+            "fantasy_points_per_game",
+        ]
+    ]
+
+    df.to_csv(output_file, index=False)
+
+    print(f"✅ Exported {len(df)} rows to {output_file}")
+    return output_file
