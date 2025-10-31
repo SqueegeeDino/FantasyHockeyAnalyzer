@@ -73,5 +73,5 @@ dbm.dbBuildUnifiedFantasyView(debug=False)
 print("✅ dbm.dbBuildUnifiedFantasyView")
 
 # === FINAL EXPORT ===
-dbm.exportFantasyLeaderboard(limit=50, sort_by="fantasy_points_per_game")
+dbm.exportFantasyLeaderboard(limit=50, sort_by="fantasy_points_total")
 print("✅ dbm.exportFantasyLeaderboard (Top 50 by FP/GP)")

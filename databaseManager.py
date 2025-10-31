@@ -784,7 +784,7 @@ def rawStatsSearchPlayerName():
 
 # Export the Unified Fantasy View
 OUTPUT_FILE = "fantasy_leaderboard.csv"
-def exportFantasyLeaderboard(limit=100, sort_by="fantasy_points_per_game"):
+def exportFantasyLeaderboard(limit=100, sort_by="fantasy_points_total"):
     """
     Export top fantasy performers to CSV.
     
