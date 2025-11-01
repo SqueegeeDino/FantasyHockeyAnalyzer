@@ -25,6 +25,7 @@ print(" [1] Export lean")
 print(" [2] Export wide")
 print(" [3] Export ultrawide")
 print(" [4] Query database")
+print(" [5] Export Leaderboard")
 print("\n")
 
 choice = input("Enter choice: ").strip()
@@ -45,20 +46,14 @@ elif choice == "2":
 elif choice == "3":
     # 3) super custom
     dbm.exportFantasyCSV(
-        filename="fantasy_custom.csv",
-        columns=[
-            "playerFullName",
-            "teamAbbrevs",
-            "positionCode",
-            "gamesPlayed",
-            "hits",
-            "blockedShots",
-            "fantasy_points_total",
-            "timeOnIcePerGame",
-        ],
-        order_by="hits DESC",
+        filename="fantasy_leaderboard_ultrawide.csv",
+        mode="ultraWide",
     )
+
 elif choice == "4":
     dbm.inspect_db_schema("fleakicker.db")
+elif choice == "5":
+    dbm.exportFantasyLeaderboard(limit=-1, sort_by="fantasy_points_per_game")
+    print("✅ dbm.exportFantasyLeaderboard")
 else:
     print("Please select a valid option")

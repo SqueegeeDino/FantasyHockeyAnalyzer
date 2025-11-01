@@ -8,26 +8,6 @@ import nhlAPI as nhl
 DB_NAME = "fleakicker.db"
 leagueID = 12100
 
-def testQuery():
-    # --- Configuration ---
-    DB_NAME = "fleakicker.db"
-    OUTPUT_FILE = "unifiedView.csv"
-    TABLE_NAME = "unified_fantasy_points"  # or "player_index_ff" depending on your naming convention
-
-    # --- Connect and fetch ---
-    conn = sqlite3.connect(DB_NAME)
-
-    # Grab the first 25 rows
-    query = f"SELECT * FROM {TABLE_NAME} LIMIT 25"
-    df = pd.read_sql_query(query, conn)
-
-    # --- Export to CSV ---
-    df.to_csv(OUTPUT_FILE, index=False)
-
-    # --- Print confirmation ---
-    print(f"✅ Exported {len(df)} rows from '{TABLE_NAME}' to '{OUTPUT_FILE}'")
-    conn.close()
-
 
 def confirm(prompt: str, run_all: bool, skip_all: bool) -> bool:
     """Handles individual confirmation, or auto-runs/skips based on user choice."""
@@ -70,11 +50,11 @@ if confirm("Populate scoring data into database?", run_all, skip_all):
 
 # --- Step 3: FleaFlicker Player Index ---
 if confirm("Fetch FleaFlicker free agent list?", run_all, skip_all):
-    dbm.dbPlayerIndexFFPop(True)
+    dbm.dbPlayerIndexFFPop(faStatus=True)
     print("✅ dbm.dbPlayerIndexFFPop(True)")
 
 if confirm("Fetch FleaFlicker rostered player list?", run_all, skip_all):
-    dbm.dbPlayerIndexFFPop(False)
+    dbm.dbPlayerIndexFFPop(faStatus=False)
     print("✅ dbm.dbPlayerIndexFFPop(False)")
 
 if confirm("Export FleaFlicker scoring table to CSV?", run_all, skip_all):

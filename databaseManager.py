@@ -338,16 +338,12 @@ def dbPlayerIndexFFPop(faStatus: bool):
         )
     """)
 
-    # we’ll collect rows in memory, then bulk-insert
-    rows_to_insert = []
+    rows_to_insert: list[tuple] = []
 
-    # reuse HTTP connection
     session = rq.Session()
 
-    # simple rate limiter
-    REQ_SLEEP_EVERY = 5   # sleep after every 5 requests
-    REQ_SLEEP_TIME = 0.5  # seconds
-
+    REQ_SLEEP_EVERY = 3
+    REQ_SLEEP_TIME = 0.5
     req_count = 0
 
     with tqdm(total=total_requests,
@@ -356,6 +352,8 @@ def dbPlayerIndexFFPop(faStatus: bool):
               colour="green") as pbar:
 
         for ipos in positions:
+            empty_in_a_row = 0  # <-- reset per position
+
             for i in offsets:
                 url = (
                     "https://www.fleaflicker.com/api/FetchPlayerListing"
@@ -372,9 +370,10 @@ def dbPlayerIndexFFPop(faStatus: bool):
                     pbar.write(f"Request error {e}")
                     failCount += 1
                     if failCount >= 3:
-                        pbar.write("Multiple consecutive failures, stopping.")
-                        conn.close()
-                        return
+                        pbar.write("❌ Multiple consecutive failures, stopping fetch loop.")
+                        # break out of BOTH loops
+                        offsets_exhausted = True
+                        break
                     pbar.update(1)
                     continue
 
@@ -383,16 +382,17 @@ def dbPlayerIndexFFPop(faStatus: bool):
                     players = data.get("players")
 
                     if not players:
+                        empty_in_a_row += 1
                         pbar.write(f"No players for {ipos} offset {i}")
-                        failCount += 1
-                        if failCount >= 3:
-                            pbar.write("Multiple consecutive empty pages, stopping.")
-                            conn.close()
-                            return
+                        if empty_in_a_row >= 3:
+                            # stop trying more offsets for THIS position
+                            pbar.write(f"Stopping {ipos} after 3 empty pages.")
+                            break
                         pbar.update(1)
                         continue
 
-                    # reset failCount on success
+                    # reset counts on success
+                    empty_in_a_row = 0
                     failCount = 0
 
                     for player in players:
@@ -406,18 +406,18 @@ def dbPlayerIndexFFPop(faStatus: bool):
                     pbar.write(f"HTTP {resp.status_code} for {ipos} offset {i}")
                     failCount += 1
                     if failCount >= 3:
-                        pbar.write("Multiple consecutive failures, stopping.")
-                        conn.close()
-                        pbar.n = 100
-                        return
+                        pbar.write("❌ Multiple consecutive failures, stopping fetch loop.")
+                        break  # break offsets for this position
 
                 req_count += 1
                 if req_count % REQ_SLEEP_EVERY == 0:
                     time.sleep(REQ_SLEEP_TIME)
 
                 pbar.update(1)
+            # end inner offset loop
+        # end positions loop
 
-    # === bulk insert at the end ===
+    # === bulk insert at the end, ALWAYS ===
     if rows_to_insert:
         if faStatus:
             cur.executemany(
@@ -432,7 +432,6 @@ def dbPlayerIndexFFPop(faStatus: bool):
 
     conn.commit()
     conn.close()
-
     print(f"✅ dbPlayerIndexFFPop({faStatus}) — inserted {len(rows_to_insert)} players")
 
 # Call this to build FleaFlicker indexes to speed up the process if you want both
