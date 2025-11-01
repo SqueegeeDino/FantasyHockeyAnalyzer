@@ -86,10 +86,6 @@ if confirm("Fetch NHL player index (team rosters)?", run_all, skip_all):
     dbm.dbPlayerIndexNHLPop()
     print("✅ dbm.dbPlayerIndexNHLPop")
 
-if confirm("Fix name duplicates (Elias Pettersson, etc.)?", run_all, skip_all):
-    dbm.dbPlayerIndexNHLFix()
-    print("✅ dbm.dbPlayerIndexNHLFix")
-
 # --- Step 4a: Local Index
 if confirm("Rebuild local index", run_all, skip_all):
     dbm.dbPlayerIndexLocalPop()

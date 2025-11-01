@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import requests as rq
+import nhlAPI
 from nhlpy import NHLClient
 import csv
 import time
@@ -30,9 +31,109 @@ def clean_name(ntype, name):
     """
     return name[ntype]['default']
 
-def dbFullReset():
-    dbWipeAll(DB_NAME)
+# Detailed and powerful export function of all data collected
+def exportFantasyCSV(
+    filename: str = "fantasy_leaderboard.csv",
+    limit: int | None = None,
+    mode: str = "lean",
+    columns: list[str] | None = None,
+    order_by: str = "fantasy_points_total DESC",
+):
+    """
+    Export rows from the unified_fantasy_points view to CSV.
 
+    - mode="lean"  -> small, human-friendly set
+    - mode="wide"  -> all columns in the view (PRAGMA)
+    - columns=[...] -> explicit list wins over mode
+    """
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # 1) make sure the view exists
+    #    (ok if it already exists)
+    #    you can also just call dbBuildUnifiedFantasyView() before this from your script
+
+    # 2) figure out what columns we should SELECT
+    if columns is not None and len(columns) > 0:
+        # explicit
+        select_cols = ", ".join(columns)
+    else:
+        if mode == "lean":
+            # nice default
+            select_cols = ", ".join([
+                "playerFullName",
+                "teamAbbrevs",
+                "positionCode",
+                "playerType",
+                "freeAgent",
+                "gamesPlayed",
+                "hits",
+                "blockedShots",
+                "realtimeTOI",
+                "fantasy_points_total",
+                "fantasy_points_per_game",
+            ])
+        elif mode == "wide":
+            # discover all columns from the view
+            cur.execute("PRAGMA table_info(unified_fantasy_points);")
+            cols = [row[1] for row in cur.fetchall()]
+            select_cols = ", ".join(cols)
+        else:
+            # fallback to lean
+            select_cols = "playerFullName, teamAbbrevs, positionCode, fantasy_points_total"
+
+    # 3) build the query
+    query = f"SELECT {select_cols} FROM unified_fantasy_points"
+    if order_by:
+        query += f" ORDER BY {order_by}"
+    if limit is not None:
+        query += f" LIMIT {limit}"
+
+    # 4) run it
+    cur.execute(query)
+    rows = cur.fetchall()
+
+    # 5) build header list in the same order as select_cols
+    header = [c.strip() for c in select_cols.split(",")]
+
+    # 6) write csv
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerows(rows)
+
+    conn.close()
+    print(f"✅ Exported {len(rows)} rows to {filename} using mode='{mode}'")
+
+# Run all FleaFlicker related functions
+def helpFlea(debug=False):
+    build_ff_indexes()
+    if debug==True:
+        print("✅ helpFlea built indices")
+    apiScoringGet(leagueID)
+    if debug==True:
+        print("✅ helpFlea retrieved scoring")
+    dbScoringPop()
+    if debug==True:
+        print("✅ helpFlea populated scoring")
+
+# Run all NHL API calls, currently includes local Index
+def helpNHL(debug=False):
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        fut_index = ex.submit(dbPlayerIndexNHLPop)
+        fut_rawSkate = ex.submit(nhlAPI.rawstats_dynamic_skater)
+        fut_rawGoal = ex.submit(nhlAPI.rawstats_dynamic_goalie)
+        fut_index.result()
+        fut_rawSkate.result()
+        fut_rawGoal.result()
+        if debug==True:
+            print("✅ helpNHL TPE workers done")
+    dbPlayerIndexLocalPop()
+    if debug==True:
+        print("✅ helpNHL populated local index")
+    dbPopulateRealtime()
+    if debug==True:
+        print("✅ helpNHL populated realtime")
 
 '''=== BUILDING ==='''
 # apiScoringGet function grabs scoring values and puts them in a .json file
@@ -358,6 +459,7 @@ def dbPlayerIndexNHLPop():
 
     conn.commit()
     conn.close()
+    dbPlayerIndexNHLFix()
     print(f"✅ dbPlayerIndexNHLPop (parallel) — inserted {len(rows)} players")
 
 # dbPlayerIndexLocalPop creates and populates the player_index_local table by matching players from both FleaFlicker and NHL tables
