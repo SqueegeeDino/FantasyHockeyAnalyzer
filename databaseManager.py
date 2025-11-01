@@ -21,6 +21,7 @@ positions = ["c", "lw", "rw", "d", "g"]
 total_requests = len(positions) * (1300 // 30)  # 5 positions, 1300 players max, 30 per page, fleakicker API specific
 current_request = 0 # Fleakicker request counter
 
+'''=== HELPERS ==='''
 
 # Helper function to clean names
 def clean_name(ntype, name):
@@ -28,6 +29,10 @@ def clean_name(ntype, name):
     Clean the name of the player or team
     """
     return name[ntype]['default']
+
+def dbFullReset():
+    dbWipeAll(DB_NAME)
+
 
 '''=== BUILDING ==='''
 # apiScoringGet function grabs scoring values and puts them in a .json file
@@ -309,7 +314,7 @@ def fetch_team_roster(team_abbr, debug=True):
     return team_abbr, roster
 
 # dbPlayerIndexNHLPop populates the player_index_nhl table using NHL player info
-def dbPlayerIndexNHLPop(debug=True):
+def dbPlayerIndexNHLPop():
     conn = sqlite3.connect("fleakicker.db")
     cur = conn.cursor()
 
@@ -344,8 +349,6 @@ def dbPlayerIndexNHLPop(debug=True):
                 elif pos == "R":
                     pos = "RW"
                 rows.append((nhl_id, name, pos, team_abbr))
-            if debug == True:
-                print(f"Executed:{fut.result}")
 
     # single bulk insert
     cur.executemany(
