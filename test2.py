@@ -29,49 +29,63 @@ def testQuery():
     conn.close()
 
 
-# === WIPE ===
-dbm.dbWipeAll(DB_NAME)
-print("✅ dbm.dbWipeAll")
+def confirm(prompt: str) -> bool:
+    """Simple yes/no confirmation prompt."""
+    resp = input(f"{prompt} (y/n): ").strip().lower()
+    return resp in ["y", "yes"]
 
-# === SCORING ===
-dbm.apiScoringGet(leagueID)
-print("✅ dbm.apiScoringGet")
+print("\n=== Fantasy Hockey Analyzer Setup ===\n")
 
-dbm.dbScoringPop()  # Build scoring dataset
-print("✅ dbm.dbScoringPop")
+if confirm("Wipe and reset the database?"):
+    dbm.dbWipeAll(DB_NAME)
+    print("✅ dbm.dbWipeAll")
 
-# === NHL PLAYER INDEX ===
-dbm.dbPlayerIndexNHLPop(debug=True)  # Build NHL index
-print("✅ dbm.dbPlayerIndexNHLPop")
+if confirm("Fetch scoring rules from FleaFlicker?"):
+    dbm.apiScoringGet(leagueID)
+    print("✅ dbm.apiScoringGet")
 
-dbm.dbPlayerIndexNHLFix()  # Fix name collisions (Elias Pettersson, etc.)
-print("✅ dbm.dbPlayerIndexNHLFix")
+if confirm("Populate scoring data into database?"):
+    dbm.dbScoringPop()
+    print("✅ dbm.dbScoringPop")
 
-# === PLAYER INDEX (Fleaflicker) ===
-dbm.build_ff_indexes()
-print("✅ dbm.build_ff_indexes")
+if confirm("Fetch FleaFlicker free agent list?"):
+    dbm.dbPlayerIndexFFPop(True)
+    print("✅ dbm.dbPlayerIndexFFPop(True)")
 
-dbm.dbPlayerIndexLocalPop()
-print("✅ dbm.dbPlayerIndexLocalPop")
-# === TABLE EXPORT ===
-dbm.dbTableToCsv("score")  # Export the scoring table for inspection
-print("✅ dbm.dbTableToCsv('score')")
+if confirm("Fetch FleaFlicker rostered player list?"):
+    dbm.dbPlayerIndexFFPop(False)
+    print("✅ dbm.dbPlayerIndexFFPop(False)")
 
-# === NHL STATS ===
-nhlAPI.rawstats_dynamic_skater()  # (your renamed skater stats function)
-print("✅ nhlAPI.rawstats_dynamic_skater")
+if confirm("Export FleaFlicker scoring table to CSV?"):
+    dbm.dbTableToCsv("score")
+    print("✅ dbm.dbTableToCsv('score')")
 
-nhlAPI.rawstats_dynamic_goalie()
-print("✅ nhlAPI.rawstats_dynamic_goalie")
+if confirm("Fetch NHL player index (team rosters)?"):
+    dbm.dbPlayerIndexNHLPop()
+    print("✅ dbm.dbPlayerIndexNHLPop")
 
-# === REALTIME DATA ===
-dbm.dbPopulateRealtime()
-print("✅ dbm.dbPopulateRealtime")
+if confirm("Fix name duplicates (Elias Pettersson, etc.)?"):
+    dbm.dbPlayerIndexNHLFix()
+    print("✅ dbm.dbPlayerIndexNHLFix")
 
-# === UNIFIED VIEW ===
-dbm.dbBuildUnifiedFantasyView(debug=False)
-print("✅ dbm.dbBuildUnifiedFantasyView")
+if confirm("Fetch NHL skater stats?"):
+    nhlAPI.rawstats_dynamic_skater()
+    print("✅ nhlAPI.rawstats_dynamic_skater")
 
-# === FINAL EXPORT ===
-dbm.exportFantasyLeaderboard(limit=50, sort_by="fantasy_points_total")
-print("✅ dbm.exportFantasyLeaderboard (Top 50 by FP/GP)")
+if confirm("Fetch NHL goalie stats?"):
+    nhlAPI.rawstats_dynamic_goalie()
+    print("✅ nhlAPI.rawstats_dynamic_goalie")
+
+if confirm("Fetch real-time skater data (hits, blocks, TOI)?"):
+    dbm.dbPopulateRealtime()
+    print("✅ dbm.dbPopulateRealtime")
+
+if confirm("Build unified fantasy view?"):
+    dbm.dbBuildUnifiedFantasyView(debug=False)
+    print("✅ dbm.dbBuildUnifiedFantasyView")
+
+if confirm("Export fantasy leaderboard to CSV?"):
+    dbm.exportFantasyLeaderboard(limit=0, sort_by="fantasy_points_per_game")
+    print("✅ dbm.exportFantasyLeaderboard")
+
+print("\n🏁 All selected operations complete.\n")

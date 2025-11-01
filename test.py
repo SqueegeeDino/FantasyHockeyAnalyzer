@@ -1,5 +1,6 @@
 import requests as rq
 import json
+import databaseManager as dbm
 
 apiConfig = "https://api.nhle.com/stats/rest/en/config"
 apiTest = "https://api.nhle.com/stats/rest/en/skater/realtime?isAggregate=true&isGame=false&limit=-1&cayenneExp=seasonId=20252026 and gameTypeId=2"
@@ -15,4 +16,5 @@ def dumpAPI(dumpee, filename:str):
     else:
         print(f"API return error:{response.status_code}")
 
-dumpAPI(apiTest, "dumpTest")
+#dumpAPI(apiTest, "dumpTest")
+dbm.exportFantasyLeaderboard(limit=-1)
