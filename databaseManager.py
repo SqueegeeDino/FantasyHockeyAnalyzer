@@ -35,31 +35,36 @@ def clean_name(ntype, name):
 def exportFantasyCSV(
     filename: str = "fantasy_leaderboard.csv",
     limit: int | None = None,
-    mode: str = "lean",
+    mode: str = "lean",  # lean | wide | ultraWide
     columns: list[str] | None = None,
     order_by: str = "fantasy_points_total DESC",
 ):
     """
     Export rows from the unified_fantasy_points view to CSV.
 
-    - mode="lean"  -> small, human-friendly set
-    - mode="wide"  -> all columns in the view (PRAGMA)
-    - columns=[...] -> explicit list wins over mode
+    - mode="lean"      -> small, human-friendly set
+    - mode="wide"      -> all columns discovered via PRAGMA
+    - mode="ultraWide" -> literally SELECT * (whatever view has right now)
+    - columns=[...]    -> explicit list wins over mode
     """
     conn = sqlite3.connect(DB_NAME)
     cur = conn.cursor()
 
-    # 1) make sure the view exists
-    #    (ok if it already exists)
-    #    you can also just call dbBuildUnifiedFantasyView() before this from your script
-
-    # 2) figure out what columns we should SELECT
+    # explicit columns always win
     if columns is not None and len(columns) > 0:
-        # explicit
         select_cols = ", ".join(columns)
+        query = f"SELECT {select_cols} FROM unified_fantasy_points"
+        if order_by:
+            query += f" ORDER BY {order_by}"
+        if limit is not None:
+            query += f" LIMIT {limit}"
+
+        cur.execute(query)
+        rows = cur.fetchall()
+        header = [c.strip() for c in select_cols.split(",")]
+
     else:
         if mode == "lean":
-            # nice default
             select_cols = ", ".join([
                 "playerFullName",
                 "teamAbbrevs",
@@ -73,30 +78,62 @@ def exportFantasyCSV(
                 "fantasy_points_total",
                 "fantasy_points_per_game",
             ])
+            query = f"SELECT {select_cols} FROM unified_fantasy_points"
+            if order_by:
+                query += f" ORDER BY {order_by}"
+            if limit is not None:
+                query += f" LIMIT {limit}"
+
+            cur.execute(query)
+            rows = cur.fetchall()
+            header = [c.strip() for c in select_cols.split(",")]
+
         elif mode == "wide":
-            # discover all columns from the view
+            # discover columns
             cur.execute("PRAGMA table_info(unified_fantasy_points);")
             cols = [row[1] for row in cur.fetchall()]
             select_cols = ", ".join(cols)
+            query = f"SELECT {select_cols} FROM unified_fantasy_points"
+            if order_by:
+                query += f" ORDER BY {order_by}"
+            if limit is not None:
+                query += f" LIMIT {limit}"
+
+            cur.execute(query)
+            rows = cur.fetchall()
+            header = cols  # same order as PRAGMA
+
+        elif mode == "ultraWide":
+            # truly whatever is in the view right now
+            query = "SELECT * FROM unified_fantasy_points"
+            if order_by:
+                query += f" ORDER BY {order_by}"
+            if limit is not None:
+                query += f" LIMIT {limit}"
+
+            cur.execute(query)
+            rows = cur.fetchall()
+            # get column names from cursor description
+            header = [desc[0] for desc in cur.description]
+
         else:
             # fallback to lean
-            select_cols = "playerFullName, teamAbbrevs, positionCode, fantasy_points_total"
+            query = """
+                SELECT playerFullName, teamAbbrevs, positionCode,
+                       fantasy_points_total, fantasy_points_per_game
+                FROM unified_fantasy_points
+            """
+            cur.execute(query)
+            rows = cur.fetchall()
+            header = [
+                "playerFullName",
+                "teamAbbrevs",
+                "positionCode",
+                "fantasy_points_total",
+                "fantasy_points_per_game",
+            ]
 
-    # 3) build the query
-    query = f"SELECT {select_cols} FROM unified_fantasy_points"
-    if order_by:
-        query += f" ORDER BY {order_by}"
-    if limit is not None:
-        query += f" LIMIT {limit}"
-
-    # 4) run it
-    cur.execute(query)
-    rows = cur.fetchall()
-
-    # 5) build header list in the same order as select_cols
-    header = [c.strip() for c in select_cols.split(",")]
-
-    # 6) write csv
+    # write csv
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(header)

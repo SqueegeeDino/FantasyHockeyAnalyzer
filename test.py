@@ -22,8 +22,10 @@ def dumpAPI(dumpee, filename:str):
 # --- Startup Menu ---
 print("\n=== Test.py Setup ===\n")
 print(" [1] Export lean")
-print(" [2] Export full")
-print(" [3] Export custom\n")
+print(" [2] Export wide")
+print(" [3] Export ultrawide")
+print(" [4] Query database")
+print("\n")
 
 choice = input("Enter choice: ").strip()
 
@@ -56,5 +58,7 @@ elif choice == "3":
         ],
         order_by="hits DESC",
     )
+elif choice == "4":
+    dbm.inspect_db_schema("fleakicker.db")
 else:
     print("Please select a valid option")
