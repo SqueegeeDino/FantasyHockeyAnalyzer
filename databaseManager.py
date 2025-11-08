@@ -9,12 +9,21 @@ from tqdm import tqdm
 import pandas as pd
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta
 
 DB_NAME = "fleakicker.db"
+
+# // FleaFlicker API specifics
 leagueID = 12100
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
+
+# // NHL API specifics
 client = NHLClient()
+NHL_BASE = "https://api.nhle.com/stats/rest/en"
+
+# // General variables
 season = 20252026
+
 
 
 # Variables mostly used in index population
@@ -171,6 +180,13 @@ def helpNHL(debug=False):
     dbPopulateRealtime()
     if debug==True:
         print("✅ helpNHL populated realtime")
+
+# Helper function to format dates for NHL API
+def _fmt_date(d: datetime, end=False) -> str:
+    # NHL API expects strings like YYYY-MM-DD or with time; include end-of-day for the end bound
+    if end:
+        return d.strftime("%Y-%m-%d 23:59:59")
+    return d.strftime("%Y-%m-%d")
 
 '''=== BUILDING ==='''
 # apiScoringGet function grabs scoring values and puts them in a .json file
@@ -599,6 +615,416 @@ def dbPopulateRealtime():
     conn.close()
     print(f"✅ Inserted/updated {len(rows)} realtime rows.")
 
+# === "Window" Views ===
+# Window being 'time window' like last 7 days, last 14 days, etc.
+
+# Ensure the window tables exist, called within dbPopulateWindowStats
+def _ensure_window_tables():
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # Skater summary (window)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS rawstats_window_skater (
+            playerId INTEGER,
+            startDate TEXT,
+            endDate   TEXT,
+            seasonId  INTEGER,
+            gamesPlayed INTEGER,
+            goals INTEGER,
+            assists INTEGER,
+            shots INTEGER,
+            ppPoints INTEGER,
+            shPoints INTEGER,
+            penaltyMinutes INTEGER,
+            positionCode TEXT,
+            teamAbbrevs TEXT,
+            skaterFullName TEXT,
+            PRIMARY KEY (playerId, startDate, endDate)
+        )
+    """)
+
+    # Skater realtime (window)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS rawstats_window_skater_realtime (
+            playerId INTEGER,
+            startDate TEXT,
+            endDate   TEXT,
+            seasonId  INTEGER,
+            hits INTEGER,
+            blockedShots INTEGER,
+            timeOnIcePerGame REAL,
+            PRIMARY KEY (playerId, startDate, endDate)
+        )
+    """)
+
+    # Goalie summary (window)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS rawstats_window_goalie (
+            playerId INTEGER,
+            startDate TEXT,
+            endDate   TEXT,
+            seasonId  INTEGER,
+            gamesPlayed INTEGER,
+            wins INTEGER,
+            losses INTEGER,
+            otLosses INTEGER,
+            saves INTEGER,
+            goalsAgainst INTEGER,
+            shutouts INTEGER,
+            teamAbbrevs TEXT,
+            goalieFullName TEXT,
+            PRIMARY KEY (playerId, startDate, endDate)
+        )
+    """)
+
+    # helpful indices
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_win_skater_pid ON rawstats_window_skater(playerId)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_win_skater_rt_pid ON rawstats_window_skater_realtime(playerId)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_win_goalie_pid ON rawstats_window_goalie(playerId)")
+
+    conn.commit()
+    conn.close()
+
+# Populate windowed stats from NHL API
+def dbPopulateWindowStats(days: int = 14,
+                          start_date: str | None = None,
+                          end_date: str | None = None,
+                          season_id: int | None = None,
+                          game_type_id: int = 2):
+    """
+    Populate date-window aggregates for skaters (summary + realtime) and goalies (summary).
+    Uses NHL API with isAggregate=true over a gameDate range.
+    - days: window size if start/end not provided
+    - start_date / end_date: 'YYYY-MM-DD' strings (end bound is inclusive, 23:59:59)
+    - season_id: optional; if provided, stored alongside rows (fallback to payload seasonId if present)
+    """
+    _ensure_window_tables()
+
+    # --- resolve dates ---
+    if start_date is None or end_date is None:
+        end_dt = datetime.utcnow()
+        start_dt = end_dt - timedelta(days=days)
+        start_str = _fmt_date(start_dt)
+        end_str = _fmt_date(end_dt, end=True)
+    else:
+        # allow passing YYYY-MM-DD (we add 23:59:59 to end)
+        start_str = start_date
+        end_str = end_date if " " in end_date else f"{end_date} 23:59:59"
+
+    cayenne_range = f'gameDate>="{start_str}" and gameDate<="{end_str}" and gameTypeId={game_type_id}'
+
+    urls = {
+        "skater_summary": f"{NHL_BASE}/skater/summary?isAggregate=true&isGame=false&limit=-1&cayenneExp={cayenne_range}",
+        "skater_realtime": f"{NHL_BASE}/skater/realtime?isAggregate=true&isGame=false&limit=-1&cayenneExp={cayenne_range}",
+        "goalie_summary": f"{NHL_BASE}/goalie/summary?isAggregate=true&isGame=false&limit=-1&cayenneExp={cayenne_range}",
+    }
+
+    session = rq.Session()
+
+    def _fetch(url_key):
+        url = urls[url_key]
+        r = session.get(url, timeout=30)
+        r.raise_for_status()
+        js = r.json()
+        return js.get("data", [])
+
+    sk_sum = _fetch("skater_summary")
+    sk_rt  = _fetch("skater_realtime")
+    gl_sum = _fetch("goalie_summary")
+
+    # --- write to DB ---
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # Clear any existing rows for this exact window so re-runs overwrite cleanly
+    cur.execute("DELETE FROM rawstats_window_skater WHERE startDate=? AND endDate=?", (start_str, end_str))
+    cur.execute("DELETE FROM rawstats_window_skater_realtime WHERE startDate=? AND endDate=?", (start_str, end_str))
+    cur.execute("DELETE FROM rawstats_window_goalie WHERE startDate=? AND endDate=?", (start_str, end_str))
+
+    # Skater summary rows
+    sk_rows = []
+    for it in sk_sum:
+        pid  = it.get("playerId")
+        # Prefer explicit season_id param, else payload seasonId, else None
+        sid  = season_id if season_id is not None else it.get("seasonId")
+        sk_rows.append((
+            pid,
+            start_str, end_str, sid,
+            it.get("gamesPlayed", 0),
+            it.get("goals", 0),
+            it.get("assists", 0),
+            it.get("shots", 0),
+            it.get("ppPoints", 0),
+            it.get("shPoints", 0),
+            it.get("penaltyMinutes", 0),
+            it.get("positionCode"),
+            it.get("teamAbbrevs"),
+            it.get("skaterFullName"),
+        ))
+    if sk_rows:
+        cur.executemany("""
+            INSERT OR REPLACE INTO rawstats_window_skater
+            (playerId, startDate, endDate, seasonId, gamesPlayed, goals, assists, shots, ppPoints, shPoints, penaltyMinutes,
+             positionCode, teamAbbrevs, skaterFullName)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, sk_rows)
+
+    # Skater realtime rows
+    rt_rows = []
+    for it in sk_rt:
+        pid  = it.get("playerId")
+        sid  = season_id if season_id is not None else it.get("seasonId")
+        rt_rows.append((
+            pid, start_str, end_str, sid,
+            it.get("hits", 0),
+            it.get("blockedShots", 0),
+            it.get("timeOnIcePerGame", 0.0),
+        ))
+    if rt_rows:
+        cur.executemany("""
+            INSERT OR REPLACE INTO rawstats_window_skater_realtime
+            (playerId, startDate, endDate, seasonId, hits, blockedShots, timeOnIcePerGame)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, rt_rows)
+
+    # Goalie summary rows
+    gl_rows = []
+    for it in gl_sum:
+        pid  = it.get("playerId")
+        sid  = season_id if season_id is not None else it.get("seasonId")
+        gl_rows.append((
+            pid, start_str, end_str, sid,
+            it.get("gamesPlayed", 0),
+            it.get("wins", 0),
+            it.get("losses", 0),
+            it.get("otLosses", 0),
+            it.get("saves", 0),
+            it.get("goalsAgainst", 0),
+            it.get("shutouts", 0),
+            it.get("teamAbbrevs"),
+            it.get("goalieFullName"),
+        ))
+    if gl_rows:
+        cur.executemany("""
+            INSERT OR REPLACE INTO rawstats_window_goalie
+            (playerId, startDate, endDate, seasonId, gamesPlayed, wins, losses, otLosses, saves, goalsAgainst, shutouts, teamAbbrevs, goalieFullName)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, gl_rows)
+
+    conn.commit()
+    conn.close()
+
+    print(f"✅ dbPopulateWindowStats — skaters:{len(sk_rows)} realtime:{len(rt_rows)} goalies:{len(gl_rows)}  "
+          f"window=[{start_str} → {end_str}]")
+
+# Helper to resolve window bounds for dbBuildUnifiedFantasyWindowView
+def _resolve_window_bounds(start_date: str | None, end_date: str | None, days: int) -> tuple[str, str]:
+    """Matches the date formatting used in dbPopulateWindowStats."""
+    if start_date and end_date:
+        end_str = end_date if " " in end_date else f"{end_date} 23:59:59"
+        return start_date, end_str
+    # fallback: latest window in DB if present, otherwise days back from now
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT startDate, endDate
+        FROM rawstats_window_skater
+        ORDER BY endDate DESC
+        LIMIT 1
+    """)
+    row = cur.fetchone()
+    conn.close()
+    if row:
+        return row[0], row[1]
+    # no rows yet → synthesize bounds (works only if you then call dbPopulateWindowStats with same days)
+    end_dt = datetime.utcnow()
+    start_dt = end_dt - timedelta(days=days)
+    return start_dt.strftime("%Y-%m-%d"), end_dt.strftime("%Y-%m-%d 23:59:59")
+
+# Build the unified fantasy points view for a given window
+def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
+                                    end_date: str | None = None,
+                                    days: int = 14,
+                                    debug: bool = False):
+    """
+    Create/replace 'unified_fantasy_points_window' for a specific date window.
+    Requires dbPopulateWindowStats() to have been run for that window.
+    """
+    ws, we = _resolve_window_bounds(start_date, end_date, days)
+
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    # --- load scoring rules ---
+    cur.execute("SELECT name, value FROM score")
+    scoring_rules = dict(cur.fetchall())
+
+    # Alias map for WINDOW tables (note: hits/blocks come from wrt.*)
+    # Keep it minimal; add more mappings if you’ve added more scoring categories.
+    STAT_ALIAS_MAP = {
+        "G":   {"col": "ws.goals",           "tables": ["skater"]},
+        "Ast": {"col": "ws.assists",         "tables": ["skater"]},
+        "PPP": {"col": "ws.ppPoints",        "tables": ["skater"]},
+        "SHP": {"col": "ws.shPoints",        "tables": ["skater"]},
+        "SOG": {"col": "ws.shots",           "tables": ["skater"]},
+        "PIM": {"col": "ws.penaltyMinutes",  "tables": ["skater"]},
+
+        "Hit": {"col": "wrt.hits",           "tables": ["skater"]},
+        "Blk": {"col": "wrt.blockedShots",   "tables": ["skater"]},
+
+        "W":   {"col": "wg.wins",            "tables": ["goalie"]},
+        "L":   {"col": "wg.losses",          "tables": ["goalie"]},
+        "OTL": {"col": "wg.otLosses",        "tables": ["goalie"]},
+        "SO":  {"col": "wg.shutouts",        "tables": ["goalie"]},
+        "SV":  {"col": "wg.saves",           "tables": ["goalie"]},
+        "GA":  {"col": "wg.goalsAgainst",    "tables": ["goalie"]},
+    }
+
+    # Build expressions
+    sk_terms = []
+    gl_terms = []
+    for stat, info in STAT_ALIAS_MAP.items():
+        if stat not in scoring_rules:
+            continue
+        mult = scoring_rules[stat]
+        if "skater" in info["tables"]:
+            sk_terms.append(f"(COALESCE({info['col']}, 0) * {mult})")
+        if "goalie" in info["tables"]:
+            # goalie columns already prefixed in map
+            gl_terms.append(f"(COALESCE({info['col']}, 0) * {mult})")
+
+    if not sk_terms: sk_terms = ["0"]
+    if not gl_terms: gl_terms = ["0"]
+
+    sk_expr = " + ".join(sk_terms)
+    gl_expr = " + ".join(gl_terms)
+
+    # Skaters (window)
+    skater_query = f"""
+    SELECT
+        ws.playerId AS nhl_id,
+        pl.ff_id,
+        ws.skaterFullName AS playerFullName,
+        ws.teamAbbrevs,
+        ws.positionCode,
+        ws.gamesPlayed,
+        'Skater' AS playerType,
+        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        ({sk_expr}) AS fantasy_points_total,
+        ROUND(({sk_expr}) / NULLIF(ws.gamesPlayed, 0), 3) AS fantasy_points_per_game,
+        COALESCE(wrt.hits, 0) AS hits,
+        COALESCE(wrt.blockedShots, 0) AS blockedShots,
+        COALESCE(wrt.timeOnIcePerGame, 0) AS realtimeTOI,
+        ws.startDate AS window_start,
+        ws.endDate   AS window_end
+    FROM rawstats_window_skater ws
+    LEFT JOIN rawstats_window_skater_realtime wrt
+      ON wrt.playerId=ws.playerId AND wrt.startDate=ws.startDate AND wrt.endDate=ws.endDate
+    LEFT JOIN player_index_local pl ON ws.playerId = pl.nhl_id
+    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
+    WHERE ws.startDate = '{ws}' AND ws.endDate = '{we}'
+    """
+
+    # Goalies (window)
+    goalie_query = f"""
+    SELECT
+        wg.playerId AS nhl_id,
+        pl.ff_id,
+        wg.goalieFullName AS playerFullName,
+        wg.teamAbbrevs,
+        'G' AS positionCode,
+        wg.gamesPlayed,
+        'Goalie' AS playerType,
+        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        ({gl_expr}) AS fantasy_points_total,
+        ROUND(({gl_expr}) / NULLIF(wg.gamesPlayed, 0), 3) AS fantasy_points_per_game,
+        0 AS hits,
+        0 AS blockedShots,
+        0 AS realtimeTOI,
+        wg.startDate AS window_start,
+        wg.endDate   AS window_end
+    FROM rawstats_window_goalie wg
+    LEFT JOIN player_index_local pl ON wg.playerId = pl.nhl_id
+    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
+    WHERE wg.startDate = '{ws}' AND wg.endDate = '{we}'
+    """
+
+    sql = f"""
+    DROP VIEW IF EXISTS unified_fantasy_points_window;
+    CREATE VIEW unified_fantasy_points_window AS
+    {skater_query}
+    UNION ALL
+    {goalie_query};
+    """
+
+    if debug:
+        print("\n🧩 --- WINDOW VIEW SQL ---\n")
+        print(sql)
+
+    # Execute (SQLite allows only one statement per execute → split)
+    for stmt in sql.strip().split(";\n"):
+        s = stmt.strip()
+        if s:
+            cur.execute(s + ";")
+
+    conn.commit()
+    conn.close()
+    print(f"✅ Created view 'unified_fantasy_points_window' for [{ws} → {we}]")
+
+# Build the unified fantasy trends view comparing season vs window
+def dbBuildTrendView():
+    """
+    Create/replace 'unified_fantasy_trends' by joining the season view
+    vs the window view on nhl_id. Assumes both views exist.
+    """
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    sql = """
+    DROP VIEW IF EXISTS unified_fantasy_trends;
+    CREATE VIEW unified_fantasy_trends AS
+    SELECT
+        w.nhl_id,
+        COALESCE(w.playerFullName, s.playerFullName) AS playerFullName,
+        COALESCE(w.teamAbbrevs, s.teamAbbrevs) AS teamAbbrevs,
+        COALESCE(w.positionCode, s.positionCode) AS positionCode,
+        COALESCE(w.playerType, s.playerType) AS playerType,
+
+        s.fantasy_points_total       AS season_fp_total,
+        s.fantasy_points_per_game    AS season_fp_pg,
+
+        w.fantasy_points_total       AS window_fp_total,
+        w.fantasy_points_per_game    AS window_fp_pg,
+
+        ROUND(w.fantasy_points_per_game - s.fantasy_points_per_game, 3) AS delta_fp_pg,
+        CASE
+          WHEN s.fantasy_points_per_game = 0 THEN NULL
+          ELSE ROUND((w.fantasy_points_per_game - s.fantasy_points_per_game) / s.fantasy_points_per_game, 3)
+        END AS pct_change_fp_pg,
+
+        w.hits   AS window_hits,
+        w.blockedShots AS window_blocks,
+        w.realtimeTOI  AS window_toi,
+
+        s.freeAgent    AS freeAgent_season,
+        w.window_start,
+        w.window_end
+    FROM unified_fantasy_points_window w
+    JOIN unified_fantasy_points s
+      ON s.nhl_id = w.nhl_id;
+    """
+
+    for stmt in sql.strip().split(";\n"):
+        s = stmt.strip()
+        if s:
+            cur.execute(s + ";")
+
+    conn.commit()
+    conn.close()
+    print("✅ Created view 'unified_fantasy_trends'")
+
+# === Final view builing ===
 # Builds a unified view combining both skater and goalie stats with Fantasy Points calculated dynamically using the 'score' table
 def dbBuildUnifiedFantasyView(debug=True):
     conn = sqlite3.connect(DB_NAME)
