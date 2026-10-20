@@ -1,8 +1,7 @@
 import sqlite3
+from pathlib import Path
 import json
 import requests as rq
-import nhlAPI
-from nhlpy import NHLClient
 import csv
 import time
 from tqdm import tqdm
@@ -10,11 +9,14 @@ import pandas as pd
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
-
-DB_NAME = "fleakicker.db"
+# Hockey/Fantasy imports
+import nhlAPI
+from nhlpy import NHLClient
+# Local Imports
+from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
+from hockey.config import ff_leagueID # Imports the ff_leagueID from hockey/config.py
 
 # // FleaFlicker API specifics
-leagueID = 12100
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
 
 # // NHL API specifics
@@ -23,8 +25,6 @@ NHL_BASE = "https://api.nhle.com/stats/rest/en"
 
 # // General variables
 season = 20252026
-
-
 
 # Variables mostly used in index population
 positions = ["c", "lw", "rw", "d", "g"]
@@ -40,123 +40,12 @@ def clean_name(ntype, name):
     """
     return name[ntype]['default']
 
-# Detailed and powerful export function of all data collected
-def exportFantasyCSV(
-    filename: str = "fantasy_leaderboard.csv",
-    limit: int | None = None,
-    mode: str = "lean",  # lean | wide | ultraWide
-    columns: list[str] | None = None,
-    order_by: str = "fantasy_points_total DESC",
-):
-    """
-    Export rows from the unified_fantasy_points view to CSV.
-
-    - mode="lean"      -> small, human-friendly set
-    - mode="wide"      -> all columns discovered via PRAGMA
-    - mode="ultraWide" -> literally SELECT * (whatever view has right now)
-    - columns=[...]    -> explicit list wins over mode
-    """
-    conn = sqlite3.connect(DB_NAME)
-    cur = conn.cursor()
-
-    # explicit columns always win
-    if columns is not None and len(columns) > 0:
-        select_cols = ", ".join(columns)
-        query = f"SELECT {select_cols} FROM unified_fantasy_points"
-        if order_by:
-            query += f" ORDER BY {order_by}"
-        if limit is not None:
-            query += f" LIMIT {limit}"
-
-        cur.execute(query)
-        rows = cur.fetchall()
-        header = [c.strip() for c in select_cols.split(",")]
-
-    else:
-        if mode == "lean":
-            select_cols = ", ".join([
-                "playerFullName",
-                "teamAbbrevs",
-                "positionCode",
-                "playerType",
-                "freeAgent",
-                "gamesPlayed",
-                "hits",
-                "blockedShots",
-                "realtimeTOI",
-                "fantasy_points_total",
-                "fantasy_points_per_game",
-            ])
-            query = f"SELECT {select_cols} FROM unified_fantasy_points"
-            if order_by:
-                query += f" ORDER BY {order_by}"
-            if limit is not None:
-                query += f" LIMIT {limit}"
-
-            cur.execute(query)
-            rows = cur.fetchall()
-            header = [c.strip() for c in select_cols.split(",")]
-
-        elif mode == "wide":
-            # discover columns
-            cur.execute("PRAGMA table_info(unified_fantasy_points);")
-            cols = [row[1] for row in cur.fetchall()]
-            select_cols = ", ".join(cols)
-            query = f"SELECT {select_cols} FROM unified_fantasy_points"
-            if order_by:
-                query += f" ORDER BY {order_by}"
-            if limit is not None:
-                query += f" LIMIT {limit}"
-
-            cur.execute(query)
-            rows = cur.fetchall()
-            header = cols  # same order as PRAGMA
-
-        elif mode == "ultraWide":
-            # truly whatever is in the view right now
-            query = "SELECT * FROM unified_fantasy_points"
-            if order_by:
-                query += f" ORDER BY {order_by}"
-            if limit is not None:
-                query += f" LIMIT {limit}"
-
-            cur.execute(query)
-            rows = cur.fetchall()
-            # get column names from cursor description
-            header = [desc[0] for desc in cur.description]
-
-        else:
-            # fallback to lean
-            query = """
-                SELECT playerFullName, teamAbbrevs, positionCode,
-                       fantasy_points_total, fantasy_points_per_game
-                FROM unified_fantasy_points
-            """
-            cur.execute(query)
-            rows = cur.fetchall()
-            header = [
-                "playerFullName",
-                "teamAbbrevs",
-                "positionCode",
-                "fantasy_points_total",
-                "fantasy_points_per_game",
-            ]
-
-    # write csv
-    with open(filename, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerows(rows)
-
-    conn.close()
-    print(f"✅ Exported {len(rows)} rows to {filename} using mode='{mode}'")
-
 # Run all FleaFlicker related functions
 def helpFlea(debug=False):
     build_ff_indexes()
     if debug==True:
         print("✅ helpFlea built indices")
-    apiScoringGet(leagueID)
+    apiScoringGet(ff_leagueID)
     if debug==True:
         print("✅ helpFlea retrieved scoring")
     dbScoringPop()
@@ -222,7 +111,7 @@ def apiScoringGet(leagueID):
         print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
 
 def ensure_hits_blocks_columns():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # We try adding. If column already exists, SQLite will throw,
@@ -269,7 +158,7 @@ def fetch_hits_blocks_for_player(player_id: int, season_id: int):
 
 # Add data from fetch_hits_blocks_for_player to the rawstats_dynamic_skater table
 def populate_hits_blocks():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # Get all skaters we know about
@@ -292,9 +181,10 @@ def populate_hits_blocks():
     conn.close()
     print("✅ hits/blocks populated")
 
-# dbScoringPop function generates and populates the fleakicker.db database with a scoring table based on the .json
+# dbScoringPop function generates and populates the database with a scoring table based on the .json
 def dbScoringPop():
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True) # Verify that the DB_PATH exists
+    conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
     cur.execute('''CREATE TABLE IF NOT EXISTS score (
@@ -321,7 +211,7 @@ def dbScoringPop():
                 else: # This is where we check the pt value for a single instance of the event, in case it's a pts per multiple like "4 pts for every 10"
                     pts = rule["pointsPer"]["value"]
                 #print(f"  {cat}: {pos} | {pts}") # Print it all nicely
-                # Add the gathered scoring data to the 'score' table in the 'fleakicker.db'
+                # Add the gathered scoring data to the 'score' table in the database'
                 d = [cat, pts, pos]
                 cur.execute("INSERT OR REPLACE INTO score VALUES(?, ?, ?)", d)
                 conn.commit()
@@ -332,7 +222,7 @@ def dbScoringPop():
 # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
 def dbPlayerIndexFFPop(faStatus: bool):
     statusStr = str(faStatus).lower()  # "true" / "false"
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     failCount = 0
 
@@ -373,7 +263,7 @@ def dbPlayerIndexFFPop(faStatus: bool):
             for i in offsets:
                 url = (
                     "https://www.fleaflicker.com/api/FetchPlayerListing"
-                    f"?sport=NHL&league_id={leagueID}"
+                    f"?sport=NHL&league_id={ff_leagueID}"
                     f"&sort=SORT_DRAFT_RANKING"
                     f"&result_offset={i}"
                     f"&filter.position_eligibility={ipos}"
@@ -468,7 +358,7 @@ def fetch_team_roster(team_abbr, debug=True):
 
 # dbPlayerIndexNHLPop populates the player_index_nhl table using NHL player info
 def dbPlayerIndexNHLPop():
-    conn = sqlite3.connect("fleakicker.db")
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     cur.execute("""
@@ -516,7 +406,7 @@ def dbPlayerIndexNHLPop():
 
 # dbPlayerIndexLocalPop creates and populates the player_index_local table by matching players from both FleaFlicker and NHL tables
 def dbPlayerIndexLocalPop():
-    conn = sqlite3.connect("fleakicker.db")
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # Create the local table if it doesn't exist
@@ -559,7 +449,7 @@ REALTIME_URL = (
 )
 
 def dbEnsureRealtimeTable(): # Build the table inside the database
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS rawstats_dynamic_skater_realtime (
@@ -589,7 +479,7 @@ def dbPopulateRealtime():
 
     rows = data.get("data", [])
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # optional: wipe this season before inserting
@@ -620,7 +510,7 @@ def dbPopulateRealtime():
 
 # Ensure the window tables exist, called within dbPopulateWindowStats
 def _ensure_window_tables():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # Skater summary (window)
@@ -712,8 +602,10 @@ def dbPopulateWindowStats(days: int = 14,
         start_str = start_date
         end_str = end_date if " " in end_date else f"{end_date} 23:59:59"
 
+    # The NHL API uses "cayenneExp" as the timeframe system. This shortcuts that to be referenced when calling the API
     cayenne_range = f'gameDate>="{start_str}" and gameDate<="{end_str}" and gameTypeId={game_type_id}'
 
+    # API URLs to be called
     urls = {
         "skater_summary": f"{NHL_BASE}/skater/summary?isAggregate=true&isGame=false&limit=-1&cayenneExp={cayenne_range}",
         "skater_realtime": f"{NHL_BASE}/skater/realtime?isAggregate=true&isGame=false&limit=-1&cayenneExp={cayenne_range}",
@@ -729,12 +621,13 @@ def dbPopulateWindowStats(days: int = 14,
         js = r.json()
         return js.get("data", [])
 
+    # Call the API URLs and set them to some local variables
     sk_sum = _fetch("skater_summary")
     sk_rt  = _fetch("skater_realtime")
     gl_sum = _fetch("goalie_summary")
 
     # --- write to DB ---
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # Clear any existing rows for this exact window so re-runs overwrite cleanly
@@ -825,7 +718,7 @@ def _resolve_window_bounds(start_date: str | None, end_date: str | None, days: i
         end_str = end_date if " " in end_date else f"{end_date} 23:59:59"
         return start_date, end_str
     # fallback: latest window in DB if present, otherwise days back from now
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("""
         SELECT startDate, endDate
@@ -853,7 +746,7 @@ def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
     """
     ws, we = _resolve_window_bounds(start_date, end_date, days)
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # --- load scoring rules ---
@@ -978,7 +871,7 @@ def dbBuildTrendView():
     Create/replace 'unified_fantasy_trends' by joining the season view
     vs the window view on nhl_id. Assumes both views exist.
     """
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     sql = """
@@ -1027,7 +920,7 @@ def dbBuildTrendView():
 # === Final view builing ===
 # Builds a unified view combining both skater and goalie stats with Fantasy Points calculated dynamically using the 'score' table
 def dbBuildUnifiedFantasyView(debug=True):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     # === load scoring rules ===
@@ -1152,7 +1045,7 @@ def dbBuildUnifiedFantasyView(debug=True):
 
 '''=== MANAGING ==='''
 # Wipe all tables in the database
-def dbWipeAll(db_name="fleakicker.db"):
+def dbWipeAll(db_name=DB_PATH):
     """
     Fully wipes a SQLite database (tables + views) while skipping protected system tables.
     """
@@ -1187,7 +1080,7 @@ def dbWipeAll(db_name="fleakicker.db"):
 
 # Wipe a specific table
 def dbTableWipe(table_name):
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
     cur.execute(f"DROP TABLE IF EXISTS {table_name}")
@@ -1221,7 +1114,7 @@ def inspect_db_schema(db_path):
 
 # Fixes for known data issues in the NHL player index
 def dbPlayerIndexNHLFix():
-    conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
+    conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
     # Standardize position names
@@ -1240,37 +1133,13 @@ def dbPlayerIndexNHLFix():
     conn.commit()
     conn.close()
 
-# Export a table to CSV
-def dbTableToCsv(table):
-    try:
-        conn = sqlite3.connect('fleakicker.db') # Connect to the database. If one doesn't exist, creates it
-        cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and
-
-        cur.execute(f"SELECT * FROM {table}")
-        rows = cur.fetchall()
-
-        headers = [description[0] for description in cur.description]
-
-        with open(f'{table}.csv', 'w', newline='', encoding='utf-8') as csvfile:
-            csvwriter = csv.writer(csvfile)
-            csvwriter.writerow(headers)  # Write the header row
-            csvwriter.writerows(rows)    # Write all data rows
-        print(f"{table}.csv created successfully.")
-    except sqlite3.Error as e:
-        print(f"SQLite error: {e}")
-    except IOError as e:
-        print(f"File I/O error: {e}")
-    finally:
-        if conn: # type: ignore
-            conn.close()
-
 '''=== SEARCHING ==='''
 # Valid returns for searching the local index
 indexReturnTypes = ["local_id", "name", "pos", "team", "nhl_id", "ff_id"]
 
 # Single player search funtion. Searching by name or NHL_ID only legal methods.
 def indexSearchPlayer(playerSearch, playerReturn):
-    conn = sqlite3.connect("fleakicker.db")
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     result = []
     if playerReturn not in indexReturnTypes:
@@ -1297,7 +1166,7 @@ def indexSearchPlayer(playerSearch, playerReturn):
 # Returns index 0 of list if list length is 1 (just to make the return not a list). If list length is >1 (eg. dupliate names) returns each with full index info
 def helperIDSP(playerSearch, playerReturn):
     iR = indexSearchPlayer(playerSearch, playerReturn)
-    conn = sqlite3.connect("fleakicker.db")
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     if len(iR) == 1: # type: ignore
         return iR[0] # type: ignore
@@ -1311,7 +1180,7 @@ def helperIDSP(playerSearch, playerReturn):
     conn.close()
 
 def rawStatsSearchPlayerName():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     search_name = input("Enter player name: ").strip()
@@ -1346,64 +1215,3 @@ def rawStatsSearchPlayerName():
     print(player)
 
     conn.close()
-
-# === Exporting ===
-
-# Export the Unified Fantasy View
-OUTPUT_FILE = "fantasy_leaderboard.csv"
-def exportFantasyLeaderboard(limit=100, sort_by="fantasy_points_total"):
-    """
-    Export top fantasy performers to CSV.
-    
-    limit: how many rows to include in the export
-    sort_by: 'fantasy_points_per_game' or 'fantasy_points_total'
-    """
-    # Safety check: only allow known sort columns
-    if sort_by not in ("fantasy_points_per_game", "fantasy_points_total"):
-        sort_by = "fantasy_points_per_game"
-
-    # build filename with timestamp so you don't overwrite older exports
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"fantasy_leaderboard_{sort_by}_{timestamp}.csv"
-
-    conn = sqlite3.connect(DB_NAME)
-
-    query = f"""
-    SELECT
-        playerFullName,
-        teamAbbrevs,
-        positionCode,
-        playerType,
-        freeAgent,
-        gamesPlayed,
-        fantasy_points_total,
-        fantasy_points_per_game
-    FROM unified_fantasy_points
-    ORDER BY {sort_by} DESC
-    LIMIT {limit}
-    """
-
-    df = pd.read_sql_query(query, conn)
-    conn.close()
-
-    # Optional cleanup: turn 0/1 into 'FA'/'Rostered' for readability
-    df["freeAgent"] = df["freeAgent"].apply(lambda x: "FA" if x == 1 else "Rostered")
-
-    # Reorder columns how you'd likely want to see them
-    df = df[
-        [
-            "playerFullName",
-            "teamAbbrevs",
-            "positionCode",
-            "playerType",
-            "freeAgent",
-            "gamesPlayed",
-            "fantasy_points_total",
-            "fantasy_points_per_game",
-        ]
-    ]
-
-    df.to_csv(output_file, index=False)
-
-    print(f"✅ Exported {len(df)} rows to {output_file}")
-    return output_file

@@ -2,18 +2,20 @@ import nhlAPI
 import databaseManager as dbm
 import sqlite3
 import pandas as pd
+# Local Imports
+from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
 
 TABLE_1 = "player_index_ff"
 TABLE_2 = "player_index_ff_fa"
 
 def testQuery(table):
     # --- Configuration ---
-    DB_NAME = "fleakicker.db"
+    
     OUTPUT_FILE = f"table_{table}.csv"
     
 
     # --- Connect and fetch ---
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_PATH)
 
     # Grab the first 25 rows
     query = f"SELECT * FROM {table} LIMIT 25"
