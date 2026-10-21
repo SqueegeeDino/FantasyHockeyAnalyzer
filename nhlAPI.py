@@ -2,9 +2,9 @@ import hockey.databaseManager as dbm
 import requests as rq
 import sqlite3
 from nhlpy import NHLClient
+from hockey.config import season
 
 limit = -1 # -1 for all results
-season = 20252026 # Current season
 
 # Base endpoint for NHL stats API
 endpointBase = "https://api.nhle.com/stats/rest/en"
