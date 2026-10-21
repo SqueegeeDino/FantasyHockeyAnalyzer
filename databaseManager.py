@@ -15,37 +15,26 @@ from nhlpy import NHLClient
 # Local Imports
 from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
 from hockey.config import ff_leagueID # Imports the ff_leagueID from hockey/config.py
+from hockey.config import season
+import hockey.ingestion_espn as ingESPN
+import hockey.ingestion_ff as ingFF
+import hockey.ingestion_yahoo as ingYAH
+import hockey.ingestion_nhl as ingNHL
+from hockey.ingestion_nhl import NHL_BASE
+from hockey.ingestion_nhl import indexReturnTypes
 
-# // FleaFlicker API specifics
-offsets = list(range(0, 1300, 30))  # Offsets for pagination
 
-# // NHL API specifics
-client = NHLClient()
-NHL_BASE = "https://api.nhle.com/stats/rest/en"
-
-# // General variables
-season = 20252026
-
-# Variables mostly used in index population
-positions = ["c", "lw", "rw", "d", "g"]
-total_requests = len(positions) * (1300 // 30)  # 5 positions, 1300 players max, 30 per page, fleakicker API specific
-current_request = 0 # Fleakicker request counter
 
 '''=== HELPERS ==='''
 
-# Helper function to clean names
-def clean_name(ntype, name):
-    """
-    Clean the name of the player or team
-    """
-    return name[ntype]['default']
+
 
 # Run all FleaFlicker related functions
 def helpFlea(debug=False):
-    build_ff_indexes()
+    ingFF.build_ff_indexes()
     if debug==True:
         print("✅ helpFlea built indices")
-    apiScoringGet(ff_leagueID)
+    ingFF.apiScoringGet(ff_leagueID)
     if debug==True:
         print("✅ helpFlea retrieved scoring")
     dbScoringPop()
@@ -55,7 +44,7 @@ def helpFlea(debug=False):
 # Run all NHL API calls, currently includes local Index
 def helpNHL(debug=False):
     with ThreadPoolExecutor(max_workers=3) as ex:
-        fut_index = ex.submit(dbPlayerIndexNHLPop)
+        fut_index = ex.submit(ingNHL.dbPlayerIndexNHLPop)
         fut_rawSkate = ex.submit(nhlAPI.rawstats_dynamic_skater)
         fut_rawGoal = ex.submit(nhlAPI.rawstats_dynamic_goalie)
         fut_index.result()
@@ -66,49 +55,13 @@ def helpNHL(debug=False):
     dbPlayerIndexLocalPop()
     if debug==True:
         print("✅ helpNHL populated local index")
-    dbPopulateRealtime()
+    ingNHL.dbPopulateRealtime()
     if debug==True:
         print("✅ helpNHL populated realtime")
 
-# Helper function to format dates for NHL API
-def _fmt_date(d: datetime, end=False) -> str:
-    # NHL API expects strings like YYYY-MM-DD or with time; include end-of-day for the end bound
-    if end:
-        return d.strftime("%Y-%m-%d 23:59:59")
-    return d.strftime("%Y-%m-%d")
 
 '''=== BUILDING ==='''
-# apiScoringGet function grabs scoring values and puts them in a .json file
-def apiScoringGet(leagueID):
-    api_leagueScoring = f"https://www.fleaflicker.com/api/FetchLeagueRules?sport=NHL&league_id={leagueID}" # Store the endpoint
-    response_leagueScoring = rq.get(api_leagueScoring) # Use the requests.get method to collect the data as a response
-    if response_leagueScoring.status_code == 200: # Check for successful response from API
-        data_leagueScoring = response_leagueScoring.json() # Collect the json data using the METHOD, store it in variable "data"
-        # Write JSON to file
-        with open("league_rules.json", "w") as f: # With function "opens" and "closes" automatically
-            json.dump(data_leagueScoring, f, indent=4)  # indent for readability
 
-        for pos in data_leagueScoring["rosterPositions"]: # Print to terminal specific information
-            label = pos.get("label")
-            min_val = pos.get("min")
-            max_val = pos.get("max")
-            start = pos.get("start")
-            print(f"{label}: start={start}, min={min_val}, max={max_val}")
-        
-        for group in data_leagueScoring["groups"]: # Search the JSON for the "groups" header and loop through each
-            print(f"\n{group['label']}") # Prints the label of the group, for instance "Goalies"
-            if "scoringRules" in group: # Makes sure the group has scoringRules in it
-                for rule in group["scoringRules"]: # Loop through the scoringRules
-                    cat = rule["category"]["abbreviation"] # Get the category abbreviation, for instance "SHP" for Short Handed Points. Side by side items lets us step down without a new loop
-                    desc = rule["description"] # Gets the decription item of the category
-                    if rule["forEvery"] == 1: # This checks to see if it's a simple pts per 1 score, or if it's something like "4 pts for every 10"
-                        pts = rule["points"]["value"]
-                        print("Pts true")
-                    else: # This is where we check the pt value for a single instance of the event, in case it's a pts per multiple like "4 pts for every 10"
-                        pts = rule["pointsPer"]["value"]
-                    print(f"  {cat}: {desc} | {pts}") # Print it all nicely
-    else:
-        print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
 
 def ensure_hits_blocks_columns():
     conn = sqlite3.connect(DB_PATH)
@@ -129,57 +82,9 @@ def ensure_hits_blocks_columns():
     conn.commit()
     conn.close()
 
-def fetch_hits_blocks_for_player(player_id: int, season_id: int):
-    # PSEUDOCODE: you’ll need to confirm the real URL/params
-    # based on that “get_NHL_Player_game_logs” description.
-    #
-    # This is what it conceptually looks like:
-    #
-    endpoint = "https://api.bloodlinealpha.com/nhl/players/game-log?playerId={}&seasonId=20242025&gameTypeId=2&isAggregate=true&isAscending=false&properties=hits,blockedShots"  # <- fill in real endpoint
-    params = {
-        "playerId": player_id,
-        "seasonId": season_id,
-        "gameTypeId": 2,     # regular season
-        "isAggregate": True,
-        "properties": "hits,blockedShots"
-    }
 
-    resp = rq.get(endpoint, params=params)
-    if resp.status_code != 200:
-        return None
 
-    js = resp.json()
 
-    # We expect something like { "hits": 143, "blockedShots": 82 }
-    hits = js.get("hits", 0)
-    blocks = js.get("blockedShots", 0)
-
-    return hits, blocks
-
-# Add data from fetch_hits_blocks_for_player to the rawstats_dynamic_skater table
-def populate_hits_blocks():
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # Get all skaters we know about
-    cur.execute("SELECT playerId, seasonId FROM rawstats_dynamic_skater")
-    players = cur.fetchall()
-
-    for player_id, season_id in players:
-        result = fetch_hits_blocks_for_player(player_id, season_id)
-        if result is None:
-            continue
-        hits, blocks = result
-
-        cur.execute("""
-            UPDATE rawstats_dynamic_skater
-            SET hits = ?, blocks = ?
-            WHERE playerId = ?
-        """, (hits, blocks, player_id))
-
-    conn.commit()
-    conn.close()
-    print("✅ hits/blocks populated")
 
 # dbScoringPop function generates and populates the database with a scoring table based on the .json
 def dbScoringPop():
@@ -219,191 +124,6 @@ def dbScoringPop():
     conn.commit()
     conn.close()       
 
-# dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
-def dbPlayerIndexFFPop(faStatus: bool):
-    statusStr = str(faStatus).lower()  # "true" / "false"
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    failCount = 0
-
-    # tables
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS player_index_ff (
-            fleakicker_id INTEGER UNIQUE,
-            name TEXT,
-            pos TEXT,
-            team TEXT
-        )
-    """)
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS player_index_ff_fa (
-            fleakicker_id INTEGER UNIQUE,
-            name TEXT,
-            pos TEXT,
-            team TEXT
-        )
-    """)
-
-    rows_to_insert: list[tuple] = []
-
-    session = rq.Session()
-
-    REQ_SLEEP_EVERY = 3
-    REQ_SLEEP_TIME = 0.5
-    req_count = 0
-
-    with tqdm(total=total_requests,
-              desc=f"FleaFlicker {'FA' if faStatus else 'All'}",
-              unit="req",
-              colour="green") as pbar:
-
-        for ipos in positions:
-            empty_in_a_row = 0  # <-- reset per position
-
-            for i in offsets:
-                url = (
-                    "https://www.fleaflicker.com/api/FetchPlayerListing"
-                    f"?sport=NHL&league_id={ff_leagueID}"
-                    f"&sort=SORT_DRAFT_RANKING"
-                    f"&result_offset={i}"
-                    f"&filter.position_eligibility={ipos}"
-                    f"&filter.free_agent_only={statusStr}"
-                )
-
-                try:
-                    resp = session.get(url, timeout=10)
-                except Exception as e:
-                    pbar.write(f"Request error {e}")
-                    failCount += 1
-                    if failCount >= 3:
-                        pbar.write("❌ Multiple consecutive failures, stopping fetch loop.")
-                        # break out of BOTH loops
-                        offsets_exhausted = True
-                        break
-                    pbar.update(1)
-                    continue
-
-                if resp.status_code == 200:
-                    data = resp.json()
-                    players = data.get("players")
-
-                    if not players:
-                        empty_in_a_row += 1
-                        pbar.write(f"No players for {ipos} offset {i}")
-                        if empty_in_a_row >= 3:
-                            # stop trying more offsets for THIS position
-                            pbar.write(f"Stopping {ipos} after 3 empty pages.")
-                            break
-                        pbar.update(1)
-                        continue
-
-                    # reset counts on success
-                    empty_in_a_row = 0
-                    failCount = 0
-
-                    for player in players:
-                        fleakicker_id = player["proPlayer"]["id"]
-                        name = player["proPlayer"]["nameFull"]
-                        pos = player["proPlayer"]["position"]
-                        team = player["proPlayer"]["proTeamAbbreviation"]
-                        rows_to_insert.append((fleakicker_id, name, pos, team))
-
-                else:
-                    pbar.write(f"HTTP {resp.status_code} for {ipos} offset {i}")
-                    failCount += 1
-                    if failCount >= 3:
-                        pbar.write("❌ Multiple consecutive failures, stopping fetch loop.")
-                        break  # break offsets for this position
-
-                req_count += 1
-                if req_count % REQ_SLEEP_EVERY == 0:
-                    time.sleep(REQ_SLEEP_TIME)
-
-                pbar.update(1)
-            # end inner offset loop
-        # end positions loop
-
-    # === bulk insert at the end, ALWAYS ===
-    if rows_to_insert:
-        if faStatus:
-            cur.executemany(
-                "INSERT OR REPLACE INTO player_index_ff_fa VALUES (?, ?, ?, ?)",
-                rows_to_insert
-            )
-        else:
-            cur.executemany(
-                "INSERT OR REPLACE INTO player_index_ff VALUES (?, ?, ?, ?)",
-                rows_to_insert
-            )
-
-    conn.commit()
-    conn.close()
-    print(f"✅ dbPlayerIndexFFPop({faStatus}) — inserted {len(rows_to_insert)} players")
-
-# Call this to build FleaFlicker indexes to speed up the process if you want both
-def build_ff_indexes():
-    with ThreadPoolExecutor(max_workers=2) as ex:
-        fut_all = ex.submit(dbPlayerIndexFFPop, False)
-        fut_fa  = ex.submit(dbPlayerIndexFFPop, True)
-        fut_all.result()
-        fut_fa.result()
-    print("✅ Both FF indexes built")
-
-# Fetch all the team rosters for the dbPlayerIndexNHLPop function to use
-def fetch_team_roster(team_abbr, debug=True):
-    roster = client.teams.team_roster(team_abbr=team_abbr, season="20252026")
-    if debug == True:
-        print(f"Fetched team: {team_abbr}")
-    return team_abbr, roster
-
-# dbPlayerIndexNHLPop populates the player_index_nhl table using NHL player info
-def dbPlayerIndexNHLPop():
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS player_index_nhl (
-            nhl_id INTEGER UNIQUE,
-            name   TEXT,
-            pos    TEXT,
-            team   TEXT
-        )
-    """)
-
-    teams = client.teams.teams()
-    team_abbrs = [t["abbr"] for t in teams]
-
-    rows = []
-
-    # fetch all rosters in parallel
-    with ThreadPoolExecutor(max_workers=6) as ex:
-        futures = [ex.submit(fetch_team_roster, abbr) for abbr in team_abbrs]
-        for fut in futures:
-            team_abbr, roster = fut.result()
-            players = roster["forwards"] + roster["defensemen"] + roster["goalies"]
-            for p in players:
-                nhl_id = p["id"]
-                first = clean_name("firstName", p)
-                last = clean_name("lastName", p)
-                name = f"{first} {last}"
-                pos = p.get("positionCode", "")
-                if pos == "L":
-                    pos = "LW"
-                elif pos == "R":
-                    pos = "RW"
-                rows.append((nhl_id, name, pos, team_abbr))
-
-    # single bulk insert
-    cur.executemany(
-        "INSERT OR REPLACE INTO player_index_nhl (nhl_id, name, pos, team) VALUES (?, ?, ?, ?)",
-        rows,
-    )
-
-    conn.commit()
-    conn.close()
-    dbPlayerIndexNHLFix()
-    print(f"✅ dbPlayerIndexNHLPop (parallel) — inserted {len(rows)} players")
-
 # dbPlayerIndexLocalPop creates and populates the player_index_local table by matching players from both FleaFlicker and NHL tables
 def dbPlayerIndexLocalPop():
     conn = sqlite3.connect(DB_PATH)
@@ -439,74 +159,16 @@ def dbPlayerIndexLocalPop():
 # == RealtimeTable Functions ==
 # RealtimeTable is how we find data like hits, blocks, and time on ice. There's lots of interesting stats in here for future use
 
-REALTIME_URL = (
-    "https://api.nhle.com/stats/rest/en/skater/realtime"
-    "?isAggregate=true"
-    "&isGame=false"
-    "&limit=-1"
-    # change seasonId here as needed
-    f"&cayenneExp=seasonId={season} and gameTypeId=2"
-)
 
-def dbEnsureRealtimeTable(): # Build the table inside the database
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS rawstats_dynamic_skater_realtime (
-            playerId INTEGER,
-            seasonId INTEGER,
-            hits INTEGER,
-            blockedShots INTEGER,
-            timeOnIcePerGame REAL,
-            PRIMARY KEY (playerId, seasonId)
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-def fetch_realtime_json(): # Actually call the API endpoint
-    resp = rq.get(REALTIME_URL)
-    resp.raise_for_status()
-    return resp.json()
-
-def dbPopulateRealtime():
-    """
-    Fetches realtime skater data (hits, blockedShots, toi/g) for a season
-    and stores it in rawstats_dynamic_skater_realtime.
-    """
-    dbEnsureRealtimeTable()
-    data = fetch_realtime_json()
-
-    rows = data.get("data", [])
-
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # optional: wipe this season before inserting
-    # since the endpoint is season-specific, it's safe
-    cur.execute("DELETE FROM rawstats_dynamic_skater_realtime WHERE seasonId = ?", (season,))
-
-    for item in rows:
-        player_id = item.get("playerId")
-        hits = item.get("hits", 0)
-        blocked = item.get("blockedShots", 0)
-        toi = item.get("timeOnIcePerGame", 0)
-        # this endpoint didn't explicitly include seasonId in your sample,
-        # but it's in the filter, so we can hardcode it here:
-        season_id = season
-
-        cur.execute("""
-            INSERT OR REPLACE INTO rawstats_dynamic_skater_realtime
-                (playerId, seasonId, hits, blockedShots, timeOnIcePerGame)
-            VALUES (?, ?, ?, ?, ?)
-        """, (player_id, season_id, hits, blocked, toi))
-
-    conn.commit()
-    conn.close()
-    print(f"✅ Inserted/updated {len(rows)} realtime rows.")
 
 # === "Window" Views ===
 # Window being 'time window' like last 7 days, last 14 days, etc.
+# Helper function to format dates for NHL API
+def _fmt_date(d: datetime, end=False) -> str:
+    # NHL API expects strings like YYYY-MM-DD or with time; include end-of-day for the end bound
+    if end:
+        return d.strftime("%Y-%m-%d 23:59:59")
+    return d.strftime("%Y-%m-%d")
 
 # Ensure the window tables exist, called within dbPopulateWindowStats
 def _ensure_window_tables():
@@ -711,337 +373,7 @@ def dbPopulateWindowStats(days: int = 14,
     print(f"✅ dbPopulateWindowStats — skaters:{len(sk_rows)} realtime:{len(rt_rows)} goalies:{len(gl_rows)}  "
           f"window=[{start_str} → {end_str}]")
 
-# Helper to resolve window bounds for dbBuildUnifiedFantasyWindowView
-def _resolve_window_bounds(start_date: str | None, end_date: str | None, days: int) -> tuple[str, str]:
-    """Matches the date formatting used in dbPopulateWindowStats."""
-    if start_date and end_date:
-        end_str = end_date if " " in end_date else f"{end_date} 23:59:59"
-        return start_date, end_str
-    # fallback: latest window in DB if present, otherwise days back from now
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT startDate, endDate
-        FROM rawstats_window_skater
-        ORDER BY endDate DESC
-        LIMIT 1
-    """)
-    row = cur.fetchone()
-    conn.close()
-    if row:
-        return row[0], row[1]
-    # no rows yet → synthesize bounds (works only if you then call dbPopulateWindowStats with same days)
-    end_dt = datetime.utcnow()
-    start_dt = end_dt - timedelta(days=days)
-    return start_dt.strftime("%Y-%m-%d"), end_dt.strftime("%Y-%m-%d 23:59:59")
 
-# Build the unified fantasy points view for a given window
-def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
-                                    end_date: str | None = None,
-                                    days: int = 14,
-                                    debug: bool = False):
-    """
-    Create/replace 'unified_fantasy_points_window' for a specific date window.
-    Requires dbPopulateWindowStats() to have been run for that window.
-    """
-    ws, we = _resolve_window_bounds(start_date, end_date, days)
-
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # --- load scoring rules ---
-    cur.execute("SELECT name, value FROM score")
-    scoring_rules = dict(cur.fetchall())
-
-    # Alias map for WINDOW tables (note: hits/blocks come from wrt.*)
-    # Keep it minimal; add more mappings if you’ve added more scoring categories.
-    STAT_ALIAS_MAP = {
-        "G":   {"col": "ws.goals",           "tables": ["skater"]},
-        "Ast": {"col": "ws.assists",         "tables": ["skater"]},
-        "PPP": {"col": "ws.ppPoints",        "tables": ["skater"]},
-        "SHP": {"col": "ws.shPoints",        "tables": ["skater"]},
-        "SOG": {"col": "ws.shots",           "tables": ["skater"]},
-        "PIM": {"col": "ws.penaltyMinutes",  "tables": ["skater"]},
-
-        "Hit": {"col": "wrt.hits",           "tables": ["skater"]},
-        "Blk": {"col": "wrt.blockedShots",   "tables": ["skater"]},
-
-        "W":   {"col": "wg.wins",            "tables": ["goalie"]},
-        "L":   {"col": "wg.losses",          "tables": ["goalie"]},
-        "OTL": {"col": "wg.otLosses",        "tables": ["goalie"]},
-        "SO":  {"col": "wg.shutouts",        "tables": ["goalie"]},
-        "SV":  {"col": "wg.saves",           "tables": ["goalie"]},
-        "GA":  {"col": "wg.goalsAgainst",    "tables": ["goalie"]},
-    }
-
-    # Build expressions
-    sk_terms = []
-    gl_terms = []
-    for stat, info in STAT_ALIAS_MAP.items():
-        if stat not in scoring_rules:
-            continue
-        mult = scoring_rules[stat]
-        if "skater" in info["tables"]:
-            sk_terms.append(f"(COALESCE({info['col']}, 0) * {mult})")
-        if "goalie" in info["tables"]:
-            # goalie columns already prefixed in map
-            gl_terms.append(f"(COALESCE({info['col']}, 0) * {mult})")
-
-    if not sk_terms: sk_terms = ["0"]
-    if not gl_terms: gl_terms = ["0"]
-
-    sk_expr = " + ".join(sk_terms)
-    gl_expr = " + ".join(gl_terms)
-
-    # Skaters (window)
-    skater_query = f"""
-    SELECT
-        ws.playerId AS nhl_id,
-        pl.ff_id,
-        ws.skaterFullName AS playerFullName,
-        ws.teamAbbrevs,
-        ws.positionCode,
-        ws.gamesPlayed,
-        'Skater' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
-        ({sk_expr}) AS fantasy_points_total,
-        ROUND(({sk_expr}) / NULLIF(ws.gamesPlayed, 0), 3) AS fantasy_points_per_game,
-        COALESCE(wrt.hits, 0) AS hits,
-        COALESCE(wrt.blockedShots, 0) AS blockedShots,
-        COALESCE(wrt.timeOnIcePerGame, 0) AS realtimeTOI,
-        ws.startDate AS window_start,
-        ws.endDate   AS window_end
-    FROM rawstats_window_skater ws
-    LEFT JOIN rawstats_window_skater_realtime wrt
-      ON wrt.playerId=ws.playerId AND wrt.startDate=ws.startDate AND wrt.endDate=ws.endDate
-    LEFT JOIN player_index_local pl ON ws.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
-    WHERE ws.startDate = '{ws}' AND ws.endDate = '{we}'
-    """
-
-    # Goalies (window)
-    goalie_query = f"""
-    SELECT
-        wg.playerId AS nhl_id,
-        pl.ff_id,
-        wg.goalieFullName AS playerFullName,
-        wg.teamAbbrevs,
-        'G' AS positionCode,
-        wg.gamesPlayed,
-        'Goalie' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
-        ({gl_expr}) AS fantasy_points_total,
-        ROUND(({gl_expr}) / NULLIF(wg.gamesPlayed, 0), 3) AS fantasy_points_per_game,
-        0 AS hits,
-        0 AS blockedShots,
-        0 AS realtimeTOI,
-        wg.startDate AS window_start,
-        wg.endDate   AS window_end
-    FROM rawstats_window_goalie wg
-    LEFT JOIN player_index_local pl ON wg.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
-    WHERE wg.startDate = '{ws}' AND wg.endDate = '{we}'
-    """
-
-    sql = f"""
-    DROP VIEW IF EXISTS unified_fantasy_points_window;
-    CREATE VIEW unified_fantasy_points_window AS
-    {skater_query}
-    UNION ALL
-    {goalie_query};
-    """
-
-    if debug:
-        print("\n🧩 --- WINDOW VIEW SQL ---\n")
-        print(sql)
-
-    # Execute (SQLite allows only one statement per execute → split)
-    for stmt in sql.strip().split(";\n"):
-        s = stmt.strip()
-        if s:
-            cur.execute(s + ";")
-
-    conn.commit()
-    conn.close()
-    print(f"✅ Created view 'unified_fantasy_points_window' for [{ws} → {we}]")
-
-# Build the unified fantasy trends view comparing season vs window
-def dbBuildTrendView():
-    """
-    Create/replace 'unified_fantasy_trends' by joining the season view
-    vs the window view on nhl_id. Assumes both views exist.
-    """
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    sql = """
-    DROP VIEW IF EXISTS unified_fantasy_trends;
-    CREATE VIEW unified_fantasy_trends AS
-    SELECT
-        w.nhl_id,
-        COALESCE(w.playerFullName, s.playerFullName) AS playerFullName,
-        COALESCE(w.teamAbbrevs, s.teamAbbrevs) AS teamAbbrevs,
-        COALESCE(w.positionCode, s.positionCode) AS positionCode,
-        COALESCE(w.playerType, s.playerType) AS playerType,
-
-        s.fantasy_points_total       AS season_fp_total,
-        s.fantasy_points_per_game    AS season_fp_pg,
-
-        w.fantasy_points_total       AS window_fp_total,
-        w.fantasy_points_per_game    AS window_fp_pg,
-
-        ROUND(w.fantasy_points_per_game - s.fantasy_points_per_game, 3) AS delta_fp_pg,
-        CASE
-          WHEN s.fantasy_points_per_game = 0 THEN NULL
-          ELSE ROUND((w.fantasy_points_per_game - s.fantasy_points_per_game) / s.fantasy_points_per_game, 3)
-        END AS pct_change_fp_pg,
-
-        w.hits   AS window_hits,
-        w.blockedShots AS window_blocks,
-        w.realtimeTOI  AS window_toi,
-
-        s.freeAgent    AS freeAgent_season,
-        w.window_start,
-        w.window_end
-    FROM unified_fantasy_points_window w
-    JOIN unified_fantasy_points s
-      ON s.nhl_id = w.nhl_id;
-    """
-
-    for stmt in sql.strip().split(";\n"):
-        s = stmt.strip()
-        if s:
-            cur.execute(s + ";")
-
-    conn.commit()
-    conn.close()
-    print("✅ Created view 'unified_fantasy_trends'")
-
-# === Final view builing ===
-# Builds a unified view combining both skater and goalie stats with Fantasy Points calculated dynamically using the 'score' table
-def dbBuildUnifiedFantasyView(debug=True):
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # === load scoring rules ===
-    cur.execute("SELECT name, value FROM score")
-    scoring_rules = cur.fetchall()
-    if not scoring_rules:
-        print("⚠️ No scoring rules found.")
-        conn.close()
-        return
-
-    # === alias map (now with realtime) ===
-    STAT_ALIAS_MAP = {
-        "G":   {"col": "goals",            "tables": ["skater"]},
-        "Ast": {"col": "assists",          "tables": ["skater"]},
-        "PPP": {"col": "ppPoints",         "tables": ["skater"]},
-        "SHP": {"col": "shPoints",         "tables": ["skater"]},
-        "SOG": {"col": "shots",            "tables": ["skater"]},
-        "PIM": {"col": "penaltyMinutes",   "tables": ["skater"]},
-
-        # NEW: these now live in rawstats_dynamic_skater_realtime
-        "Hit": {"col": "rth.hits",         "tables": ["skater"]},
-        "Blk": {"col": "rth.blockedShots", "tables": ["skater"]},
-
-        # goalie stuff
-        "W":   {"col": "wins",             "tables": ["goalie"]},
-        "L":   {"col": "losses",           "tables": ["goalie"]},
-        "OTL": {"col": "otLosses",         "tables": ["goalie"]},
-        "SO":  {"col": "shutouts",         "tables": ["goalie"]},
-        "SV":  {"col": "saves",            "tables": ["goalie"]},
-        "GA":  {"col": "goalsAgainst",     "tables": ["goalie"]},
-    }
-
-    # === build expressions separately ===
-    skater_terms = []
-    goalie_terms = []
-
-    for stat_name, multiplier in scoring_rules:
-        mapping = STAT_ALIAS_MAP.get(stat_name)
-        if mapping is None:
-            if debug:
-                print(f"⚠️ Skipping unmapped stat {stat_name}")
-            continue
-
-        col = mapping["col"]
-        applies_to = mapping["tables"]
-
-        if "skater" in applies_to:
-            skater_terms.append(f"(COALESCE({col}, 0) * {multiplier})")
-        if "goalie" in applies_to:
-            goalie_terms.append(f"(COALESCE(ps.\"{col}\", 0) * {multiplier})")  # goalies still from main table
-
-    if not skater_terms:
-        skater_terms = ["0"]
-    if not goalie_terms:
-        goalie_terms = ["0"]
-
-    skater_expr = " + ".join(skater_terms)
-    goalie_expr = " + ".join(goalie_terms)
-
-    # === skater query with realtime join ===
-    skater_query = f"""
-    SELECT
-        ps.playerId AS nhl_id,
-        pl.ff_id,
-        ps.skaterFullName AS playerFullName,
-        ps.teamAbbrevs,
-        ps.positionCode,
-        ps.gamesPlayed,
-        'Skater' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
-        ({skater_expr}) AS fantasy_points_total,
-        ROUND(({skater_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game,
-        COALESCE(rth.hits, 0) AS hits,
-        COALESCE(rth.blockedShots, 0) AS blockedShots,
-        COALESCE(rth.timeOnIcePerGame, 0) AS realtimeTOI
-    FROM rawstats_dynamic_skater ps
-    LEFT JOIN rawstats_dynamic_skater_realtime rth
-        ON ps.playerId = rth.playerId
-       AND ps.seasonId = rth.seasonId
-    LEFT JOIN player_index_local pl
-        ON ps.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa
-        ON pl.ff_id = fa.fleakicker_id
-    """
-
-    # === goalie query unchanged (no realtime join, they don't live there) ===
-    goalie_query = f"""
-    SELECT
-        ps.playerId AS nhl_id,
-        pl.ff_id,
-        ps.goalieFullName AS playerFullName,
-        ps.teamAbbrevs,
-        'G' AS positionCode,
-        ps.gamesPlayed,
-        'Goalie' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
-        ({goalie_expr}) AS fantasy_points_total,
-        ROUND(({goalie_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game,
-        0 AS hits,
-        0 AS blockedShots,
-        0 AS realtimeTOI
-    FROM rawstats_dynamic_goalie ps
-    LEFT JOIN player_index_local pl
-        ON ps.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa
-        ON pl.ff_id = fa.fleakicker_id
-    """
-
-    unified_sql = f"""
-    CREATE VIEW IF NOT EXISTS unified_fantasy_points AS
-    {skater_query}
-    UNION ALL
-    {goalie_query};
-    """
-
-    cur.execute("DROP VIEW IF EXISTS unified_fantasy_points")
-    cur.execute(unified_sql)
-    conn.commit()
-    conn.close()
-
-    print("✅ Rebuilt unified_fantasy_points with realtime join.")
 
 '''=== MANAGING ==='''
 # Wipe all tables in the database
@@ -1111,31 +443,6 @@ def inspect_db_schema(db_path):
             print(f"  - {name} ({col_type}){' NOT NULL' if notnull else ''}{pk_str}")
 
     conn.close()
-
-# Fixes for known data issues in the NHL player index
-def dbPlayerIndexNHLFix():
-    conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it
-    cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
-
-    # Standardize position names
-    cur.execute("""
-    UPDATE player_index_nhl
-    SET pos = 'LW'
-    WHERE pos = 'L';
-                """)
-
-    cur.execute("""
-    UPDATE player_index_nhl
-    SET pos = 'RW'
-    WHERE pos = 'R';
-    """)
-
-    conn.commit()
-    conn.close()
-
-'''=== SEARCHING ==='''
-# Valid returns for searching the local index
-indexReturnTypes = ["local_id", "name", "pos", "team", "nhl_id", "ff_id"]
 
 # Single player search funtion. Searching by name or NHL_ID only legal methods.
 def indexSearchPlayer(playerSearch, playerReturn):
