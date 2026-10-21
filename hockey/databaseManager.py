@@ -24,10 +24,6 @@ from hockey.ingestion_nhl import NHL_BASE
 from hockey.query import indexReturnTypes
 from hockey.query import indexSearchPlayer
 
-'''=== HELPERS ==='''
-
-
-
 '''=== BUILDING ==='''
 
 def ensure_hits_blocks_columns():
@@ -401,8 +397,6 @@ def inspect_db_schema(db_path):
             print(f"  - {name} ({col_type}){' NOT NULL' if notnull else ''}{pk_str}")
 
     conn.close()
-
-
 
 # Returns index 0 of list if list length is 1 (just to make the return not a list). If list length is >1 (eg. dupliate names) returns each with full index info
 def helperIDSP(playerSearch, playerReturn):
