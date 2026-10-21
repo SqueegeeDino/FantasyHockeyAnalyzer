@@ -11,7 +11,6 @@ from hockey.config import season
 # // NHL API specifics
 client = NHLClient()
 NHL_BASE = "https://api.nhle.com/stats/rest/en"
-
 # Helper function to clean names
 def _clean_name(ntype, name):
     """
@@ -99,12 +98,7 @@ def fetch_team_roster(team_abbr, debug=True):
         print(f"Fetched team: {team_abbr}")
     return team_abbr, roster
 
-# Helper function to format dates for NHL API
-def _fmt_date(d: datetime, end=False) -> str:
-    # NHL API expects strings like YYYY-MM-DD or with time; include end-of-day for the end bound
-    if end:
-        return d.strftime("%Y-%m-%d 23:59:59")
-    return d.strftime("%Y-%m-%d")
+
 
 def fetch_hits_blocks_for_player(player_id: int, season_id: int):
     # PSEUDOCODE: you’ll need to confirm the real URL/params
