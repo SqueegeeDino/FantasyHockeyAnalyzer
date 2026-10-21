@@ -1,5 +1,5 @@
 import nhlAPI
-import databaseManager as dbm
+import hockey.databaseManager as dbm
 import sqlite3
 import pandas as pd
 # Local Imports

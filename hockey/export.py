@@ -3,7 +3,7 @@ import csv
 from datetime import datetime
 import pandas as pd
 # Local Imports
-import databaseManager as dbm
+import hockey.databaseManager as dbm
 from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
 from hockey.config import ff_leagueID
 

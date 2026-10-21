@@ -2,6 +2,10 @@ import sqlite3
 
 from hockey.config import DB_PATH
 
+'''=== SEARCHING ==='''
+# Valid returns for searching the local index
+indexReturnTypes = ["local_id", "name", "pos", "team", "nhl_id", "ff_id"]
+
 def rawStatsSearchPlayerName():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -37,4 +41,30 @@ def rawStatsSearchPlayerName():
     print("\nSelected player details:")
     print(player)
 
+    conn.close()
+
+# Single player search funtion. Searching by name or NHL_ID only legal methods.
+def indexSearchPlayer(playerSearch, playerReturn):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    result = []
+    if playerReturn not in indexReturnTypes:
+        raise ValueError(f"Invalid value: {playerReturn}. Must be one of {', '.join(indexReturnTypes)}")
+    if isinstance(playerSearch, str):
+        condition = "name"
+    elif isinstance(playerSearch, int):
+        condition = "nhl_id"
+    else:
+        print(f"{playerSearch} Invalid")
+        return
+    
+    cur.execute(f"SELECT {playerReturn} FROM player_index_local WHERE {condition} = ?", (playerSearch,))
+    found_players = cur.fetchall()
+    if found_players:
+        for p in found_players:
+            p = p[0]
+            result.append(p)
+    else:
+        print(f"Player not found.")
+    return result
     conn.close()

@@ -1,9 +1,15 @@
 import nhlAPI
-import databaseManager as dbm
+import hockey.databaseManager as dbm
 import requests as rq
 import sqlite3
 import pandas as pd
 import nhlAPI as nhl
+from hockey.config import DB_PATH
+import hockey.ingestion_ff as ingFF
+import hockey.export as exp
+import hockey.ingestion_nhl as ingNHL
+import hockey.query as hQuery
+import hockey.scoring as hSc
 
 DB_NAME = "fleakicker.db"
 leagueID = 12100
@@ -36,12 +42,12 @@ print("\n--- Beginning Execution ---\n")
 
 # --- Step 1: Wipe Database ---
 if confirm("Wipe and reset the database?", run_all, skip_all):
-    dbm.dbWipeAll(DB_NAME)
+    dbm.dbWipeAll(DB_PATH)
     print("✅ dbm.dbWipeAll")
 
 # --- Step 2: Fetch FleaFlicker Scoring ---
 if confirm("Fetch scoring rules from FleaFlicker?", run_all, skip_all):
-    dbm.apiScoringGet(leagueID)
+    ingFF.apiScoringGet(leagueID)
     print("✅ dbm.apiScoringGet")
 
 if confirm("Populate scoring data into database?", run_all, skip_all):
@@ -50,20 +56,20 @@ if confirm("Populate scoring data into database?", run_all, skip_all):
 
 # --- Step 3: FleaFlicker Player Index ---
 if confirm("Fetch FleaFlicker free agent list?", run_all, skip_all):
-    dbm.dbPlayerIndexFFPop(faStatus=True)
+    ingFF.dbPlayerIndexFFPop(faStatus=True)
     print("✅ dbm.dbPlayerIndexFFPop(True)")
 
 if confirm("Fetch FleaFlicker rostered player list?", run_all, skip_all):
-    dbm.dbPlayerIndexFFPop(faStatus=False)
+    ingFF.dbPlayerIndexFFPop(faStatus=False)
     print("✅ dbm.dbPlayerIndexFFPop(False)")
 
 if confirm("Export FleaFlicker scoring table to CSV?", run_all, skip_all):
-    dbm.dbTableToCsv("score")
+    exp.dbTableToCsv("score")
     print("✅ dbm.dbTableToCsv('score')")
 
 # --- Step 4: NHL Player Index ---
 if confirm("Fetch NHL player index (team rosters)?", run_all, skip_all):
-    dbm.dbPlayerIndexNHLPop()
+    ingNHL.dbPlayerIndexNHLPop()
     print("✅ dbm.dbPlayerIndexNHLPop")
 
 # --- Step 4a: Local Index
@@ -81,16 +87,16 @@ if confirm("Fetch NHL goalie stats?", run_all, skip_all):
     print("✅ nhlAPI.rawstats_dynamic_goalie")
 
 if confirm("Fetch real-time skater data (hits, blocks, TOI)?", run_all, skip_all):
-    dbm.dbPopulateRealtime()
+    ingNHL.dbPopulateRealtime()
     print("✅ dbm.dbPopulateRealtime")
 
 # --- Step 6: Fantasy Integration ---
 if confirm("Build unified fantasy view?", run_all, skip_all):
-    dbm.dbBuildUnifiedFantasyView(debug=False)
+    hSc.dbBuildUnifiedFantasyView(debug=False)
     print("✅ dbm.dbBuildUnifiedFantasyView")
 
 if confirm("Export fantasy leaderboard to CSV?", run_all, skip_all):
-    dbm.exportFantasyLeaderboard(limit=50, sort_by="fantasy_points_per_game")
+    exp.exportFantasyLeaderboard(limit=50, sort_by="fantasy_points_per_game")
     print("✅ dbm.exportFantasyLeaderboard")
 
 print("\n🏁 All selected operations complete.\n")

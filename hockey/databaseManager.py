@@ -56,9 +56,7 @@ def helpNHL(debug=False):
     if debug==True:
         print("✅ helpNHL populated realtime")
 
-
 '''=== BUILDING ==='''
-
 
 def ensure_hits_blocks_columns():
     conn = sqlite3.connect(DB_PATH)
@@ -78,10 +76,6 @@ def ensure_hits_blocks_columns():
 
     conn.commit()
     conn.close()
-
-
-
-
 
 # dbScoringPop function generates and populates the database with a scoring table based on the .json
 def dbScoringPop():
@@ -152,11 +146,6 @@ def dbPlayerIndexLocalPop():
 
     conn.commit()
     conn.close()
-
-# == RealtimeTable Functions ==
-# RealtimeTable is how we find data like hits, blocks, and time on ice. There's lots of interesting stats in here for future use
-
-
 
 # === "Window" Views ===
 # Window being 'time window' like last 7 days, last 14 days, etc.

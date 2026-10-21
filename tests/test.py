@@ -1,6 +1,7 @@
 import requests as rq
 import json
-import databaseManager as dbm
+import hockey.databaseManager as dbm
+import hockey.export as exp
 
 apiConfig = "https://api.nhle.com/stats/rest/en/config"
 apiTest = "https://api.nhle.com/stats/rest/en/skater/realtime?isAggregate=true&isGame=false&limit=-1&cayenneExp=seasonId=20252026 and gameTypeId=2"
@@ -32,20 +33,20 @@ choice = input("Enter choice: ").strip()
 
 # 1) lean / leaderboard style
 if choice == "1":
-    dbm.exportFantasyCSV(
+    exp.exportFantasyCSV(
         filename="fantasy_leaderboard_lean.csv",
         limit=100,
         mode="lean",
     )
 elif choice == "2":
     # 2) all columns the view has
-    dbm.exportFantasyCSV(
+    exp.exportFantasyCSV(
         filename="fantasy_leaderboard_wide.csv",
         mode="wide",
     )
 elif choice == "3":
     # 3) super custom
-    dbm.exportFantasyCSV(
+    exp.exportFantasyCSV(
         filename="fantasy_leaderboard_ultrawide.csv",
         mode="ultraWide",
     )
@@ -53,7 +54,7 @@ elif choice == "3":
 elif choice == "4":
     dbm.inspect_db_schema("fleakicker.db")
 elif choice == "5":
-    dbm.exportFantasyLeaderboard(limit=-1, sort_by="fantasy_points_per_game")
+    exp.exportFantasyLeaderboard(limit=-1, sort_by="fantasy_points_per_game")
     print("✅ dbm.exportFantasyLeaderboard")
 else:
     print("Please select a valid option")

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+# Global Variables
+season = 20262027
 
 # Define the path to the database file
 BASE_DIR = Path(__file__).resolve().parent.parent

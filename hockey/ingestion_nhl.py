@@ -39,9 +39,7 @@ def _dbPlayerIndexNHLFix():
     conn.commit()
     conn.close()
 
-'''=== SEARCHING ==='''
-# Valid returns for searching the local index
-indexReturnTypes = ["local_id", "name", "pos", "team", "nhl_id", "ff_id"]
+
 
 # dbPlayerIndexNHLPop populates the player_index_nhl table using NHL player info
 def dbPlayerIndexNHLPop():
@@ -98,8 +96,6 @@ def fetch_team_roster(team_abbr, debug=True):
         print(f"Fetched team: {team_abbr}")
     return team_abbr, roster
 
-
-
 def fetch_hits_blocks_for_player(player_id: int, season_id: int):
     # PSEUDOCODE: you’ll need to confirm the real URL/params
     # based on that “get_NHL_Player_game_logs” description.
@@ -152,6 +148,8 @@ def populate_hits_blocks():
     conn.close()
     print("✅ hits/blocks populated")
 
+# == RealtimeTable Functions ==
+# RealtimeTable is how we find data like hits, blocks, and time on ice. There's lots of interesting stats in here for future use
 REALTIME_URL = (
     "https://api.nhle.com/stats/rest/en/skater/realtime"
     "?isAggregate=true"

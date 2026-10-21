@@ -1,4 +1,4 @@
-import databaseManager as dbm
+import hockey.databaseManager as dbm
 import requests as rq
 import sqlite3
 from nhlpy import NHLClient
