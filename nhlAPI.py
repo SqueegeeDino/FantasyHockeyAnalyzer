@@ -3,6 +3,7 @@ import requests as rq
 import sqlite3
 from nhlpy import NHLClient
 from hockey.config import season
+from hockey.config import DB_PATH
 
 limit = -1 # -1 for all results
 
@@ -28,11 +29,10 @@ def infer_type(value):
 
 # === DATABASE ===
 # Config
-DB_NAME = "fleakicker.db"
 TABLE_NAME_SKATER = "rawstats_dynamic_skater"
 TABLE_NAME_GOALIE = "rawstats_dynamic_goalie"
 
-def rawstats_dynamic_skater(database_name=DB_NAME, table_name=TABLE_NAME_SKATER, endpoint=endpointSkater):
+def rawstats_dynamic_skater(database_name=DB_PATH, table_name=TABLE_NAME_SKATER, endpoint=endpointSkater):
     # Handle skater request and population
     reSkater = rq.get(endpoint)
     if reSkater.status_code == 200:
@@ -74,7 +74,7 @@ def rawstats_dynamic_skater(database_name=DB_NAME, table_name=TABLE_NAME_SKATER,
     else:
         print(f"Error API call: {reSkater.status_code}")
 
-def rawstats_dynamic_goalie(database_name=DB_NAME, table_name=TABLE_NAME_GOALIE, endpoint=endpointGoalie):
+def rawstats_dynamic_goalie(database_name=DB_PATH, table_name=TABLE_NAME_GOALIE, endpoint=endpointGoalie):
     # Handle goalie request and population
     reGoalie = rq.get(endpoint)
     if reGoalie.status_code == 200:

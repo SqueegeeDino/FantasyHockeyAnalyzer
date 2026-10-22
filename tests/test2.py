@@ -3,15 +3,14 @@ import hockey.databaseManager as dbm
 import requests as rq
 import sqlite3
 import pandas as pd
-import nhlAPI as nhl
 from hockey.config import DB_PATH
 import hockey.ingestion_ff as ingFF
 import hockey.export as exp
 import hockey.ingestion_nhl as ingNHL
 import hockey.query as hQuery
 import hockey.scoring as hSc
+from hockey.config import DB_PATH
 
-DB_NAME = "fleakicker.db"
 leagueID = 12100
 
 

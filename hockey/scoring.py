@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime
 from datetime import timedelta
 from hockey.config import DB_PATH
+import hockey.databaseManager as dbm
 
 # Helper to resolve window bounds for dbBuildUnifiedFantasyWindowView
 def _resolve_window_bounds(start_date: str | None, end_date: str | None, days: int) -> tuple[str, str]:
@@ -42,6 +43,10 @@ def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
     cur = conn.cursor()
 
     # --- load scoring rules ---
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", ('score',))
+    if not cur.fetchone():
+        dbm.dbScoringPop()
+
     cur.execute("SELECT name, value FROM score")
     scoring_rules = dict(cur.fetchall())
 
