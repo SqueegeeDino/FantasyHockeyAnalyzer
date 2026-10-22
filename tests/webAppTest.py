@@ -4,11 +4,20 @@ import pandas as pd
 from hockey.config import DB_PATH
 import hockey.scoring as hSc
 
-"""
-name = st.text_input("Insert text here")
-if st.button("Greet"):
-    st.write(f"Hello {name}")
-"""
+faVal = 0
+
+st.title("Fantasy Hockey Analyzer")
+st.header("By SDT")
+
+
+faCheck = st.checkbox("Free Agent Only")
+
+if faCheck:
+        faVal = 1
+else:
+        faVal = 0
+
+st.write(f"{faVal}")
 
 def get_rankings(min_games):
     conn = sqlite3.connect(DB_PATH)
@@ -21,13 +30,15 @@ def get_rankings(min_games):
                 playerFullName,
                 positionCode,
                 gamesPlayed,
-                fantasy_points_total
+                fantasy_points_total,
+                freeAgent
             FROM unified_fantasy_points
             WHERE gamesPlayed >= ?
+            AND freeAgent >= ?
             ORDER BY fantasy_points_total DESC
             """,
             conn,
-            params=(min_games,),
+            params=(min_games,faVal),
         )
     finally:
         conn.close()
