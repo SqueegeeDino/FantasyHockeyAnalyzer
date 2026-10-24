@@ -91,7 +91,7 @@ def dbPlayerIndexNHLPop():
 
 # Fetch all the team rosters for the dbPlayerIndexNHLPop function to use
 def fetch_team_roster(team_abbr, debug=True):
-    roster = client.teams.team_roster(team_abbr=team_abbr, season="20252026")
+    roster = client.teams.team_roster(team_abbr=team_abbr, season=str(season))
     if debug == True:
         print(f"Fetched team: {team_abbr}")
     return team_abbr, roster
@@ -102,7 +102,7 @@ def fetch_hits_blocks_for_player(player_id: int, season_id: int):
     #
     # This is what it conceptually looks like:
     #
-    endpoint = "https://api.bloodlinealpha.com/nhl/players/game-log?playerId={}&seasonId=20242025&gameTypeId=2&isAggregate=true&isAscending=false&properties=hits,blockedShots"  # <- fill in real endpoint
+    endpoint = "https://api.bloodlinealpha.com/nhl/players/game-log?playerId={}&seasonId=20262027&gameTypeId=2&isAggregate=true&isAscending=false&properties=hits,blockedShots"  # <- fill in real endpoint
     params = {
         "playerId": player_id,
         "seasonId": season_id,

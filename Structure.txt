@@ -1,7 +1,0 @@
-*Player Index*
-- This should simply store all the players with the following data:
-    + Name
-    + FF ID
-    + NHL ID
-    + Current team
-    + Position

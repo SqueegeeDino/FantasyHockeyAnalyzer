@@ -77,8 +77,9 @@ def dbPlayerIndexFFPop(faStatus: bool):
 
     session = rq.Session()
 
-    REQ_SLEEP_EVERY = 3
-    REQ_SLEEP_TIME = 0.5
+    # Some safety valves to try not overrunning FleaFlickers 90 API calls/Minute limitation
+    REQ_SLEEP_EVERY = 1
+    REQ_SLEEP_TIME = 1
     req_count = 0
 
     with tqdm(total=total_requests,

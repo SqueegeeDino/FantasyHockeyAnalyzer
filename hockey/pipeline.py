@@ -37,3 +37,4 @@ def helpNHL(debug=False):
     ingNHL.dbPopulateRealtime()
     if debug==True:
         print("✅ helpNHL populated realtime")
+

@@ -119,7 +119,7 @@ def rawstats_dynamic_goalie(database_name=DB_PATH, table_name=TABLE_NAME_GOALIE,
 # === Testing ===
 # /v1/edge/skater-detail/{player-id}/{season}/{game-type}
 def nhlTest():
-    reTest = rq.get("https://api-web.nhle.com/v1/edge/skater-detail/8478402/20252026/2")
+    reTest = rq.get("https://api-web.nhle.com/v1/edge/skater-detail/8478402/20262027/2")
     if reTest.status_code == 200:
         testData = reTest.json()
         print(testData)

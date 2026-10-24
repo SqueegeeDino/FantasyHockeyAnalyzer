@@ -8,4 +8,4 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "data" / "FHAnalyzerMain.db"
 
 # FleaFlicker Specifics
-ff_leagueID = 12100
+ff_leagueID = 12099

@@ -47,7 +47,7 @@ if confirm("Wipe and reset the database?", run_all, skip_all):
 # --- Step 2: Fetch FleaFlicker Scoring ---
 if confirm("Fetch scoring rules from FleaFlicker?", run_all, skip_all):
     ingFF.apiScoringGet(leagueID)
-    print("✅ dbm.apiScoringGet")
+    print("✅ ingFF.apiScoringGet")
 
 if confirm("Populate scoring data into database?", run_all, skip_all):
     dbm.dbScoringPop()
@@ -56,20 +56,20 @@ if confirm("Populate scoring data into database?", run_all, skip_all):
 # --- Step 3: FleaFlicker Player Index ---
 if confirm("Fetch FleaFlicker free agent list?", run_all, skip_all):
     ingFF.dbPlayerIndexFFPop(faStatus=True)
-    print("✅ dbm.dbPlayerIndexFFPop(True)")
+    print("✅ ingFF.dbPlayerIndexFFPop(True)")
 
 if confirm("Fetch FleaFlicker rostered player list?", run_all, skip_all):
     ingFF.dbPlayerIndexFFPop(faStatus=False)
-    print("✅ dbm.dbPlayerIndexFFPop(False)")
+    print("✅ ingFF.dbPlayerIndexFFPop(False)")
 
 if confirm("Export FleaFlicker scoring table to CSV?", run_all, skip_all):
     exp.dbTableToCsv("score")
-    print("✅ dbm.dbTableToCsv('score')")
+    print("✅ exp.dbTableToCsv('score')")
 
 # --- Step 4: NHL Player Index ---
 if confirm("Fetch NHL player index (team rosters)?", run_all, skip_all):
     ingNHL.dbPlayerIndexNHLPop()
-    print("✅ dbm.dbPlayerIndexNHLPop")
+    print("✅ ingNHL.dbPlayerIndexNHLPop")
 
 # --- Step 4a: Local Index
 if confirm("Rebuild local index", run_all, skip_all):
@@ -87,15 +87,15 @@ if confirm("Fetch NHL goalie stats?", run_all, skip_all):
 
 if confirm("Fetch real-time skater data (hits, blocks, TOI)?", run_all, skip_all):
     ingNHL.dbPopulateRealtime()
-    print("✅ dbm.dbPopulateRealtime")
+    print("✅ ingNHL.dbPopulateRealtime")
 
 # --- Step 6: Fantasy Integration ---
 if confirm("Build unified fantasy view?", run_all, skip_all):
     hSc.dbBuildUnifiedFantasyView(debug=False)
-    print("✅ dbm.dbBuildUnifiedFantasyView")
+    print("✅ hSc.dbBuildUnifiedFantasyView")
 
 if confirm("Export fantasy leaderboard to CSV?", run_all, skip_all):
     exp.exportFantasyLeaderboard(limit=50, sort_by="fantasy_points_per_game")
-    print("✅ dbm.exportFantasyLeaderboard")
+    print("✅ exp.exportFantasyLeaderboard")
 
 print("\n🏁 All selected operations complete.\n")
