@@ -40,6 +40,8 @@ teams = [
     "Washington Capitals",
     "Winnipeg Jets",
 ]
+
+st.set_page_config(layout="wide")
 st.title("Fantasy Hockey Analyzer")
 st.header("By SDT")
 
@@ -91,4 +93,4 @@ min_games = st.slider("Minimum Games Played", 0, 84, 10)
 
 rankings = get_rankings(min_games)
 
-st.dataframe(rankings, hide_index=True, use_container_width=True)
+st.dataframe(rankings, hide_index=True, width="stretch")
