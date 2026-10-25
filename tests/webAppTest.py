@@ -4,7 +4,9 @@ import pandas as pd
 from hockey.config import DB_PATH
 import hockey.databaseManager as dbm
 import hockey.scoring as hSc
+from hockey.display import prepare_display
 
+# === Variables used in frontend generation
 teams = [
     "Anaheim Ducks",
     "Boston Bruins",
@@ -45,11 +47,11 @@ fantasy_services = [
       "Fantrax",
       "FleaFlicker"
 ]
+
+# === Top of page generation
 st.set_page_config(layout="wide")
 st.title("Fantasy Hockey Analyzer")
 st.header("By SDT")
-
-
 
 with st.container(border=True):
       col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
@@ -69,7 +71,8 @@ with st.container(border=True, horizontal=True):
       check1 = st.checkbox("Free Agent Only", key="faCheckBool"),
       teamFilter = st.multiselect(
         label="Filter by team:",
-        options=(teams)
+        options=(teams),
+        width=600
         )
 cleanedFilter = dbm.normalize_team_list(teamFilter)
 
@@ -110,4 +113,41 @@ min_games = st.slider("Minimum Games Played", 0, 84, 10)
 
 rankings = get_rankings(min_games)
 
-st.dataframe(rankings, hide_index=True, width="stretch")
+COLUMN_CONFIG = {
+      "playerFullName": st.column_config.Column(
+            label="Player",
+            help="Full name of player"
+      ),
+      "positionCode": st.column_config.Column(
+            label="Position",
+            help="Registered positions of player (not always 100% accurate)"
+      ),
+      "gamesPlayed": st.column_config.Column(
+            label="GP",
+            help="Games played"
+      ),
+      "fantasy_points_total": st.column_config.Column(
+            label="FPT",
+            help="Fantasy Points Total"
+      ),
+      "fantasy_points_per_game": st.column_config.Column(
+            label="FP/G",
+            help="Fantasy Points per Game"
+      ),
+      "freeAgent": st.column_config.Column(
+            label="FA",
+            help="FA Status"
+      ),
+      "teamAbbrevs": st.column_config.Column(
+            label="Team",
+            help="Current team"
+      ),
+
+
+}
+
+st.dataframe(
+      rankings,
+      column_config=COLUMN_CONFIG,
+      hide_index=True, 
+      width="stretch")
