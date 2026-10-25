@@ -5,7 +5,6 @@ from hockey.config import DB_PATH
 import hockey.databaseManager as dbm
 import hockey.scoring as hSc
 
-faVal = 0
 teams = [
     "Anaheim Ducks",
     "Boston Bruins",
@@ -40,26 +39,44 @@ teams = [
     "Washington Capitals",
     "Winnipeg Jets",
 ]
-
+fantasy_services = [
+      "ESPN",
+      "Yahoo",
+      "Fantrax",
+      "FleaFlicker"
+]
 st.set_page_config(layout="wide")
 st.title("Fantasy Hockey Analyzer")
 st.header("By SDT")
 
 
-faCheck = st.checkbox("Free Agent Only")
-teamFilter = st.multiselect(
-      label="Filter by team:",
-      options=(teams)
-)
 
+with st.container(border=True):
+      col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
+      with col1:
+            fantasyServiceSelect = st.selectbox(
+                  label="Fantasy Service:",
+                  options=(fantasy_services)
+            )
+      with col2:
+            leagueLink = st.text_input(
+                  label="League URL",
+                  placeholder="Paste URL here",
+                  type="url"
+            )
+
+with st.container(border=True, horizontal=True):
+      check1 = st.checkbox("Free Agent Only", key="faCheckBool"),
+      teamFilter = st.multiselect(
+        label="Filter by team:",
+        options=(teams)
+        )
 cleanedFilter = dbm.normalize_team_list(teamFilter)
 
-if faCheck:
+if st.session_state.faCheckBool:
         faVal = 1
 else:
         faVal = 0
-
-# st.write(f"{faVal}")
 
 def get_rankings(min_games):
     hSc.dbBuildUnifiedFantasyView(False)
