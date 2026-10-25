@@ -68,6 +68,7 @@ def get_rankings(min_games):
             positionCode,
             gamesPlayed,
             fantasy_points_total,
+            fantasy_points_per_game,
             freeAgent,
             teamAbbrevs
         FROM unified_fantasy_points
