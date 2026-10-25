@@ -432,6 +432,8 @@ def define_team_aliases():
             _aliases[cleaned_name] = canonical
     return _aliases
 
+define_team_aliases()
+
 # Input a string value of a team name, and pass out the normalized abbreviation as defined in the team_aliases.json
 def normalize_team(value: str) -> str:
     key = value.strip().casefold()

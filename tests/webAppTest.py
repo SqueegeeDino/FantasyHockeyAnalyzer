@@ -60,29 +60,31 @@ else:
 # st.write(f"{faVal}")
 
 def get_rankings(min_games):
-    conn = sqlite3.connect(DB_PATH)
-
     hSc.dbBuildUnifiedFantasyView(False)
-    try:
-        return pd.read_sql_query(
-            """
-            SELECT
-                playerFullName,
-                positionCode,
-                gamesPlayed,
-                fantasy_points_total,
-                freeAgent,
-                teamAbbrevs
-            FROM unified_fantasy_points
-            WHERE gamesPlayed >= ?
-            AND freeAgent >= ?
-            ORDER BY fantasy_points_total DESC
-            """,
-            conn,
-            params=(min_games,faVal),
-        )  
-    finally:
-        conn.close()
+
+    query = """
+        SELECT
+            playerFullName,
+            positionCode,
+            gamesPlayed,
+            fantasy_points_total,
+            freeAgent,
+            teamAbbrevs
+        FROM unified_fantasy_points
+        WHERE gamesPlayed >= ?
+          AND freeAgent >= ?
+    """
+    params = [min_games, faVal]
+
+    if cleanedFilter:
+        placeholders = ", ".join("?" for _ in cleanedFilter)
+        query += f" AND teamAbbrevs IN ({placeholders})"
+        params.extend(cleanedFilter)
+
+    query += " ORDER BY fantasy_points_total DESC"
+
+    with sqlite3.connect(DB_PATH) as conn:
+        return pd.read_sql_query(query, conn, params=params)
 
 min_games = st.slider("Minimum Games Played", 0, 84, 10)
 
