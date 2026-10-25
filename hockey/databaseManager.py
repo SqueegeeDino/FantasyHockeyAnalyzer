@@ -14,6 +14,8 @@ import nhlAPI
 from nhlpy import NHLClient
 # Local Imports
 from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
+from hockey.config import BASE_DIR # Base directory of the project
+from hockey.config import TA_PATH # Path to team aliases json
 from hockey.config import ff_leagueID # Imports the ff_leagueID from hockey/config.py
 from hockey.config import season
 import hockey.ingestion_espn as ingESPN
@@ -413,3 +415,20 @@ def helperIDSP(playerSearch, playerReturn):
             #print(f"{i}: {item}")
         return iR
     conn.close()
+
+# Normalizing team names with abbreviations
+_teams = json.loads(TA_PATH.read_text(encoding="utf-8")) # Reading the team aliases json
+_aliases = {}
+
+def define_team_aliases():
+    for canonical, aliases in _teams.items():
+        # canonical = ABR (E.g. COL, or TBL)
+        # aliases = City Team (E.g. Colorado Avalanche or Colorado)
+
+        all_names = [canonical, *aliases] # *aliases unpacks the full list
+
+        for alias in all_names:
+            cleaned_name = alias.strip().casefold()
+            _aliases[cleaned_name] = canonical
+    return _aliases
+
