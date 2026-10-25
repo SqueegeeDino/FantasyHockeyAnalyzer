@@ -50,6 +50,8 @@ teamFilter = st.multiselect(
       options=(teams)
 )
 
+cleanedFilter = dbm.normalize_team_list(teamFilter)
+
 if faCheck:
         faVal = 1
 else:
@@ -78,7 +80,7 @@ def get_rankings(min_games):
             """,
             conn,
             params=(min_games,faVal),
-        )
+        )  
     finally:
         conn.close()
 
