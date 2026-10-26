@@ -54,22 +54,22 @@ st.title("Fantasy Hockey Analyzer")
 st.header("By SDT")
 
 with st.container(border=True):
-      col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
-      with col1:
-            fantasyServiceSelect = st.selectbox(
-                  label="Fantasy Service:",
-                  options=(fantasy_services)
-            )
-      with col2:
-            leagueLink = st.text_input(
-                  label="League URL",
-                  placeholder="Paste URL here",
-                  type="url"
-            )
+    col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
+    with col1:
+        fantasyServiceSelect = st.selectbox(
+                label="Fantasy Service:",
+                options=(fantasy_services)
+        )
+    with col2:
+        leagueLink = st.text_input(
+                label="League URL",
+                placeholder="Paste URL here",
+                type="url"
+        )
 
 with st.container(border=True, horizontal=True):
-      check1 = st.checkbox("Free Agent Only", key="faCheckBool"),
-      teamFilter = st.multiselect(
+    check1 = st.checkbox("Free Agent Only", key="faCheckBool"),
+    teamFilter = st.multiselect(
         label="Filter by team:",
         options=(teams),
         width=600
@@ -147,7 +147,7 @@ COLUMN_CONFIG = {
 }
 
 st.dataframe(
-      rankings,
-      column_config=COLUMN_CONFIG,
-      hide_index=True, 
-      width="stretch")
+    rankings,
+    column_config=COLUMN_CONFIG,
+    hide_index=True, 
+    width="stretch")
