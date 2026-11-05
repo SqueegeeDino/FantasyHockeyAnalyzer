@@ -6,6 +6,7 @@ import hockey.ingestion_espn as ingESPN
 import hockey.ingestion_ff as ingFF
 import hockey.ingestion_yahoo as ingYAH
 import hockey.ingestion_nhl as ingNHL
+import hockey.scoring as hSc
 from hockey.config import ff_leagueID
 
 # Run all FleaFlicker related functions
@@ -20,13 +21,11 @@ def helpFlea(debug=False):
     if debug==True:
         print("✅ helpFlea populated scoring")
 
-# Run all NHL API calls, currently includes local Index
+# Run all NHL API calls, recently CUT index building. CALL INDEX BUILDING SEPARATELY
 def helpNHL(debug=False):
     with ThreadPoolExecutor(max_workers=3) as ex:
-        fut_index = ex.submit(ingNHL.dbPlayerIndexNHLPop)
         fut_rawSkate = ex.submit(nhlAPI.rawstats_dynamic_skater)
         fut_rawGoal = ex.submit(nhlAPI.rawstats_dynamic_goalie)
-        fut_index.result()
         fut_rawSkate.result()
         fut_rawGoal.result()
         if debug==True:
@@ -38,3 +37,10 @@ def helpNHL(debug=False):
     if debug==True:
         print("✅ helpNHL populated realtime")
 
+def buildStatsBasic(debug=False):
+    helpNHL(debug)
+    dbm.dbScoringPop()
+    hSc.dbBuildUnifiedFantasyView(False)
+
+    if debug==True:
+        print("✅ buildStatsBasic done")

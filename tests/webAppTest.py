@@ -4,7 +4,9 @@ import pandas as pd
 from hockey.config import DB_PATH
 import hockey.databaseManager as dbm
 import hockey.scoring as hSc
+import hockey.pipeline as hPipe
 from hockey.display import prepare_display
+import webapp.webHelpers as wh
 
 # === Variables used in frontend generation
 teams = [
@@ -52,6 +54,15 @@ fantasy_services = [
 st.set_page_config(layout="wide")
 st.title("Fantasy Hockey Analyzer")
 st.header("By SDT")
+
+with st.sidebar:
+    st.header("Settings")
+    st.write("This is where you can set your league settings and filters.")
+    st.button("Reload Stats", 
+              key="reloadStats", 
+              help="Click to reload stats from the database. This will take a few seconds.",
+              on_click=hPipe.buildStatsBasic(),
+              )
 
 with st.container(border=True):
     col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
@@ -142,12 +153,12 @@ COLUMN_CONFIG = {
             label="Team",
             help="Current team"
       ),
-
-
 }
 
+rankings_filtered = wh.filter_dataframe(rankings)
+
 st.dataframe(
-    rankings,
+    rankings_filtered,
     column_config=COLUMN_CONFIG,
     hide_index=True, 
     width="stretch")

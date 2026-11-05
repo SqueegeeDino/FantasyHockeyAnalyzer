@@ -10,3 +10,5 @@ A lightweight database focused NHL Fantasy Hockey analyzing tool. Planned to use
     + NHL ID
     + Current team
     + Position
+
+python -m streamlit run tests/webAppTest.py
