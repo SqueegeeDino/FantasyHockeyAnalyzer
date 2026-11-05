@@ -56,27 +56,29 @@ st.title("Fantasy Hockey Analyzer")
 st.header("By SDT")
 
 with st.sidebar:
-    st.header("Settings")
-    st.write("This is where you can set your league settings and filters.")
-    st.button("Reload Stats", 
-              key="reloadStats", 
-              help="Click to reload stats from the database. This will take a few seconds.",
-              on_click=hPipe.buildStatsBasic(),
-              )
+      st.header("Settings")
+      st.write("This is where you can set your league settings and filters.")
+      fantasyServiceSelect = st.selectbox(
+            label="Fantasy Service:",
+            options=(fantasy_services)
+            )
+      leagueLink = st.text_input(
+            label="League URL",
+            placeholder="Paste URL here",
+            type="url"
+      )
+      st.button("Reload Stats", 
+                  key="reloadStats", 
+                  help="Click to reload stats from the database. This will take a few seconds.",
+                  on_click=hPipe.buildStatsBasic(),
+                  )
 
 with st.container(border=True):
-    col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
-    with col1:
-        fantasyServiceSelect = st.selectbox(
-                label="Fantasy Service:",
-                options=(fantasy_services)
-        )
-    with col2:
-        leagueLink = st.text_input(
-                label="League URL",
-                placeholder="Paste URL here",
-                type="url"
-        )
+      col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
+      with col1:
+            st.write("Placeholder")
+      with col2:
+            st.write("Placeholder 2")
 
 with st.container(border=True, horizontal=True):
     check1 = st.checkbox("Free Agent Only", key="faCheckBool"),
