@@ -12,3 +12,6 @@ A lightweight database focused NHL Fantasy Hockey analyzing tool. Planned to use
     + Position
 
 python -m streamlit run tests/webAppTest.py
+
+# For the Streamlit table filtering helper function:
+https://github.com/tylerjrichards/st-filter-dataframe/blob/main/streamlit_app.py
