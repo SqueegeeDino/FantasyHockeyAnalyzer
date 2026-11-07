@@ -178,3 +178,16 @@ def build_ff_indexes():
         fut_all.result()
         fut_fa.result()
     print("✅ Both FF indexes built")
+
+def fa_refresh():
+    api_FA = (
+        "https://www.fleaflicker.com/api/FetchPlayerListing"
+        f"?sport=NHL&league_id={ff_leagueID}"
+        f"&sort=SORT_DRAFT_RANKING"
+        f"&result_offset={i}"
+        f"&filter.position_eligibility={ipos}"
+        f"&filter.free_agent_only={True}"
+        )
+    ff_fas = []
+
+    
