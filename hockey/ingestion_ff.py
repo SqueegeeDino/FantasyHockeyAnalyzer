@@ -213,3 +213,70 @@ def ff_FARefresh(on_progress=None):
             conn.commit()
     finally:
         conn.close()
+
+# Call FF API to get all rosters in league and their players. WIP alternative to the very slow free agent lookup
+def ff_apiGetRosters(leagueID):
+    apiLink = f"https://www.fleaflicker.com/api/FetchLeagueRosters?sport=NHL&league_id={leagueID}"
+
+    # Call the API with correct parameters
+    # Link looks like this: apiLink = f"https://www.fleaflicker.com/api/FetchLeagueRosters?sport=NHL&league_id={leagueID}"
+    response = rq.get(
+        "https://www.fleaflicker.com/api/FetchLeagueRosters",
+        params={
+            "sport": "NHL",
+            "league_id": ff_leagueID
+        },
+        timeout=20,
+    )
+    response.raise_for_status() # Raises error if one occured
+    data = response.json() # Stash the response into a json in memory
+
+    rows = [] # create a blank rows list
+
+    # For loop 
+    for roster in data["rosters"]: # Grabs the "rosters" item
+        fantasy_team = roster["team"]
+
+        for player in roster["players"]:
+            pro = player["proPlayer"]
+
+            rows.append((
+                pro["id"],
+                pro["nameFull"],
+                pro.get("position", "Unknown"), # Optional item, if blank returns "Unknown"
+                pro.get("proTeamAbbreviation", "Unknown"), # Optional item, if blank returns "Unkown"
+                fantasy_team["id"],
+                fantasy_team["name"],
+            ))
+
+    conn = sqlite3.connect(DB_PATH)
+
+    try:
+        with conn:
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS player_index_ff_rostered (
+                ff_id INTEGER PRIMARY KEY,
+                name TEXT,
+                pos TEXT,
+                nhl_team TEXT,
+                fantasy_team_id INTEGER,
+                fantasy_team_name TEXT,
+            )
+        """)
+
+        conn.execute("DELETE FROM player_index_ff_rostered")
+
+        conn.executemany("""
+            INSERT INTO player_index_ff_rostered (
+                ff_id,
+                name,
+                pos,
+                nhl_team,
+                fantasy_team_id,
+                fantasy_team_name
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, rows)
+
+    finally:
+        conn.close()
