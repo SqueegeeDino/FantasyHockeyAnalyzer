@@ -70,7 +70,7 @@ with st.sidebar:
       st.button("Reload Stats", 
                   key="reloadStats", 
                   help="Click to reload stats from the database. This will take a few seconds.",
-                  on_click=hPipe.buildStatsBasic(),
+                  on_click=hPipe.buildStatsBasic,
                   )
 
 with st.container(border=True):

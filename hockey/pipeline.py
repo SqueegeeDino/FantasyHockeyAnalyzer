@@ -39,6 +39,7 @@ def helpNHL(debug=False):
 
 def buildStatsBasic(debug=False):
     helpNHL(debug)
+    ingFF.ff_FARefresh()
     dbm.dbScoringPop()
     hSc.dbBuildUnifiedFantasyView(False)
 

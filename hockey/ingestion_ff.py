@@ -7,9 +7,13 @@ from concurrent.futures import ThreadPoolExecutor
 # Hockey/Fantasy Imports
 from hockey.config import DB_PATH
 from hockey.config import ff_leagueID
+import hockey.databaseManager as dbm
 
 # // FleaFlicker API specifics
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
+# Some safety valves to try not overrunning FleaFlickers 90 API calls/Minute limitation
+REQ_SLEEP_EVERY = 1
+REQ_SLEEP_TIME = 1
 # Variables mostly used in index population
 positions = ["c", "lw", "rw", "d", "g"]
 total_requests = len(positions) * (1300 // 30)  # 5 positions, 1300 players max, 30 per page, fleakicker API specific
@@ -50,10 +54,8 @@ def apiScoringGet(leagueID):
 
 # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
 def dbPlayerIndexFFPop(faStatus: bool):
-    statusStr = str(faStatus).lower()  # "true" / "false"
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    failCount = 0
 
     # tables
     cur.execute("""
@@ -73,14 +75,33 @@ def dbPlayerIndexFFPop(faStatus: bool):
         )
     """)
 
+    rows_to_insert = ff_apiIndex(faStatus) # Reutrn the list tuple from the function
+
+    # === bulk insert at the end, ALWAYS ===
+    if rows_to_insert:
+        if faStatus:
+            cur.executemany(
+                "INSERT OR REPLACE INTO player_index_ff_fa VALUES (?, ?, ?, ?)",
+                rows_to_insert
+            )
+        else:
+            cur.executemany(
+                "INSERT OR REPLACE INTO player_index_ff VALUES (?, ?, ?, ?)",
+                rows_to_insert
+            )
+
+    conn.commit()
+    conn.close()
+    print(f"✅ dbPlayerIndexFFPop({faStatus}) — inserted {len(rows_to_insert)} players")
+
+def ff_apiIndex(faStatus: bool):
+    statusStr = str(faStatus).lower()  # "true" / "false"
+    failCount = 0
+    req_count = 0
+
     rows_to_insert: list[tuple] = []
 
     session = rq.Session()
-
-    # Some safety valves to try not overrunning FleaFlickers 90 API calls/Minute limitation
-    REQ_SLEEP_EVERY = 1
-    REQ_SLEEP_TIME = 1
-    req_count = 0
 
     with tqdm(total=total_requests,
               desc=f"FleaFlicker {'FA' if faStatus else 'All'}",
@@ -113,7 +134,7 @@ def dbPlayerIndexFFPop(faStatus: bool):
                     pbar.update(1)
                     continue
 
-                if resp.status_code == 200:
+                if resp.status_code == 200: # Response code 200 is a success response
                     data = resp.json()
                     players = data.get("players")
 
@@ -152,23 +173,7 @@ def dbPlayerIndexFFPop(faStatus: bool):
                 pbar.update(1)
             # end inner offset loop
         # end positions loop
-
-    # === bulk insert at the end, ALWAYS ===
-    if rows_to_insert:
-        if faStatus:
-            cur.executemany(
-                "INSERT OR REPLACE INTO player_index_ff_fa VALUES (?, ?, ?, ?)",
-                rows_to_insert
-            )
-        else:
-            cur.executemany(
-                "INSERT OR REPLACE INTO player_index_ff VALUES (?, ?, ?, ?)",
-                rows_to_insert
-            )
-
-    conn.commit()
-    conn.close()
-    print(f"✅ dbPlayerIndexFFPop({faStatus}) — inserted {len(rows_to_insert)} players")
+    return rows_to_insert
 
 # Call this to build FleaFlicker indexes to speed up the process if you want both
 def build_ff_indexes():
@@ -179,15 +184,31 @@ def build_ff_indexes():
         fut_fa.result()
     print("✅ Both FF indexes built")
 
-def fa_refresh():
-    api_FA = (
-        "https://www.fleaflicker.com/api/FetchPlayerListing"
-        f"?sport=NHL&league_id={ff_leagueID}"
-        f"&sort=SORT_DRAFT_RANKING"
-        f"&result_offset={i}"
-        f"&filter.position_eligibility={ipos}"
-        f"&filter.free_agent_only={True}"
-        )
-    ff_fas = []
+def ff_FARefresh():
+    table_name = "player_index_ff_fa" # Creating a table_name variable makes this a potentially reusable function further down the line
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
-    
+    try:
+        rows_to_update = ff_apiIndex(True) # Run the function looking only for free agents
+        if rows_to_update:
+            if not dbm.table_exists(table_name): # Check to see if the FA table already exists, otherwise go make it
+                cur.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {table_name} (
+                        fleakicker_id INTEGER UNIQUE,
+                        name TEXT,
+                        pos TEXT,
+                        team TEXT
+                    )
+                """)
+
+            # Wipe the table
+            cur.execute(f"DELETE FROM {table_name};")
+            # Repopulate
+            cur.executemany(
+                f"INSERT OR REPLACE INTO {table_name} VALUES (?, ?, ?, ?)",
+                rows_to_update
+            )
+            conn.commit()
+    finally:
+        conn.close()

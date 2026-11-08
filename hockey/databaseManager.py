@@ -329,8 +329,6 @@ def dbPopulateWindowStats(days: int = 14,
     print(f"✅ dbPopulateWindowStats — skaters:{len(sk_rows)} realtime:{len(rt_rows)} goalies:{len(gl_rows)}  "
           f"window=[{start_str} → {end_str}]")
 
-
-
 '''=== MANAGING ==='''
 # Wipe all tables in the database
 def dbWipeAll(db_name=DB_PATH):
@@ -445,3 +443,19 @@ def normalize_team(value: str) -> str:
 
 def normalize_team_list(values: list[str]) -> list[str]:
     return [normalize_team(value) for value in values]
+
+def table_exists(table_name: str):
+    # Connect to db
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+        (table_name,)
+    )
+
+    # fetchone() returns a row tuple if found, or None if it doesn't exist
+    exists = cur.fetchone() is not None
+
+    conn.close()
+    return exists
