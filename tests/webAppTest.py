@@ -65,12 +65,10 @@ with st.sidebar:
       leagueLink = st.text_input(
             label="League URL",
             placeholder="Paste URL here",
-            type="url"
       )
-      st.button("Reload Stats", 
+      reload_requested = st.button("Reload Stats", 
                   key="reloadStats", 
-                  help="Click to reload stats from the database. This will take a few seconds.",
-                  on_click=hPipe.buildStatsBasic,
+                  help="Fetch current NHL statistics and FleaFlicker availability. This can take several minutes.",
                   )
 
 with st.container(border=True):
@@ -124,7 +122,45 @@ def get_rankings(min_games):
 
 min_games = st.slider("Minimum Games Played", 0, 84, 10)
 
-rankings = get_rankings(min_games)
+# Reserve the status and table slots before starting the blocking refresh.
+status_area = st.empty()
+table_area = st.empty()
+
+if reload_requested:
+    table_area.skeleton(height=420)
+    with status_area.container():
+        status = st.status("Reloading statistics…", expanded=True)
+        step = status.empty()
+        ff_progress = status.empty()
+
+        def show_status(message):
+            step.write(message)
+            status.update(label=message)
+
+        def show_ff_progress(fraction, message):
+            ff_progress.progress(
+                fraction,
+                text=f"FleaFlicker pagination · {message}",
+            )
+
+        try:
+            hPipe.buildStatsBasic(
+                on_status=show_status,
+                on_ff_progress=show_ff_progress,
+            )
+        except Exception as exc:
+            status.update(label="Refresh failed", state="error", expanded=True)
+            status.error(str(exc))
+            status.write("Showing the last saved data. Some earlier refresh steps may have completed.")
+        else:
+            status.update(label="Statistics refreshed", state="complete", expanded=False)
+
+try:
+    rankings = get_rankings(min_games)
+except Exception as exc:
+    table_area.empty()
+    st.error(f"Could not load rankings: {exc}")
+    st.stop()
 
 COLUMN_CONFIG = {
       "playerFullName": st.column_config.Column(
@@ -159,7 +195,7 @@ COLUMN_CONFIG = {
 
 rankings_filtered = wh.filter_dataframe(rankings)
 
-st.dataframe(
+table_area.dataframe(
     rankings_filtered,
     column_config=COLUMN_CONFIG,
     hide_index=True, 

@@ -94,7 +94,8 @@ def dbPlayerIndexFFPop(faStatus: bool):
     conn.close()
     print(f"✅ dbPlayerIndexFFPop({faStatus}) — inserted {len(rows_to_insert)} players")
 
-def ff_apiIndex(faStatus: bool):
+def ff_apiIndex(faStatus: bool, on_progress=None):
+    """Fetch listings; report (fraction, message) without depending on Streamlit."""
     statusStr = str(faStatus).lower()  # "true" / "false"
     failCount = 0
     req_count = 0
@@ -108,10 +109,13 @@ def ff_apiIndex(faStatus: bool):
               unit="req",
               colour="green") as pbar:
 
-        for ipos in positions:
+        for position_index, ipos in enumerate(positions):
             empty_in_a_row = 0  # <-- reset per position
 
-            for i in offsets:
+            for page_index, i in enumerate(offsets):
+                if on_progress:
+                    fraction = (position_index + page_index / len(offsets)) / len(positions)
+                    on_progress(fraction, f"{ipos.upper()} · offset {i} · {len(rows_to_insert)} records fetched")
                 url = (
                     "https://www.fleaflicker.com/api/FetchPlayerListing"
                     f"?sport=NHL&league_id={ff_leagueID}"
@@ -122,17 +126,12 @@ def ff_apiIndex(faStatus: bool):
                 )
 
                 try:
+                    time.sleep(REQ_SLEEP_TIME)
                     resp = session.get(url, timeout=10)
-                except Exception as e:
-                    pbar.write(f"Request error {e}")
-                    failCount += 1
-                    if failCount >= 3:
-                        pbar.write("❌ Multiple consecutive failures, stopping fetch loop.")
-                        # break out of BOTH loops
-                        offsets_exhausted = True
-                        break
-                    pbar.update(1)
-                    continue
+                except rq.RequestException as exc:
+                    raise RuntimeError(
+                        f"FleaFlicker request failed for {ipos}, offset {i}; refresh cancelled."
+                    ) from exc
 
                 if resp.status_code == 200: # Response code 200 is a success response
                     data = resp.json()
@@ -160,17 +159,17 @@ def ff_apiIndex(faStatus: bool):
                         rows_to_insert.append((fleakicker_id, name, pos, team))
 
                 else:
-                    pbar.write(f"HTTP {resp.status_code} for {ipos} offset {i}")
-                    failCount += 1
-                    if failCount >= 3:
-                        pbar.write("❌ Multiple consecutive failures, stopping fetch loop.")
-                        break  # break offsets for this position
-
-                req_count += 1
-                if req_count % REQ_SLEEP_EVERY == 0:
-                    time.sleep(REQ_SLEEP_TIME)
+                    raise RuntimeError(
+                        f"FleaFlicker HTTP {resp.status_code} for {ipos}, offset {i}; "
+                        "refresh cancelled and previous availability preserved."
+                    )
 
                 pbar.update(1)
+            if on_progress:
+                on_progress(
+                    (position_index + 1) / len(positions),
+                    f"{ipos.upper()} complete · {len(rows_to_insert)} records fetched",
+                )
             # end inner offset loop
         # end positions loop
     return rows_to_insert
@@ -184,13 +183,15 @@ def build_ff_indexes():
         fut_fa.result()
     print("✅ Both FF indexes built")
 
-def ff_FARefresh():
+def ff_FARefresh(on_progress=None):
     table_name = "player_index_ff_fa" # Creating a table_name variable makes this a potentially reusable function further down the line
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     try:
-        rows_to_update = ff_apiIndex(True) # Run the function looking only for free agents
+        rows_to_update = ff_apiIndex(True, on_progress=on_progress) # Run the function looking only for free agents
+        if not rows_to_update:
+            raise RuntimeError("No free agents returned; previous availability preserved.")
         if rows_to_update:
             if not dbm.table_exists(table_name): # Check to see if the FA table already exists, otherwise go make it
                 cur.execute(f"""

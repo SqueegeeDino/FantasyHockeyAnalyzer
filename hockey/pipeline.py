@@ -22,7 +22,9 @@ def helpFlea(debug=False):
         print("✅ helpFlea populated scoring")
 
 # Run all NHL API calls, recently CUT index building. CALL INDEX BUILDING SEPARATELY
-def helpNHL(debug=False):
+def helpNHL(debug=False, on_status=None):
+    report = on_status or (lambda message: None)
+    report("Fetching NHL skater and goalie statistics…")
     with ThreadPoolExecutor(max_workers=3) as ex:
         fut_rawSkate = ex.submit(nhlAPI.rawstats_dynamic_skater)
         fut_rawGoal = ex.submit(nhlAPI.rawstats_dynamic_goalie)
@@ -30,18 +32,26 @@ def helpNHL(debug=False):
         fut_rawGoal.result()
         if debug==True:
             print("✅ helpNHL TPE workers done")
+    report("Updating NHL-to-fantasy player mappings…")
     dbm.dbPlayerIndexLocalPop()
     if debug==True:
         print("✅ helpNHL populated local index")
+    report("Fetching hits, blocks, and ice time…")
     ingNHL.dbPopulateRealtime()
     if debug==True:
         print("✅ helpNHL populated realtime")
 
-def buildStatsBasic(debug=False):
-    helpNHL(debug)
-    ingFF.ff_FARefresh()
+def buildStatsBasic(debug=False, on_status=None, on_ff_progress=None):
+    """Refresh statistics; optional callbacks also support a web progress display."""
+    report = on_status or (lambda message: None)
+    helpNHL(debug, on_status=report)
+    report("Refreshing FleaFlicker free-agent availability…")
+    ingFF.ff_FARefresh(on_progress=on_ff_progress)
+    report("Loading fantasy scoring rules…")
     dbm.dbScoringPop()
+    report("Rebuilding fantasy rankings…")
     hSc.dbBuildUnifiedFantasyView(False)
+    report("Statistics and availability refreshed.")
 
-    if debug==True:
+    if debug:
         print("✅ buildStatsBasic done")
