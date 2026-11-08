@@ -100,7 +100,11 @@ def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
         ws.positionCode,
         ws.gamesPlayed,
         'Skater' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        CASE
+            WHEN pl.ff_id IS NULL THEN NULL
+            WHEN rostered.ff_id IS NOT NULL THEN 0
+            ELSE 1
+        END AS freeAgent,
         ({sk_expr}) AS fantasy_points_total,
         ROUND(({sk_expr}) / NULLIF(ws.gamesPlayed, 0), 3) AS fantasy_points_per_game,
         COALESCE(wrt.hits, 0) AS hits,
@@ -110,9 +114,11 @@ def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
         ws.endDate   AS window_end
     FROM rawstats_window_skater ws
     LEFT JOIN rawstats_window_skater_realtime wrt
-      ON wrt.playerId=ws.playerId AND wrt.startDate=ws.startDate AND wrt.endDate=ws.endDate
-    LEFT JOIN player_index_local pl ON ws.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
+        ON wrt.playerId=ws.playerId AND wrt.startDate=ws.startDate AND wrt.endDate=ws.endDate
+    LEFT JOIN player_index_local pl 
+        ON ws.playerId = pl.nhl_id
+    LEFT JOIN player_index_ff_rostered rostered
+        ON pl.ff_id = rostered.ff_id
     WHERE ws.startDate = '{ws}' AND ws.endDate = '{we}'
     """
 
@@ -126,7 +132,11 @@ def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
         'G' AS positionCode,
         wg.gamesPlayed,
         'Goalie' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        CASE 
+            WHEN pl.ff_id IS NULL THEN NULL
+            WHEN rostered.ff_id IS NOT NULL THEN 0
+            ELSE 1
+        END AS freeAgent,
         ({gl_expr}) AS fantasy_points_total,
         ROUND(({gl_expr}) / NULLIF(wg.gamesPlayed, 0), 3) AS fantasy_points_per_game,
         0 AS hits,
@@ -136,7 +146,7 @@ def dbBuildUnifiedFantasyWindowView(start_date: str | None = None,
         wg.endDate   AS window_end
     FROM rawstats_window_goalie wg
     LEFT JOIN player_index_local pl ON wg.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa ON pl.ff_id = fa.fleakicker_id
+    LEFT JOIN player_index_ff_rostered rostered ON pl.ff_id = rostered.ff_id
     WHERE wg.startDate = '{ws}' AND wg.endDate = '{we}'
     """
 
@@ -287,7 +297,11 @@ def dbBuildUnifiedFantasyView(debug=True):
         ps.positionCode,
         ps.gamesPlayed,
         'Skater' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        CASE
+            WHEN pl.ff_id IS NULL THEN NULL
+            WHEN rostered.ff_id IS NOT NULL THEN 0
+            ELSE 1
+        END AS freeAgent,
         ({skater_expr}) AS fantasy_points_total,
         ROUND(({skater_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game,
         COALESCE(rth.hits, 0) AS hits,
@@ -299,8 +313,8 @@ def dbBuildUnifiedFantasyView(debug=True):
        AND ps.seasonId = rth.seasonId
     LEFT JOIN player_index_local pl
         ON ps.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa
-        ON pl.ff_id = fa.fleakicker_id
+    LEFT JOIN player_index_ff_rostered rostered
+        ON pl.ff_id = rostered.ff_id
     """
 
     # === goalie query unchanged (no realtime join, they don't live there) ===
@@ -313,7 +327,11 @@ def dbBuildUnifiedFantasyView(debug=True):
         'G' AS positionCode,
         ps.gamesPlayed,
         'Goalie' AS playerType,
-        CASE WHEN fa.fleakicker_id IS NOT NULL THEN 1 ELSE 0 END AS freeAgent,
+        CASE
+            WHEN pl.ff_id IS NULL THEN NULL
+            WHEN rostered.ff_id IS NOT NULL THEN 0
+            ELSE 1
+        END AS freeAgent,
         ({goalie_expr}) AS fantasy_points_total,
         ROUND(({goalie_expr}) / NULLIF(ps.gamesPlayed, 0), 3) AS fantasy_points_per_game,
         0 AS hits,
@@ -322,8 +340,8 @@ def dbBuildUnifiedFantasyView(debug=True):
     FROM rawstats_dynamic_goalie ps
     LEFT JOIN player_index_local pl
         ON ps.playerId = pl.nhl_id
-    LEFT JOIN player_index_ff_fa fa
-        ON pl.ff_id = fa.fleakicker_id
+    LEFT JOIN player_index_ff_rostered rostered
+        ON pl.ff_id = rostered.ff_id
     """
 
     unified_sql = f"""

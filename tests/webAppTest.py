@@ -68,7 +68,7 @@ with st.sidebar:
       )
       reload_requested = st.button("Reload Stats", 
                   key="reloadStats", 
-                  help="Fetch current NHL statistics and FleaFlicker availability. This can take several minutes.",
+                  help="Fetch current NHL statistics and update availability from FleaFlicker league rosters.",
                   )
 
 with st.container(border=True):
@@ -106,7 +106,7 @@ def get_rankings(min_games):
             teamAbbrevs
         FROM unified_fantasy_points
         WHERE gamesPlayed >= ?
-          AND freeAgent >= ?
+          AND (? = 0 OR freeAgent = 1)
     """
     params = [min_games, faVal]
 
@@ -131,22 +131,14 @@ if reload_requested:
     with status_area.container():
         status = st.status("Reloading statistics…", expanded=True)
         step = status.empty()
-        ff_progress = status.empty()
 
         def show_status(message):
             step.write(message)
             status.update(label=message)
 
-        def show_ff_progress(fraction, message):
-            ff_progress.progress(
-                fraction,
-                text=f"FleaFlicker pagination · {message}",
-            )
-
         try:
             hPipe.buildStatsBasic(
                 on_status=show_status,
-                on_ff_progress=show_ff_progress,
             )
         except Exception as exc:
             status.update(label="Refresh failed", state="error", expanded=True)

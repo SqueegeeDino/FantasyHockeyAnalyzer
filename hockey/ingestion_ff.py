@@ -216,67 +216,63 @@ def ff_FARefresh(on_progress=None):
 
 # Call FF API to get all rosters in league and their players. WIP alternative to the very slow free agent lookup
 def ff_apiGetRosters(leagueID):
-    apiLink = f"https://www.fleaflicker.com/api/FetchLeagueRosters?sport=NHL&league_id={leagueID}"
-
-    # Call the API with correct parameters
-    # Link looks like this: apiLink = f"https://www.fleaflicker.com/api/FetchLeagueRosters?sport=NHL&league_id={leagueID}"
+    """Replace the ownership snapshot only after a complete roster response."""
     response = rq.get(
         "https://www.fleaflicker.com/api/FetchLeagueRosters",
-        params={
-            "sport": "NHL",
-            "league_id": ff_leagueID
-        },
+        params={"sport": "NHL", "league_id": leagueID},
         timeout=20,
     )
-    response.raise_for_status() # Raises error if one occured
-    data = response.json() # Stash the response into a json in memory
+    response.raise_for_status()
+    data = response.json()
+    rosters = data["rosters"]
+    if not rosters:
+        raise ValueError("No league rosters returned; previous ownership preserved.")
 
-    rows = [] # create a blank rows list
-
-    # For loop 
-    for roster in data["rosters"]: # Grabs the "rosters" item
+    rows = []
+    for roster in rosters:
         fantasy_team = roster["team"]
-
         for player in roster["players"]:
             pro = player["proPlayer"]
-
             rows.append((
-                pro["id"],
-                pro["nameFull"],
-                pro.get("position", "Unknown"), # Optional item, if blank returns "Unknown"
-                pro.get("proTeamAbbreviation", "Unknown"), # Optional item, if blank returns "Unkown"
-                fantasy_team["id"],
-                fantasy_team["name"],
+                pro["id"], pro["nameFull"],
+                pro.get("position", "Unknown"),
+                pro.get("proTeamAbbreviation", "Unknown"),
+                fantasy_team["id"], fantasy_team["name"],
             ))
 
     conn = sqlite3.connect(DB_PATH)
+    try:
+        with conn:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS player_index_ff_rostered (
+                    ff_id INTEGER PRIMARY KEY,
+                    name TEXT,
+                    pos TEXT,
+                    nhl_team TEXT,
+                    fantasy_team_id INTEGER,
+                    fantasy_team_name TEXT
+                )
+            """)
+            conn.execute("DELETE FROM player_index_ff_rostered")
+            conn.executemany("""
+                INSERT INTO player_index_ff_rostered (
+                    ff_id, name, pos, nhl_team,
+                    fantasy_team_id, fantasy_team_name
+                ) VALUES (?, ?, ?, ?, ?, ?)
+            """, rows)
+    finally:
+        conn.close()
+    return len(rows)
+
+
+def ff_build_player_availability_view():
+    conn = sqlite3.connect(DB_PATH)
+    
 
     try:
         with conn:
             conn.execute("""
-            CREATE TABLE IF NOT EXISTS player_index_ff_rostered (
-                ff_id INTEGER PRIMARY KEY,
-                name TEXT,
-                pos TEXT,
-                nhl_team TEXT,
-                fantasy_team_id INTEGER,
-                fantasy_team_name TEXT,
-            )
+            
         """)
-
-        conn.execute("DELETE FROM player_index_ff_rostered")
-
-        conn.executemany("""
-            INSERT INTO player_index_ff_rostered (
-                ff_id,
-                name,
-                pos,
-                nhl_team,
-                fantasy_team_id,
-                fantasy_team_name
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, rows)
-
     finally:
         conn.close()

@@ -41,12 +41,12 @@ def helpNHL(debug=False, on_status=None):
     if debug==True:
         print("✅ helpNHL populated realtime")
 
-def buildStatsBasic(debug=False, on_status=None, on_ff_progress=None):
+def buildStatsBasic(debug=False, on_status=None):
     """Refresh statistics; optional callbacks also support a web progress display."""
     report = on_status or (lambda message: None)
     helpNHL(debug, on_status=report)
-    report("Refreshing FleaFlicker free-agent availability…")
-    ingFF.ff_FARefresh(on_progress=on_ff_progress)
+    report("Refreshing FleaFlicker league rosters…")
+    ingFF.ff_apiGetRosters(ff_leagueID)
     report("Loading fantasy scoring rules…")
     dbm.dbScoringPop()
     report("Rebuilding fantasy rankings…")
