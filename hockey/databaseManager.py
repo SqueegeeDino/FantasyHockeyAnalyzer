@@ -1,4 +1,5 @@
 import sqlite3
+import unicodedata
 from pathlib import Path
 import json
 import requests as rq
@@ -85,37 +86,97 @@ def dbScoringPop():
     conn.commit()
     conn.close()       
 
-# dbPlayerIndexLocalPop creates and populates the player_index_local table by matching players from both FleaFlicker and NHL tables
+def _player_name_key(name):
+    """Compare names without accents, case differences, or extra whitespace."""
+    decomposed = unicodedata.normalize("NFKD", name)
+    unaccented = "".join(char for char in decomposed if not unicodedata.combining(char))
+    return " ".join(unaccented.casefold().split())
+
+
+def _player_positions(value):
+    """Expand provider position groups into comparable NHL positions."""
+    groups = {
+        "L": {"LW"}, "R": {"RW"},
+        "W": {"LW", "RW"}, "F": {"C", "LW", "RW"},
+    }
+    result = set()
+    for position in value.upper().replace(",", "/").split("/"):
+        position = position.strip()
+        if position:
+            result.update(groups.get(position, {position}))
+    return result
+
+
+def _player_team_key(value):
+    key = value.strip().casefold()
+    return _aliases.get(key, key.upper())
+
+
 def dbPlayerIndexLocalPop():
+    """Rebuild derived mappings using normalized names, teams, and positions.
+
+    Only unambiguous one-to-one matches are accepted. Original provider names
+    and positions are retained; normalization is used only for comparison.
+    """
     conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    try:
+        with conn:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS player_index_local (
+                    local_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    pos TEXT NOT NULL,
+                    team TEXT NOT NULL,
+                    nhl_id INTEGER,
+                    ff_id INTEGER,
+                    UNIQUE(name, pos, team)
+                )
+            """)
+            # Preserve local IDs for players that already have a mapping.
+            existing = dict(conn.execute(
+                "SELECT nhl_id, MIN(local_id) FROM player_index_local GROUP BY nhl_id"
+            ))
+            fantasy = {}
+            for ff_id, name, pos, team in conn.execute(
+                "SELECT fleakicker_id, name, pos, team FROM player_index_ff"
+            ):
+                key = (_player_name_key(name), _player_team_key(team))
+                fantasy.setdefault(key, []).append((ff_id, pos))
 
-    # Create the local table if it doesn't exist
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS player_index_local (
-        local_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        pos TEXT NOT NULL,
-        team TEXT NOT NULL,
-        nhl_id INTEGER,
-        ff_id INTEGER,
-        UNIQUE(name, pos, team)
-    )
-    """)
+            candidates = []
+            for nhl_id, name, pos, team in conn.execute(
+                "SELECT nhl_id, name, pos, team FROM player_index_nhl"
+            ):
+                key = (_player_name_key(name), _player_team_key(team))
 
-    # Insert only players in BOTH tables, handling multi-position matches
-    cur.execute("""
-    INSERT OR IGNORE INTO player_index_local (name, pos, team, nhl_id, ff_id)
-    SELECT n.name, f.pos, n.team, n.nhl_id, f.fleakicker_id
-    FROM player_index_nhl n
-    JOIN player_index_ff f
-      ON n.name = f.name
-     AND n.team = f.team
-     AND f.pos LIKE '%' || n.pos || '%'
-    """)
+                current_candidates = fantasy.get(key, [])
 
-    conn.commit()
-    conn.close()
+                if len(current_candidates) == 1:
+                    matches = current_candidates
+                else:
+                    matches = [
+                        (ff_id, ff_pos)
+                        for ff_id, ff_pos in current_candidates
+                        if _player_positions(pos) & _player_positions(ff_pos)
+                    ]
+                if len(matches) == 1:
+                    ff_id, ff_pos = matches[0]
+                    candidates.append((existing.get(nhl_id), name, ff_pos,
+                                       _player_team_key(team), nhl_id, ff_id))
+
+            counts = {}
+            for row in candidates:
+                counts[row[5]] = counts.get(row[5], 0) + 1
+            rows = [row for row in candidates if counts[row[5]] == 1]
+            conn.execute("DELETE FROM player_index_local")
+            conn.executemany("""
+                INSERT INTO player_index_local
+                    (local_id, name, pos, team, nhl_id, ff_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, rows)
+        return len(rows)
+    finally:
+        conn.close()
 
 # === "Window" Views ===
 # Window being 'time window' like last 7 days, last 14 days, etc.

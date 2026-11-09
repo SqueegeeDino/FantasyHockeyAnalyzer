@@ -10,16 +10,24 @@ COLUMN_LABELS = {
     "teamAbbrevs": "Team",
 }
 
+def format_availability(value):
+    if pd.isna(value):
+        return "Unknown"
+    return {1: "FA", 0: "Rostered"}.get(value, "Unknown")
+
+
 VALUE_FORMATTERS = {
-    "freeAgent": lambda value: "FA" if value == 1 else "",
+    "freeAgent": format_availability,
 }
 
 
-def prepare_display(data: pd.DataFrame) -> pd.DataFrame:
+def prepare_display(data: pd.DataFrame, *, rename_columns: bool = True) -> pd.DataFrame:
     display = data.copy()
 
     for column, formatter in VALUE_FORMATTERS.items():
         if column in display.columns:
             display[column] = display[column].map(formatter)
 
-    return display.rename(columns=COLUMN_LABELS)
+    if rename_columns:
+        return display.rename(columns=COLUMN_LABELS)
+    return display

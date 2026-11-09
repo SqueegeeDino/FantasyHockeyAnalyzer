@@ -176,8 +176,8 @@ COLUMN_CONFIG = {
             help="Fantasy Points per Game"
       ),
       "freeAgent": st.column_config.Column(
-            label="FA",
-            help="FA Status"
+            label="Availability",
+            help="FA: unrostered. Rostered: on a fantasy team. Unknown: no matched fantasy player ID."
       ),
       "teamAbbrevs": st.column_config.Column(
             label="Team",
@@ -188,7 +188,7 @@ COLUMN_CONFIG = {
 rankings_filtered = wh.filter_dataframe(rankings)
 
 table_area.dataframe(
-    rankings_filtered,
+    prepare_display(rankings_filtered, rename_columns=False),
     column_config=COLUMN_CONFIG,
     hide_index=True, 
     width="stretch")
