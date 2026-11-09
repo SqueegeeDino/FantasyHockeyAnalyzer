@@ -3,7 +3,7 @@ import hockey.databaseManager as dbm
 import requests as rq
 import sqlite3
 import pandas as pd
-from hockey.config import DB_PATH
+from hockey.config import DB_PATH, ff_leagueID
 import hockey.ingestion_ff as ingFF
 import hockey.export as exp
 import hockey.ingestion_nhl as ingNHL
@@ -11,7 +11,7 @@ import hockey.query as hQuery
 import hockey.scoring as hSc
 from hockey.config import DB_PATH
 
-leagueID = 12100
+leagueID = ff_leagueID
 
 
 def confirm(prompt: str, run_all: bool, skip_all: bool) -> bool:
@@ -53,14 +53,10 @@ if confirm("Populate scoring data into database?", run_all, skip_all):
     dbm.dbScoringPop()
     print("✅ dbm.dbScoringPop")
 
-# --- Step 3: FleaFlicker Player Index ---
-if confirm("Fetch FleaFlicker free agent list?", run_all, skip_all):
-    ingFF.dbPlayerIndexFFPop(faStatus=True)
-    print("✅ ingFF.dbPlayerIndexFFPop(True)")
-
-if confirm("Fetch FleaFlicker rostered player list?", run_all, skip_all):
-    ingFF.dbPlayerIndexFFPop(faStatus=False)
-    print("✅ ingFF.dbPlayerIndexFFPop(False)")
+# --- Step 3: FleaFlicker identities, ownership, and availability ---
+if confirm("Build full FleaFlicker index and refresh league rosters?", run_all, skip_all):
+    ingFF.build_ff_indexes()
+    print("✅ FleaFlicker identities, rosters, and availability built")
 
 if confirm("Export FleaFlicker scoring table to CSV?", run_all, skip_all):
     exp.dbTableToCsv("score")
@@ -72,9 +68,9 @@ if confirm("Fetch NHL player index (team rosters)?", run_all, skip_all):
     print("✅ ingNHL.dbPlayerIndexNHLPop")
 
 # --- Step 4a: Local Index
-if confirm("Rebuild local index", run_all, skip_all):
-    dbm.dbPlayerIndexLocalPop()
-    print("✅ dbm.dbPlayerIndexLocalPop")
+if confirm("Rebuild local index after both provider indexes are ready?", run_all, skip_all):
+    count = dbm.dbPlayerIndexLocalPop()
+    print(f"✅ Local index rebuilt: {count} mappings")
 
 # --- Step 5: NHL Statistics ---
 if confirm("Fetch NHL skater stats?", run_all, skip_all):

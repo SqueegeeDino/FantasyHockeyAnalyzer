@@ -53,135 +53,116 @@ def apiScoringGet(leagueID):
         print(f"Error leagueScoring: {response_leagueScoring.status_code}") # Error out if the api collection fails
 
 # dbPlayerIndexPopFF populates the player_index_ff table using FleaFlicker player info
-def dbPlayerIndexFFPop(faStatus: bool):
+''' Possible inputs:
+dbPlayerIndexFFPop()      # All players; default
+dbPlayerIndexFFPop(False) # All players; backward compatible
+dbPlayerIndexFFPop(True)  # FA only; also adds them to the master index
+'''
+def dbPlayerIndexFFPop(faStatus: bool | None = None):
+    """None/False fetch all identities; True also refreshes the legacy FA table."""
+    rows = ff_apiIndex(faStatus)
+    if not rows:
+        raise RuntimeError("No players returned; existing indexes preserved.")
     conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    try:
+        with conn:
+            for table in ("player_index_ff", "player_index_ff_fa"):
+                conn.execute(f"""CREATE TABLE IF NOT EXISTS {table} (
+                    fleakicker_id INTEGER UNIQUE, name TEXT, pos TEXT, team TEXT
+                )""")
+            conn.executemany("""
+                INSERT OR REPLACE INTO player_index_ff
+                (fleakicker_id, name, pos, team) VALUES (?, ?, ?, ?)
+            """, rows)
+            if faStatus is True:
+                conn.execute("DELETE FROM player_index_ff_fa")
+                conn.executemany("""
+                    INSERT INTO player_index_ff_fa VALUES (?, ?, ?, ?)
+                """, rows)
+    finally:
+        conn.close()
+    print(f"Master index updated with {len(rows)} unique players.")
+    return len(rows)
 
-    # tables
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS player_index_ff (
-            fleakicker_id INTEGER UNIQUE,
-            name TEXT,
-            pos TEXT,
-            team TEXT
-        )
-    """)
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS player_index_ff_fa (
-            fleakicker_id INTEGER UNIQUE,
-            name TEXT,
-            pos TEXT,
-            team TEXT
-        )
-    """)
 
-    rows_to_insert = ff_apiIndex(faStatus) # Reutrn the list tuple from the function
-
-    # === bulk insert at the end, ALWAYS ===
-    if rows_to_insert:
-        if faStatus:
-            cur.executemany(
-                "INSERT OR REPLACE INTO player_index_ff_fa VALUES (?, ?, ?, ?)",
-                rows_to_insert
-            )
-        else:
-            cur.executemany(
-                "INSERT OR REPLACE INTO player_index_ff VALUES (?, ?, ?, ?)",
-                rows_to_insert
-            )
-
-    conn.commit()
-    conn.close()
-    print(f"✅ dbPlayerIndexFFPop({faStatus}) — inserted {len(rows_to_insert)} players")
-
-def ff_apiIndex(faStatus: bool, on_progress=None):
-    """Fetch listings; report (fraction, message) without depending on Streamlit."""
-    statusStr = str(faStatus).lower()  # "true" / "false"
-    failCount = 0
-    req_count = 0
-
-    rows_to_insert: list[tuple] = []
-
-    session = rq.Session()
-
-    with tqdm(total=total_requests,
-              desc=f"FleaFlicker {'FA' if faStatus else 'All'}",
-              unit="req",
-              colour="green") as pbar:
-
+def ff_apiIndex(faStatus: bool | None = None, on_progress=None):
+    """Follow server pagination for each position and deduplicate player IDs."""
+    if faStatus is not None and not isinstance(faStatus, bool):
+        raise TypeError("faStatus must be True, False, or None (all players).")
+    rows_by_id = {}
+    with rq.Session() as session, tqdm(
+        desc=f"FleaFlicker {'FA' if faStatus is True else 'All'}",
+        unit="req", colour="green",
+    ) as pbar:
         for position_index, ipos in enumerate(positions):
-            empty_in_a_row = 0  # <-- reset per position
-
-            for page_index, i in enumerate(offsets):
+            offset = 0
+            seen_pages = set()
+            while True:
                 if on_progress:
-                    fraction = (position_index + page_index / len(offsets)) / len(positions)
-                    on_progress(fraction, f"{ipos.upper()} · offset {i} · {len(rows_to_insert)} records fetched")
-                url = (
-                    "https://www.fleaflicker.com/api/FetchPlayerListing"
-                    f"?sport=NHL&league_id={ff_leagueID}"
-                    f"&sort=SORT_DRAFT_RANKING"
-                    f"&result_offset={i}"
-                    f"&filter.position_eligibility={ipos}"
-                    f"&filter.free_agent_only={statusStr}"
+                    on_progress(position_index / len(positions),
+                                f"{ipos.upper()} · offset {offset} · {len(rows_by_id)} unique players")
+                params = {
+                    "sport": "NHL", "league_id": ff_leagueID,
+                    "sort": "SORT_DRAFT_RANKING", "result_offset": offset,
+                    "filter.position_eligibility": ipos,
+                }
+                if faStatus is not None:
+                    params["filter.free_agent_only"] = str(faStatus).lower()
+                time.sleep(REQ_SLEEP_TIME)
+                response = session.get(
+                    "https://www.fleaflicker.com/api/FetchPlayerListing",
+                    params=params, timeout=20,
                 )
-
-                try:
-                    time.sleep(REQ_SLEEP_TIME)
-                    resp = session.get(url, timeout=10)
-                except rq.RequestException as exc:
-                    raise RuntimeError(
-                        f"FleaFlicker request failed for {ipos}, offset {i}; refresh cancelled."
-                    ) from exc
-
-                if resp.status_code == 200: # Response code 200 is a success response
-                    data = resp.json()
-                    players = data.get("players")
-
-                    if not players:
-                        empty_in_a_row += 1
-                        pbar.write(f"No players for {ipos} offset {i}")
-                        if empty_in_a_row >= 3:
-                            # stop trying more offsets for THIS position
-                            pbar.write(f"Stopping {ipos} after 3 empty pages.")
-                            break
-                        pbar.update(1)
-                        continue
-
-                    # reset counts on success
-                    empty_in_a_row = 0
-                    failCount = 0
-
-                    for player in players:
-                        fleakicker_id = player["proPlayer"]["id"]
-                        name = player["proPlayer"]["nameFull"]
-                        pos = player["proPlayer"]["position"]
-                        team = player["proPlayer"]["proTeamAbbreviation"]
-                        rows_to_insert.append((fleakicker_id, name, pos, team))
-
-                else:
-                    raise RuntimeError(
-                        f"FleaFlicker HTTP {resp.status_code} for {ipos}, offset {i}; "
-                        "refresh cancelled and previous availability preserved."
+                response.raise_for_status()
+                data = response.json()
+                players = data.get("players", [])
+                page_ids = tuple(player["proPlayer"]["id"] for player in players)
+                repeated_page = page_ids in seen_pages
+                seen_pages.add(page_ids)
+                for player in players:
+                    pro = player["proPlayer"]
+                    rows_by_id[pro["id"]] = (
+                        pro["id"], pro["nameFull"],
+                        pro.get("position", "Unknown"),
+                        pro.get("proTeamAbbreviation", "Unknown"),
                     )
-
                 pbar.update(1)
+                next_offset = data.get("resultOffsetNext")
+                # FleaFlicker can advertise another offset on an empty final page.
+                # An empty page ends this position, not the entire index build.
+                if not players or next_offset is None:
+                    break
+                # Beyond its listing cap, FleaFlicker repeats the last populated
+                # page and returns the same next offset. Do not fetch it forever.
+                if (repeated_page and isinstance(next_offset, int)
+                        and not isinstance(next_offset, bool) and next_offset <= offset):
+                    pbar.write(
+                        f"{ipos.upper()}: reached FleaFlicker listing boundary at {offset}; "
+                        "repeated page skipped."
+                    )
+                    break
+                if (not isinstance(next_offset, int)
+                        or isinstance(next_offset, bool)
+                        or next_offset <= offset):
+                    raise RuntimeError(
+                        f"Invalid pagination for {ipos} at {offset}: "
+                        f"{len(players)} players, next offset {next_offset!r}; indexes preserved."
+                    )
+                offset = next_offset
             if on_progress:
-                on_progress(
-                    (position_index + 1) / len(positions),
-                    f"{ipos.upper()} complete · {len(rows_to_insert)} records fetched",
-                )
-            # end inner offset loop
-        # end positions loop
-    return rows_to_insert
+                on_progress((position_index + 1) / len(positions),
+                            f"{ipos.upper()} complete · {len(rows_by_id)} unique players")
+    return list(rows_by_id.values())
 
-# Call this to build FleaFlicker indexes to speed up the process if you want both
+
 def build_ff_indexes():
-    with ThreadPoolExecutor(max_workers=2) as ex:
-        fut_all = ex.submit(dbPlayerIndexFFPop, False)
-        fut_fa  = ex.submit(dbPlayerIndexFFPop, True)
-        fut_all.result()
-        fut_fa.result()
-    print("✅ Both FF indexes built")
+    """Build identities, ownership, and availability sequentially."""
+    count = dbPlayerIndexFFPop()
+    rostered = ff_apiGetRosters(ff_leagueID)
+    ff_build_player_availability_view()
+    print(f"Indexes ready: {count} listing players; {rostered} rostered.")
+    return count
+
 
 def ff_FARefresh(on_progress=None):
     table_name = "player_index_ff_fa" # Creating a table_name variable makes this a potentially reusable function further down the line
@@ -253,6 +234,14 @@ def ff_apiGetRosters(leagueID):
                     fantasy_team_name TEXT
                 )
             """)
+            # Include rostered identities even when the listing omitted them.
+            conn.execute("""CREATE TABLE IF NOT EXISTS player_index_ff (
+                fleakicker_id INTEGER UNIQUE, name TEXT, pos TEXT, team TEXT
+            )""")
+            conn.executemany("""
+                INSERT OR REPLACE INTO player_index_ff
+                (fleakicker_id, name, pos, team) VALUES (?, ?, ?, ?)
+            """, [row[:4] for row in rows])
             conn.execute("DELETE FROM player_index_ff_rostered")
             conn.executemany("""
                 INSERT INTO player_index_ff_rostered (
@@ -267,12 +256,24 @@ def ff_apiGetRosters(leagueID):
 
 def ff_build_player_availability_view():
     conn = sqlite3.connect(DB_PATH)
-    
 
     try:
         with conn:
+            conn.execute("DROP VIEW IF EXISTS player_availability")
             conn.execute("""
-            
+            CREATE VIEW player_availability AS
+            SELECT
+                p.fleakicker_id AS ff_id,
+                p.name,
+                p.pos,
+                p.team,
+                CASE
+                    WHEN r.ff_id IS NOT NULL THEN 0
+                    ELSE 1
+                END AS freeAgent
+            FROM player_index_ff p
+            LEFT JOIN player_index_ff_rostered r
+                ON p.fleakicker_id = r.ff_id
         """)
     finally:
         conn.close()
