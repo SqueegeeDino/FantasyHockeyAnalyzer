@@ -50,6 +50,34 @@ fantasy_services = [
       "FleaFlicker"
 ]
 
+def get_rankings(min_games, l_cleanedFilter):
+    hSc.dbBuildUnifiedFantasyView(False)
+
+    query = """
+        SELECT
+            playerFullName,
+            positionCode,
+            gamesPlayed,
+            fantasy_points_total,
+            fantasy_points_per_game,
+            freeAgent,
+            teamAbbrevs
+        FROM unified_fantasy_points
+        WHERE gamesPlayed >= ?
+          AND (? = 0 OR freeAgent = 1)
+    """
+    params = [min_games, faVal]
+
+    if l_cleanedFilter:
+        placeholders = ", ".join("?" for _ in l_cleanedFilter)
+        query += f" AND teamAbbrevs IN ({placeholders})"
+        params.extend(l_cleanedFilter)
+
+    query += " ORDER BY fantasy_points_total DESC"
+
+    with sqlite3.connect(DB_PATH) as conn:
+        return pd.read_sql_query(query, conn, params=params)
+
 # === Top of page generation
 st.set_page_config(layout="wide")
 st.title("Fantasy Hockey Analyzer")
@@ -74,53 +102,28 @@ with st.sidebar:
 with st.container(border=True):
       col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
       with col1:
-            st.write("Placeholder")
+            check1 = st.checkbox("Free Agent Only", key="faCheckBool"),
       with col2:
-            st.write("Placeholder 2")
+            min_games = st.slider("Minimum Games Played", 0, 84, 10)
+      with col3:
+            teamFilter = st.multiselect(
+                  label="Filter by team:",
+                  options=(teams),
+                  width=600
+                  )
 
-with st.container(border=True, horizontal=True):
-    check1 = st.checkbox("Free Agent Only", key="faCheckBool"),
-    teamFilter = st.multiselect(
-        label="Filter by team:",
-        options=(teams),
-        width=600
-        )
 cleanedFilter = dbm.normalize_team_list(teamFilter)
-
 if st.session_state.faCheckBool:
         faVal = 1
 else:
         faVal = 0
+rankings = get_rankings(min_games, cleanedFilter)
 
-def get_rankings(min_games):
-    hSc.dbBuildUnifiedFantasyView(False)
 
-    query = """
-        SELECT
-            playerFullName,
-            positionCode,
-            gamesPlayed,
-            fantasy_points_total,
-            fantasy_points_per_game,
-            freeAgent,
-            teamAbbrevs
-        FROM unified_fantasy_points
-        WHERE gamesPlayed >= ?
-          AND (? = 0 OR freeAgent = 1)
-    """
-    params = [min_games, faVal]
 
-    if cleanedFilter:
-        placeholders = ", ".join("?" for _ in cleanedFilter)
-        query += f" AND teamAbbrevs IN ({placeholders})"
-        params.extend(cleanedFilter)
 
-    query += " ORDER BY fantasy_points_total DESC"
-
-    with sqlite3.connect(DB_PATH) as conn:
-        return pd.read_sql_query(query, conn, params=params)
-
-min_games = st.slider("Minimum Games Played", 0, 84, 10)
+with st.container(border=True, horizontal=True):
+    rankings_filtered = wh.filter_dataframe(rankings)
 
 # Reserve the status and table slots before starting the blocking refresh.
 status_area = st.empty()
@@ -147,13 +150,9 @@ if reload_requested:
         else:
             status.update(label="Statistics refreshed", state="complete", expanded=False)
 
-try:
-    rankings = get_rankings(min_games)
-except Exception as exc:
-    table_area.empty()
-    st.error(f"Could not load rankings: {exc}")
-    st.stop()
 
+
+# Labels, tooltips, other table config items
 COLUMN_CONFIG = {
       "playerFullName": st.column_config.Column(
             label="Player",
@@ -184,8 +183,6 @@ COLUMN_CONFIG = {
             help="Current team"
       ),
 }
-
-rankings_filtered = wh.filter_dataframe(rankings)
 
 table_area.dataframe(
     prepare_display(rankings_filtered, rename_columns=False),
