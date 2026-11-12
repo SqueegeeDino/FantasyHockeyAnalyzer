@@ -1,0 +1,237 @@
+{
+    "allowOutOfPositionScoring": false,
+    "homeTeamBonus": 0,
+    "matchupTieRule": "NONE",
+    "matchupTieRuleBy": 0,
+    "playerRankType": "STANDARD",
+    "playoffHomeTeamBonus": 0,
+    "playoffMatchupTieRule": "NONE",
+    "playoffMatchupTieRuleBy": 0,
+    "scoringItems": [
+        {Skater - Blocked Shots
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 19.0,
+            "statId": 32
+        },
+        {Goalie - Wins
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 101.0,
+            "statId": 1
+        },
+        {Skater - Special Teams Goals
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 21.0,
+            "statId": 35
+        },
+        {Skater - Shots on Goal
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 17.0,
+            "statId": 29
+        },
+        {Skater - Faceoffs Won
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 1.0,
+            "statId": 13
+        },
+        {Goalie - Games Started
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 100.0,
+            "statId": 0
+        },
+        {Goalie - Shots Against
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 103.0,
+            "statId": 3
+        },
+        {Goalie - Overtime Losses
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 108.0,
+            "statId": 9
+        },
+        {Skater - Power Play Points
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 8.0,
+            "statId": 38
+        },
+        {Skater - Special Teams Points
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 23.0,
+            "statId": 37
+        },
+        {Goalie - Losses
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 102.0,
+            "statId": 2
+        },
+        {Skater - Assists
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 2.0,
+            "statId": 14
+        },
+        {Skater - Defensemen Points
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 20.0,
+            "statId": 33
+        },
+        {Skater - Points
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 3.0,
+            "statId": 16
+        },
+        {Goalie - Saves
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 106.0,
+            "statId": 6
+        },
+        {Skater - Hits
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 18.0,
+            "statId": 31
+        },
+        {Skater - Short Handed Points
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 11.0,
+            "statId": 39
+        },
+        {Skater - Plus/Minus
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 4.0,
+            "statId": 15
+        },
+        {Goalie - Shutouts
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 107.0,
+            "statId": 7
+        },
+        {Skater - Faceoffs Lost
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 14.0,
+            "statId": 24
+        },
+        {Skater - Penalty Minutes
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 5.0,
+            "statId": 17
+        },
+        {Skater - Faceoffs Won
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 13.0,
+            "statId": 23
+        },
+        {Goalie - Goals Against
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 104.0,
+            "statId": 4
+        },
+        {Skater - Powerplay Goals
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 6.0,
+            "statId": 18
+        },
+        {Skater - Shifts
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 15.0,
+            "statId": 25
+        },
+        {Skater - Hat Tricks
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 16.0,
+            "statId": 28
+        },
+        {Skater - Game-Winning Goals
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 12.0,
+            "statId": 22
+        },
+        {Skater - Special Teams Assists
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 22.0,
+            "statId": 36
+        },
+        {Skater - Power Play Assists
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 7.0,
+            "statId": 19
+        },
+        {Skater - Short Handed Assists
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 10.0,
+            "statId": 21
+        },
+        {Skater - Short Handed Goals
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 9.0,
+            "statId": 20
+        },
+        {Goalie - Empty Net Goals Against
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 105.0,
+            "statId": 5
+        }
+    ],
+    "scoringType": "H2H_POINTS"
+}
