@@ -1,0 +1,169 @@
+{
+    "allowOutOfPositionScoring": false,
+    "homeTeamBonus": 0,
+    "matchupTieRule": "NONE",
+    "matchupTieRuleBy": 0,
+    "playerRankType": "STANDARD",
+    "playoffHomeTeamBonus": 0,
+    "playoffMatchupTieRule": "NONE",
+    "playoffMatchupTieRuleBy": 0,
+    "scoringItems": [
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 21
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 23
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.1,
+            "pointsOverrides": {},
+            "statId": 29
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.1,
+            "pointsOverrides": {},
+            "statId": 31
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 1.0,
+            "pointsOverrides": {},
+            "statId": 14
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 3.0,
+            "pointsOverrides": {},
+            "statId": 7
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.5,
+            "pointsOverrides": {},
+            "statId": 32
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 2
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 3
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": -1.2,
+            "statId": 4
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 2.5,
+            "statId": 1
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.5,
+            "pointsOverrides": {},
+            "statId": 38
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.5,
+            "statId": 39
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.5,
+            "statId": 9
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 2.0,
+            "pointsOverrides": {},
+            "statId": 13
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 15
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 16
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 18
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.0,
+            "pointsOverrides": {},
+            "statId": 19
+        },
+        {
+            "isReverseItem": false,
+            "leagueRanking": 0.0,
+            "leagueTotal": 0.0,
+            "points": 0.2,
+            "pointsOverrides": {},
+            "statId": 6
+        }
+    ],
+    "scoringType": "H2H_POINTS"
+}
