@@ -49,7 +49,7 @@ def ensure_hits_blocks_columns():
     conn.close()
 
 # dbScoringPop function generates and populates the database with a scoring table based on the .json
-def dbScoringPop():
+def dbScoringPop(leagueType):
     DB_PATH.parent.mkdir(parents=True, exist_ok=True) # Verify that the DB_PATH exists
     conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
@@ -61,6 +61,19 @@ def dbScoringPop():
         )            
     ''') # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
 
+    if leagueType == "FF":
+        dbScoringFF(conn, cur)
+    if leagueType == "ESPN":
+        return
+    if leagueType == "Yahoo":
+        return
+    if leagueType == "FanTrax":
+        return
+    else:
+        print("Error: No leagueType provided to dbm.dbScoringPop")
+
+
+def dbScoringFF(conn, cur):
     # === Open and parse the league_rules.json ===
     with open('league_rules.json', 'r') as file: # Open the 'league_rules.json', in read mode, as identified by 'r'
         data = json.load(file) # Set the 'data' variable as the file loaded in
