@@ -72,8 +72,9 @@ def dbScoringPop(leagueType):
     else:
         print("Error: No leagueType provided to dbm.dbScoringPop")
 
-
-def dbScoringFF(conn, cur):
+def dbScoringFF(connection, cursor):
+    conn = connection
+    cur = cursor
     # === Open and parse the league_rules.json ===
     with open('league_rules.json', 'r') as file: # Open the 'league_rules.json', in read mode, as identified by 'r'
         data = json.load(file) # Set the 'data' variable as the file loaded in
@@ -98,6 +99,8 @@ def dbScoringFF(conn, cur):
 
     conn.commit()
     conn.close()       
+
+
 
 def _player_name_key(name):
     """Compare names without accents, case differences, or extra whitespace."""

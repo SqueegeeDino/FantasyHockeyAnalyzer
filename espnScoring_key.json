@@ -3,162 +3,356 @@
         {
             "Stat Name": "Blocked Shots",
             "Player Type": "Skater",
-            "statID": 32
+            "statId": 32,
+            "abbreviation": "Blk",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Wins",
             "Player Type": "Goalie",
-            "statID": 1
+            "statId": 1,
+            "abbreviation": "W",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Special Teams Goals",
             "Player Type": "Skater",
-            "statID": 35
+            "statId": 35,
+            "abbreviation": "STG",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Shots on Goal",
             "Player Type": "Skater",
-            "statID": 29
+            "statId": 29,
+            "abbreviation": "SOG",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Goals",
             "Player Type": "Skater",
-            "statID": 13
+            "statId": 13,
+            "abbreviation": "G",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Games Started",
             "Player Type": "Goalie",
-            "statID": 0
+            "statId": 0,
+            "abbreviation": "GS",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Shots Against",
             "Player Type": "Goalie",
-            "statID": 3
+            "statId": 3,
+            "abbreviation": "SA",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Overtime Losses",
             "Player Type": "Goalie",
-            "statID": 9
+            "statId": 9,
+            "abbreviation": "OTL",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Power Play Points",
             "Player Type": "Skater",
-            "statID": 38
+            "statId": 38,
+            "abbreviation": "PPP",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Special Teams Points",
             "Player Type": "Skater",
-            "statID": 37
+            "statId": 37,
+            "abbreviation": "STP",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Losses",
             "Player Type": "Goalie",
-            "statID": 2
+            "statId": 2,
+            "abbreviation": "L",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Assists",
             "Player Type": "Skater",
-            "statID": 14
+            "statId": 14,
+            "abbreviation": "Ast",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Defensemen Points",
             "Player Type": "Skater",
-            "statID": 33
+            "statId": 33,
+            "abbreviation": "DPt",
+            "applyTo": [
+                "D"
+            ]
         },
         {
             "Stat Name": "Points",
             "Player Type": "Skater",
-            "statID": 16
+            "statId": 16,
+            "abbreviation": "Pts",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Saves",
             "Player Type": "Goalie",
-            "statID": 6
+            "statId": 6,
+            "abbreviation": "SV",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Hits",
             "Player Type": "Skater",
-            "statID": 31
+            "statId": 31,
+            "abbreviation": "Hit",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Short Handed Points",
             "Player Type": "Skater",
-            "statID": 39
+            "statId": 39,
+            "abbreviation": "SHP",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Plus/Minus",
             "Player Type": "Skater",
-            "statID": 15
+            "statId": 15,
+            "abbreviation": "+/-",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Shutouts",
             "Player Type": "Goalie",
-            "statID": 7
+            "statId": 7,
+            "abbreviation": "SO",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Faceoffs Lost",
             "Player Type": "Skater",
-            "statID": 24
+            "statId": 24,
+            "abbreviation": "FL",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Penalty Minutes",
             "Player Type": "Skater",
-            "statID": 17
+            "statId": 17,
+            "abbreviation": "PIM",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Faceoffs Won",
             "Player Type": "Skater",
-            "statID": 23
+            "statId": 23,
+            "abbreviation": "FW",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Goals Against",
             "Player Type": "Goalie",
-            "statID": 4
+            "statId": 4,
+            "abbreviation": "GA",
+            "applyTo": [
+                "G"
+            ]
         },
         {
             "Stat Name": "Powerplay Goals",
             "Player Type": "Skater",
-            "statID": 18
+            "statId": 18,
+            "abbreviation": "PPG",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Shifts",
             "Player Type": "Skater",
-            "statID": 25
+            "statId": 25,
+            "abbreviation": "S",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Hat Tricks",
             "Player Type": "Skater",
-            "statID": 28
+            "statId": 28,
+            "abbreviation": "HT",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Game-Winning Goals",
             "Player Type": "Skater",
-            "statID": 22
+            "statId": 22,
+            "abbreviation": "GWG",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Special Teams Assists",
             "Player Type": "Skater",
-            "statID": 36
+            "statId": 36,
+            "abbreviation": "STA",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Power Play Assists",
             "Player Type": "Skater",
-            "statID": 19
+            "statId": 19,
+            "abbreviation": "PPA",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Short Handed Assists",
             "Player Type": "Skater",
-            "statID": 21
+            "statId": 21,
+            "abbreviation": "SHA",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Short Handed Goals",
             "Player Type": "Skater",
-            "statID": 20
+            "statId": 20,
+            "abbreviation": "SHG",
+            "applyTo": [
+                "C",
+                "LW",
+                "RW",
+                "D"
+            ]
         },
         {
             "Stat Name": "Empty Net Goals Against",
             "Player Type": "Goalie",
-            "statID": 5
+            "statId": 5,
+            "abbreviation": "ENG",
+            "applyTo": [
+                "G"
+            ]
         }
     ]
 }
