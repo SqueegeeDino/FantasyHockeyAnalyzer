@@ -49,30 +49,36 @@ def ensure_hits_blocks_columns():
     conn.close()
 
 # dbScoringPop function generates and populates the database with a scoring table based on the .json
-def dbScoringPop(leagueType):
+def dbScoringPop(leagueType: str, leagueID: int, debug: bool):
     DB_PATH.parent.mkdir(parents=True, exist_ok=True) # Verify that the DB_PATH exists
     conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
 
     cur.execute('''CREATE TABLE IF NOT EXISTS score (
+        statID INTEGER UNIQUE,
         name TEXT UNIQUE, 
         value FLOAT,
         pos TEXT
         )            
     ''') # Create the table inside the database if there isn't one. We use UNIQUE for the name to prevent duplicating existing entries
 
+    cur.execute('''DELETE FROM score''')
+
     if leagueType == "FF":
-        dbScoringFF(conn, cur)
-    if leagueType == "ESPN":
+        _dbScoringFF(conn, cur)
+    elif leagueType == "ESPN":
+        _dbScoringESPN(conn, cur)
+    elif leagueType == "Yahoo":
         return
-    if leagueType == "Yahoo":
-        return
-    if leagueType == "FanTrax":
+    elif leagueType == "FanTrax":
         return
     else:
-        print("Error: No leagueType provided to dbm.dbScoringPop")
+        raise ValueError(f"Unsupported league type: {leagueType!r}")
 
-def dbScoringFF(connection, cursor):
+    if debug:
+        print("dbScoringPop done")
+
+def _dbScoringFF(connection, cursor):
     conn = connection
     cur = cursor
     # === Open and parse the league_rules.json ===
@@ -84,6 +90,7 @@ def dbScoringFF(connection, cursor):
         if "scoringRules" in group: # Makes sure the group has scoringRules in it
             for rule in group["scoringRules"]: # Loop through the scoringRules
                 cat = rule["category"]["abbreviation"] # Get the category abbreviation, for instance "SHP" for Short Handed Points. Side by side items lets us step down without a new loop
+                id = rule["category"]["id"] # Same process as the abbreviation
                 pos = ""
                 for app in rule["applyTo"]:
                     pos += (f",{app}")
@@ -91,16 +98,37 @@ def dbScoringFF(connection, cursor):
                     pts = rule["points"]["value"]
                 else: # This is where we check the pt value for a single instance of the event, in case it's a pts per multiple like "4 pts for every 10"
                     pts = rule["pointsPer"]["value"]
-                #print(f"  {cat}: {pos} | {pts}") # Print it all nicely
+                #print(f"  {id} | {cat}: {pos} | {pts}") # Print it all nicely
                 # Add the gathered scoring data to the 'score' table in the database'
-                d = [cat, pts, pos]
-                cur.execute("INSERT OR REPLACE INTO score VALUES(?, ?, ?)", d)
+                d = [id, cat, pts, pos]
+                cur.execute("""
+                            INSERT OR REPLACE INTO score (statID, name, value, pos)
+                            VALUES (?, ?, ?, ?)
+                            """, 
+                            d)
                 conn.commit()
 
     conn.commit()
     conn.close()       
 
+def _dbScoringESPN(connection, cursor):
+    conn = connection
+    cur = cursor
 
+    with open('espnScoring_key', 'r') as fileKey: # Open the key 
+        dataKey = json.load(fileKey)
+
+    for i in dataKey["scoringItems"]: # Loop through all the items in the key
+        id = ["statId"]
+        pos = ["Player Type"]
+        name = ["Stat Name"]
+
+    with open('espnScoring_output', 'r') as file: # Open the json in read mode
+        data = json.load(file) # Set data variable to hold the json data
+
+    for rule in data["scoringItems"]: # Loop through all the items in "scoringItems"
+        id = rule["statId"]
+        points = rule["points"]
 
 def _player_name_key(name):
     """Compare names without accents, case differences, or extra whitespace."""

@@ -1,5 +1,15 @@
 import hockey.databaseManager as dbm
+import sqlite3
+from hockey.config import DB_PATH
 
-teams = dbm.define_team_aliases()
+leagueType = "FF"
+leagueID_ff = 12099
+leagueID_ESPN = 190894274
 
-print(teams.keys())
+conn = sqlite3.connect(DB_PATH)
+cur = conn.cursor()
+
+cur.execute("DROP TABLE IF EXISTS score")
+
+dbm.dbScoringPop(leagueType=leagueType, leagueID=leagueID_ff, debug=True)
+print("Test.py Done")
