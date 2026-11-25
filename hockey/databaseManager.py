@@ -72,6 +72,7 @@ def dbScoringPop(
         ingFF.apiScoringGet(leagueID=leagueID)
         _dbScoringFF(conn, cur)
     elif leagueType == "ESPN":
+        ingESPN.espn_getScoring(leagueID=leagueID, year=leagueYear)
         _dbScoringESPN(conn, cur)
     elif leagueType == "Yahoo":
         return
@@ -83,6 +84,8 @@ def dbScoringPop(
     if debug:
         print(f"dbScoringPop {leagueType}/{leagueID} Done")
 
+'''= Functions for each major fantasy service scoring ='''
+# Actual data ingestion is done in each independant ingestion script
 def _dbScoringFF(connection, cursor):
     conn = connection
     cur = cursor
@@ -120,18 +123,6 @@ def _dbScoringESPN(connection, cursor):
     conn = connection
     cur = cursor
 
-    # Create a cache table for temporarily storing the data to be merged. Stores point values in this case
-    # --- Probably not a good way of doing this but idk how else rn
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS "score_cache" (
-        "statID"	INTEGER UNIQUE,
-        "name"	TEXT UNIQUE,
-        "value"	FLOAT,
-        "pos"	TEXT
-    )
-    """)
-    cur.execute('''DELETE FROM score_cache''') # Wipe the cache
-
     with open('espnScoring_key.json', 'r') as fileKey: # Open the key 
         dataKey = json.load(fileKey)
 
@@ -154,6 +145,7 @@ def _dbScoringESPN(connection, cursor):
     for rule in data["scoringItems"]: # Loop through all the items in "scoringItems"
         id = rule["statId"]
         points = rule["points"]
+        # Update each row in the score table, setting the points value where the ID matches
         cur.execute("""
                 UPDATE score
                 SET value=?
@@ -161,6 +153,7 @@ def _dbScoringESPN(connection, cursor):
                 """,
                 (points, id))
         conn.commit()
+    conn.close()
 
 def _player_name_key(name):
     """Compare names without accents, case differences, or extra whitespace."""

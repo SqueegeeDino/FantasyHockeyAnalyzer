@@ -2,7 +2,7 @@ import hockey.databaseManager as dbm
 import sqlite3
 from hockey.config import DB_PATH
 
-leagueType = "ESPN"
+leagueType = "FF"
 leagueID_ff = 12099
 leagueID_ESPN = 190894274
 
