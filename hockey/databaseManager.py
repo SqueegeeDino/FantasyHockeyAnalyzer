@@ -49,7 +49,11 @@ def ensure_hits_blocks_columns():
     conn.close()
 
 # dbScoringPop function generates and populates the database with a scoring table based on the .json
-def dbScoringPop(leagueType: str, leagueID: int, debug: bool):
+def dbScoringPop(
+        leagueType: str, 
+        leagueID: int, 
+        leagueYear: str=2027, #Optional argument
+        debug: bool=False): #Optional argument
     DB_PATH.parent.mkdir(parents=True, exist_ok=True) # Verify that the DB_PATH exists
     conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it
     cur = conn.cursor() # Create a cursor. This is used to execute SQL commands and fetch results
@@ -65,6 +69,7 @@ def dbScoringPop(leagueType: str, leagueID: int, debug: bool):
     cur.execute('''DELETE FROM score''')
 
     if leagueType == "FF":
+        ingFF.apiScoringGet(leagueID=leagueID)
         _dbScoringFF(conn, cur)
     elif leagueType == "ESPN":
         _dbScoringESPN(conn, cur)
@@ -76,7 +81,7 @@ def dbScoringPop(leagueType: str, leagueID: int, debug: bool):
         raise ValueError(f"Unsupported league type: {leagueType!r}")
 
     if debug:
-        print("dbScoringPop done")
+        print(f"dbScoringPop {leagueType}/{leagueID} Done")
 
 def _dbScoringFF(connection, cursor):
     conn = connection
@@ -115,20 +120,47 @@ def _dbScoringESPN(connection, cursor):
     conn = connection
     cur = cursor
 
-    with open('espnScoring_key', 'r') as fileKey: # Open the key 
+    # Create a cache table for temporarily storing the data to be merged. Stores point values in this case
+    # --- Probably not a good way of doing this but idk how else rn
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS "score_cache" (
+        "statID"	INTEGER UNIQUE,
+        "name"	TEXT UNIQUE,
+        "value"	FLOAT,
+        "pos"	TEXT
+    )
+    """)
+    cur.execute('''DELETE FROM score_cache''') # Wipe the cache
+
+    with open('espnScoring_key.json', 'r') as fileKey: # Open the key 
         dataKey = json.load(fileKey)
 
     for i in dataKey["scoringItems"]: # Loop through all the items in the key
-        id = ["statId"]
-        pos = ["Player Type"]
-        name = ["Stat Name"]
+        id = i["statId"]
+        pos = i["Player Type"]
+        name = i["Stat Name"]
+        pts = 0
+        d = [id, name, pts, pos]
+        cur.execute("""
+                    INSERT OR REPLACE INTO score (statID, name, value, pos)
+                    VALUES (?, ?, ?, ?)
+                    """, 
+                    d)
+        conn.commit()
 
-    with open('espnScoring_output', 'r') as file: # Open the json in read mode
+    with open('espnScoring_output.json', 'r') as file: # Open the json in read mode
         data = json.load(file) # Set data variable to hold the json data
 
     for rule in data["scoringItems"]: # Loop through all the items in "scoringItems"
         id = rule["statId"]
         points = rule["points"]
+        cur.execute("""
+                UPDATE score
+                SET value=?
+                WHERE statID=?
+                """,
+                (points, id))
+        conn.commit()
 
 def _player_name_key(name):
     """Compare names without accents, case differences, or extra whitespace."""
