@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 # Hockey/Fantasy Imports
 import hockey.databaseManager as dbm
 import hockey.config as cfg
+from hockey.config import DB_PATH
 
 # // FleaFlicker API specifics
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
@@ -100,7 +101,7 @@ def ff_apiIndex(faStatus: bool | None = None, on_progress=None):
                     on_progress(position_index / len(positions),
                                 f"{ipos.upper()} · offset {offset} · {len(rows_by_id)} unique players")
                 params = {
-                    "sport": "NHL", "league_id": ff_leagueID,
+                    "sport": "NHL", "league_id": cfg.LEAGUE_ID_STR,
                     "sort": "SORT_DRAFT_RANKING", "result_offset": offset,
                     "filter.position_eligibility": ipos,
                 }
@@ -156,7 +157,7 @@ def ff_apiIndex(faStatus: bool | None = None, on_progress=None):
 def build_ff_indexes():
     """Build identities, ownership, and availability sequentially."""
     count = dbPlayerIndexFFPop()
-    rostered = ff_apiGetRosters(ff_leagueID)
+    rostered = ff_apiGetRosters(cfg.LEAGUE_ID_STR)
     ff_build_player_availability_view()
     print(f"Indexes ready: {count} listing players; {rostered} rostered.")
     return count

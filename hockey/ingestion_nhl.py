@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 import nhlAPI
 from nhlpy import NHLClient
 from hockey.config import DB_PATH
-from hockey.config import season
+from hockey.config import SEASON
 
 # // NHL API specifics
 client = NHLClient()
@@ -91,7 +91,7 @@ def dbPlayerIndexNHLPop():
 
 # Fetch all the team rosters for the dbPlayerIndexNHLPop function to use
 def fetch_team_roster(team_abbr, debug=True):
-    roster = client.teams.team_roster(team_abbr=team_abbr, season=str(season))
+    roster = client.teams.team_roster(team_abbr=team_abbr, season=str(SEASON))
     if debug == True:
         print(f"Fetched team: {team_abbr}")
     return team_abbr, roster
@@ -156,7 +156,7 @@ REALTIME_URL = (
     "&isGame=false"
     "&limit=-1"
     # change seasonId here as needed
-    f"&cayenneExp=seasonId={season} and gameTypeId=2"
+    f"&cayenneExp=seasonId={SEASON} and gameTypeId=2"
 )
 
 def dbEnsureRealtimeTable(): # Build the table inside the database
@@ -195,7 +195,7 @@ def dbPopulateRealtime():
 
     # optional: wipe this season before inserting
     # since the endpoint is season-specific, it's safe
-    cur.execute("DELETE FROM rawstats_dynamic_skater_realtime WHERE seasonId = ?", (season,))
+    cur.execute("DELETE FROM rawstats_dynamic_skater_realtime WHERE seasonId = ?", (SEASON,))
 
     for item in rows:
         player_id = item.get("playerId")
@@ -204,7 +204,7 @@ def dbPopulateRealtime():
         toi = item.get("timeOnIcePerGame", 0)
         # this endpoint didn't explicitly include seasonId in your sample,
         # but it's in the filter, so we can hardcode it here:
-        season_id = season
+        season_id = SEASON
 
         cur.execute("""
             INSERT OR REPLACE INTO rawstats_dynamic_skater_realtime

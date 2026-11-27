@@ -3,7 +3,8 @@ import hockey.databaseManager as dbm
 import requests as rq
 import sqlite3
 import pandas as pd
-from hockey.config import DB_PATH, ff_leagueID
+import hockey.config as cfg
+from hockey.config import DB_PATH
 import hockey.ingestion_ff as ingFF
 import hockey.export as exp
 import hockey.ingestion_nhl as ingNHL
@@ -11,7 +12,7 @@ import hockey.query as hQuery
 import hockey.scoring as hSc
 from hockey.config import DB_PATH
 
-leagueID = ff_leagueID
+leagueID = cfg.LEAGUE_ID_STR
 
 
 def confirm(prompt: str, run_all: bool, skip_all: bool) -> bool:
@@ -50,7 +51,7 @@ if confirm("Fetch scoring rules from FleaFlicker?", run_all, skip_all):
     print("✅ ingFF.apiScoringGet")
 
 if confirm("Populate scoring data into database?", run_all, skip_all):
-    dbm.dbScoringPop()
+    dbm.dbScoringPop(cfg.LEAGUE_TYPE, cfg.convertID_toInt(cfg.LEAGUE_ID_STR))
     print("✅ dbm.dbScoringPop")
 
 # --- Step 3: FleaFlicker identities, ownership, and availability ---

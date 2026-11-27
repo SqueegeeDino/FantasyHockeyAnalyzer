@@ -11,13 +11,11 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 # Hockey/Fantasy imports
-import nhlAPI
-from nhlpy import NHLClient
 # Local Imports
+import hockey.config as cfg
 from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
 from hockey.config import BASE_DIR # Base directory of the project
 from hockey.config import TA_PATH # Path to team aliases json
-from hockey.config import season
 import hockey.ingestion_espn as ingESPN
 import hockey.ingestion_ff as ingFF
 import hockey.ingestion_yahoo as ingYAH
@@ -51,7 +49,7 @@ def ensure_hits_blocks_columns():
 def dbScoringPop(
         leagueType: str, 
         leagueID: int, 
-        leagueYear: str=2027, #Optional argument
+        leagueYear: str=str(cfg.YEAR), #Optional argument
         debug: bool=False): #Optional argument
     DB_PATH.parent.mkdir(parents=True, exist_ok=True) # Verify that the DB_PATH exists
     conn = sqlite3.connect(DB_PATH) # Connect to the database. If one doesn't exist, creates it

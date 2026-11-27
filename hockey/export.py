@@ -5,7 +5,7 @@ import pandas as pd
 # Local Imports
 import hockey.databaseManager as dbm
 from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
-from hockey.config import ff_leagueID
+from hockey.config import LEAGUE_ID_STR
 
 # Detailed and powerful export function of all data collected
 def exportFantasyCSV(

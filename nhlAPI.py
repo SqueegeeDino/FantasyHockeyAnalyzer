@@ -2,7 +2,7 @@ import hockey.databaseManager as dbm
 import requests as rq
 import sqlite3
 from nhlpy import NHLClient
-from hockey.config import season
+import hockey.config as cfg
 from hockey.config import DB_PATH
 
 limit = -1 # -1 for all results
@@ -14,8 +14,8 @@ endpointBase = "https://api.nhle.com/stats/rest/en"
 # GameTypeId=2 is regular season, 3 for playoffs
 # Sort options: https://gitlab.com/dword4/nhlapi/-/blob/master/stats-api.md#skater-summary
 # Sort desc is high to low, asc is low to high
-endpointSkater = f"{endpointBase}/skater/summary?limit={limit}&sort=points&dir=desc&cayenneExp=seasonId={season} and gameTypeId=2"
-endpointGoalie = f"{endpointBase}/goalie/summary?limit={limit}&sort=wins&dir=desc&cayenneExp=seasonId={season} and gameTypeId=2"
+endpointSkater = f"{endpointBase}/skater/summary?limit={limit}&sort=points&dir=desc&cayenneExp=seasonId={cfg.SEASON} and gameTypeId=2"
+endpointGoalie = f"{endpointBase}/goalie/summary?limit={limit}&sort=wins&dir=desc&cayenneExp=seasonId={cfg.SEASON} and gameTypeId=2"
 
 
 # Map Python types → SQLite types

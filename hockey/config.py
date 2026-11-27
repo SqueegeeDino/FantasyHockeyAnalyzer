@@ -2,7 +2,8 @@ from pathlib import Path
 import sqlite3
 
 # Global Variables
-season = 20262027
+SEASON = 20262027
+YEAR = 2027
 
 # Define the path to the database file
 BASE_DIR = Path(__file__).resolve().parent.parent
