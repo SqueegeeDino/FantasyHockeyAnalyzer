@@ -12,3 +12,8 @@ TA_PATH = BASE_DIR / "data" / "team_aliases.json"
 
 # FleaFlicker Specifics
 ff_leagueID = 12099
+
+# Mutable variables
+LEAGUE_TYPE = ""
+LEAGUE_ID_STR = ""
+MY_TEAM = ""
