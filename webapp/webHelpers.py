@@ -6,6 +6,8 @@ from pandas.api.types import (
     is_numeric_dtype,
     is_object_dtype,
 )
+import re
+from urllib.parse import parse_qs, urlsplit
 
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -82,3 +84,49 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                     df = df[df[column].str.contains(user_text_input)]
 
     return df
+
+def findLeagueFromURL(url: str, debug: bool=False) -> str:
+    leagueType = ""
+    parts = urlsplit(url.strip())
+
+    if debug:
+        print(f"Parts Scheme:{parts.scheme}")
+
+    if parts.scheme not in ("http", "https"):
+        raise ValueError("Paste a full league URL starting with HTTP or HTTPS")
+
+    if debug:
+        print(f"Parts Hostname: {parts.hostname}")
+
+    if parts.hostname == "www.fleaflicker.com":
+        match = re.match(r"^/nhl/leagues/([0-9]+)(?:/|$)", parts.path)
+        leagueType = "FleaFlicker"
+        print("Fleaflicker")
+    elif parts.hostname == "fantasy.espn.com":
+
+        if debug:
+            print(f"[ESPN] Parts.path.rstrip: {parts.path.rstrip("/")}")
+        if parts.path.rstrip("/") == "/hockey/league":
+            ids = parse_qs(parts.query, keep_blank_values=True).get("leagueId", [])
+
+            if debug:
+                print(f"ids len: {len(ids)}")
+            if len(ids) == 1 and re.fullmatch(r"[0-9]+", ids[0]):
+                if debug:
+                    print(ids[0])
+                return ids[0], "ESPN"
+        raise ValueError("ESPN link with league ID expected but could not be found")
+    elif parts.hostname == "hockey.fantasysports.yahoo.com":
+        match = re.match(r"^/hockey/([0-9]+)(?:/|$)", parts.path)
+        leagueType = "Yahoo"
+        print("Yahoo")
+    elif parts.hostname == "www.fantrax.com":
+        match = re.match(r"^/fantasy/league/([a-zA-Z0-9]+)(?:/|$)", parts.path)
+        leagueType = "Fantrax"
+        print("Fantrax")
+    else:
+        raise ValueError("Please provide a valid fantasy service link. FleaFlicker, ESPN, Yahoo, and Fantrax are supported")
+
+    if debug:
+        print (match.group(1))
+    return match.group(1), leagueType
