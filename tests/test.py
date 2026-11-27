@@ -17,4 +17,3 @@ print("Test.py Done")
 """
 
 print(f"League ID and type: {wH.findLeagueFromURL(leagueURL)}")
-
