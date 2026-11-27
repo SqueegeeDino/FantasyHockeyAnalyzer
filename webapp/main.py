@@ -90,10 +90,12 @@ with st.sidebar:
             label="Fantasy Service:",
             options=(fantasy_services)
             )
-      leagueLink = st.text_input(
+      leagueURL = st.text_input(
             label="League URL",
             placeholder="Paste URL here",
       )
+      if leagueURL:
+           st.write(f"League URL: {leagueURL}")
       reload_requested = st.button("Reload Stats", 
                   key="reloadStats", 
                   help="Fetch current NHL statistics and update availability from FleaFlicker league rosters.",
@@ -118,8 +120,6 @@ if st.session_state.faCheckBool:
 else:
         faVal = 0
 rankings = get_rankings(min_games, cleanedFilter)
-
-
 
 
 with st.container(border=True, horizontal=True):
