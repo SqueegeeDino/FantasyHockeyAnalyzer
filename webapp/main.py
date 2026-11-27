@@ -7,7 +7,10 @@ import hockey.scoring as hSc
 import hockey.pipeline as hPipe
 from hockey.display import prepare_display
 import webapp.webHelpers as wh
+import hockey.config as cfg
 
+'''=== VARIABLES ==='''
+# We may move these to hocky/config.py
 # === Variables used in frontend generation
 teams = [
     "Anaheim Ducks",
@@ -50,6 +53,7 @@ fantasy_services = [
       "FleaFlicker"
 ]
 
+'''=== FUNCTIONS ==='''
 def get_rankings(min_games, l_cleanedFilter):
     hSc.dbBuildUnifiedFantasyView(False)
 
@@ -81,8 +85,8 @@ def get_rankings(min_games, l_cleanedFilter):
 # === Top of page generation
 st.set_page_config(layout="wide")
 st.title("Fantasy Hockey Analyzer")
-st.header("By SDT")
 
+'''=== SIDEBAR ==='''
 with st.sidebar:
       st.header("Settings")
       st.write("This is where you can set your league settings and filters.")
@@ -95,12 +99,17 @@ with st.sidebar:
             placeholder="Paste URL here",
       )
       if leagueURL:
+           cfg.LEAGUE_ID_STR, cfg.LEAGUE_TYPE = wh.findLeagueFromURL(leagueURL)
+           print(f"League ID: {cfg.LEAGUE_ID_STR}")
+           print(f"League type: {cfg.LEAGUE_TYPE}")
            st.write(f"League URL: {leagueURL}")
+      
       reload_requested = st.button("Reload Stats", 
                   key="reloadStats", 
                   help="Fetch current NHL statistics and update availability from FleaFlicker league rosters.",
                   )
 
+'''=== TOPPER ==='''
 with st.container(border=True):
       col1, col2, col3, col4 = st.columns([1,2,2,1]) # Define columns then their ratios
       with col1:
@@ -121,7 +130,7 @@ else:
         faVal = 0
 rankings = get_rankings(min_games, cleanedFilter)
 
-
+'''=== TABLE ==='''
 with st.container(border=True, horizontal=True):
     rankings_filtered = wh.filter_dataframe(rankings)
 
@@ -129,6 +138,8 @@ with st.container(border=True, horizontal=True):
 status_area = st.empty()
 table_area = st.empty()
 
+'''=== FUNCTIONALITY ==='''
+# Reload
 if reload_requested:
     table_area.skeleton(height=420)
     with status_area.container():

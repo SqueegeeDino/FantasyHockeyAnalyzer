@@ -129,4 +129,4 @@ def findLeagueFromURL(url: str, debug: bool=False) -> str:
 
     if debug:
         print (match.group(1))
-    return match.group(1), leagueType
+    return match.group(1), leagueType # Return leagueID then leagueType
