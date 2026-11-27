@@ -5,9 +5,8 @@ import requests as rq
 import time
 from concurrent.futures import ThreadPoolExecutor
 # Hockey/Fantasy Imports
-from hockey.config import DB_PATH
-from hockey.config import ff_leagueID
 import hockey.databaseManager as dbm
+import hockey.config as cfg
 
 # // FleaFlicker API specifics
 offsets = list(range(0, 1300, 30))  # Offsets for pagination
@@ -18,7 +17,6 @@ REQ_SLEEP_TIME = 1
 positions = ["c", "lw", "rw", "d", "g"]
 total_requests = len(positions) * (1300 // 30)  # 5 positions, 1300 players max, 30 per page, fleakicker API specific
 current_request = 0 # Fleakicker request counter
-
 
 # apiScoringGet function grabs scoring values and puts them in a .json file
 def apiScoringGet(leagueID):
@@ -253,7 +251,6 @@ def ff_apiGetRosters(leagueID):
         conn.close()
     return len(rows)
 
-
 def ff_build_player_availability_view():
     conn = sqlite3.connect(DB_PATH)
 
@@ -277,3 +274,19 @@ def ff_build_player_availability_view():
         """)
     finally:
         conn.close()
+
+def ff_apiGetTeams(leagueID, debug:bool = False) -> list[dict]:
+    print(f"[ingFF] Debug: {debug}")
+    id = cfg.convertID_toInt(cfg.LEAGUE_ID_STR, debug)
+    response = rq.get(
+        "https://www.fleaflicker.com/api/FetchLeagueStandings",
+        params={"sport": "NHL", "league_id": id},
+        timeout=10
+    )
+    response.raise_for_status()
+
+    return [
+        {"id": team["id"], "name": team["name"]}
+        for division in response.json()["divisions"]
+        for team in division.get("teams", [])
+    ]

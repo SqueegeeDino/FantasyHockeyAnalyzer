@@ -17,7 +17,6 @@ from nhlpy import NHLClient
 from hockey.config import DB_PATH # Imports the DB_PATH from hockey/config.py
 from hockey.config import BASE_DIR # Base directory of the project
 from hockey.config import TA_PATH # Path to team aliases json
-from hockey.config import ff_leagueID # Imports the ff_leagueID from hockey/config.py
 from hockey.config import season
 import hockey.ingestion_espn as ingESPN
 import hockey.ingestion_ff as ingFF
