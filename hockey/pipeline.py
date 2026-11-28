@@ -7,17 +7,17 @@ import hockey.ingestion_ff as ingFF
 import hockey.ingestion_yahoo as ingYAH
 import hockey.ingestion_nhl as ingNHL
 import hockey.scoring as hSc
-from hockey.config import LEAGUE_ID_STR
+import hockey.config as cfg
 
 # Run all FleaFlicker related functions
 def helpFlea(debug=False):
     ingFF.build_ff_indexes()
     if debug==True:
         print("✅ helpFlea built indices")
-    ingFF.apiScoringGet(LEAGUE_ID_STR)
+    ingFF.apiScoringGet(cfg.LEAGUE_ID_STR)
     if debug==True:
         print("✅ helpFlea retrieved scoring")
-    dbm.dbScoringPop()
+    dbm.dbScoringPop(leagueType=cfg.LEAGUE_TYPE, leagueID=cfg.LEAGUE_ID_STR)
     if debug==True:
         print("✅ helpFlea populated scoring")
 
@@ -46,9 +46,9 @@ def buildStatsBasic(debug=False, on_status=None):
     report = on_status or (lambda message: None)
     helpNHL(debug, on_status=report)
     report("Refreshing FleaFlicker league rosters…")
-    ingFF.ff_apiGetRosters(LEAGUE_ID_STR)
+    ingFF.ff_apiGetRosters(cfg.LEAGUE_ID_STR)
     report("Loading fantasy scoring rules…")
-    dbm.dbScoringPop()
+    dbm.dbScoringPop(leagueType=cfg.LEAGUE_TYPE, leagueID=cfg.LEAGUE_ID_STR)
     report("Rebuilding fantasy rankings…")
     hSc.dbBuildUnifiedFantasyView(False)
     report("Statistics and availability refreshed.")

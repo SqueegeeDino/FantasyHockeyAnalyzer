@@ -101,6 +101,7 @@ def myTeam(teamList):
       for i, item in enumerate(teamList):
           if st.button(item, key=f"btn_{i}_{item}", width="stretch"):
                st.session_state["selected_item"] = item
+               st.rerun()
       if "selected_item" in st.session_state:
             st.write(f"Selected: **{st.session_state['selected_item']}**")
 
@@ -108,22 +109,27 @@ def myTeam(teamList):
 with st.sidebar:
       st.header("Settings")
       st.write("This is where you can set your league settings and filters.")
-      fantasyServiceSelect = st.selectbox(
-            label="Fantasy Service:",
-            options=(fantasy_services)
-            )
-      leagueURL = st.text_input(
-            label="League URL",
-            placeholder="Paste URL here",
-      )
+      with st.form("leagueURL_form", clear_on_submit=True):          
+            leagueURL = st.text_input(
+                  label="League URL",
+                  placeholder="Paste URL here",
+                  key="input_url",
+                  help="Paste complete league home URL here",
+                  type="url",
+                  icon=":material/link:"
+                  )
+            submitted = st.form_submit_button("Go")
       # If the league URL box is updated with "Enter"
-      if leagueURL:
+      if submitted and leagueURL:
            cfg.LEAGUE_ID_STR, cfg.LEAGUE_TYPE = wh.findLeagueFromURL(leagueURL)
            print(f"League ID: {cfg.LEAGUE_ID_STR}")
            print(f"League type: {cfg.LEAGUE_TYPE}")
            st.write(f"League URL: {leagueURL}")
            teamList = ingFF.ff_apiGetTeams(cfg.LEAGUE_ID_STR)
            myTeam(teamList) # Use "teams" as a standin without network
+           cfg.MY_TEAM = myTeam
+      if "selected_item" in st.session_state:
+           st.write(f"Selected team: **{st.session_state['selected_item']}**")
       
       reload_requested = st.button("Reload Stats", 
                   key="reloadStats", 

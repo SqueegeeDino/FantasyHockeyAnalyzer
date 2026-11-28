@@ -48,7 +48,7 @@ def ensure_hits_blocks_columns():
 # dbScoringPop function generates and populates the database with a scoring table based on the .json
 def dbScoringPop(
         leagueType: str, 
-        leagueID: int, 
+        leagueID, 
         leagueYear: str=str(cfg.YEAR), #Optional argument
         debug: bool=False): #Optional argument
     DB_PATH.parent.mkdir(parents=True, exist_ok=True) # Verify that the DB_PATH exists
@@ -65,15 +65,15 @@ def dbScoringPop(
 
     cur.execute('''DELETE FROM score''')
 
-    if leagueType == "FF":
+    if leagueType == 'FleaFlicker':
         ingFF.apiScoringGet(leagueID=leagueID)
         _dbScoringFF(conn, cur)
-    elif leagueType == "ESPN":
+    elif leagueType == 'ESPN':
         ingESPN.espn_getScoring(leagueID=leagueID, year=leagueYear)
         _dbScoringESPN(conn, cur)
-    elif leagueType == "Yahoo":
+    elif leagueType == 'Yahoo':
         return
-    elif leagueType == "FanTrax":
+    elif leagueType == 'FanTrax':
         return
     else:
         raise ValueError(f"Unsupported league type: {leagueType!r}")
